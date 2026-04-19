@@ -1,42 +1,36 @@
 package nl.davidfemi.domain.board;
 
-import java.util.Objects;
+public record Position(int file, int rank) implements Comparable {
 
-public class Position {
-    private final int file;
-    private final int rank;
-
-    public Position (int file, int rank){
-        this.file = file;
-        this.rank = rank;
-    }
-
-    public int getFile() {
-        return file;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    public String getPosition(){
+    public String getPosition() {
         return "" + file + rank;
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Position)){
+        if (!(o instanceof Position)) {
             return false;
         }
         Position pos = (Position) o;
-            return pos.getFile() == this.getFile() && pos.getRank() == this.getRank();
+        return pos.file() == this.file() && pos.rank() == this.rank();
     }
 
     @Override
-    public int hashCode(){
-        return Objects.hash(file, rank);
+    public int compareTo(Object o) {
+        Position pos = (Position) o;
+        if (this.rank() < pos.rank())
+            return -1;
+        if (this.rank() > pos.rank())
+            return 1;
+        if (this.rank() == pos.rank()) {
+            if (this.file() < pos.file())
+                return -1;
+            if (this.file() > pos.file())
+                return 1;
+        }
+        return 0;
     }
 }

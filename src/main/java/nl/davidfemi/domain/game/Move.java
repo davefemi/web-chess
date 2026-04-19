@@ -1,4 +1,7 @@
 package nl.davidfemi.domain.game;
 
-public class Move {
+import nl.davidfemi.domain.board.Position;
+
+public record Move(Position oldPosition, Position newPosition) {
+
 }

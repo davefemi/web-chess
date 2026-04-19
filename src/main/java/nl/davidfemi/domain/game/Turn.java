@@ -3,7 +3,7 @@ package nl.davidfemi.domain.game;
 import nl.davidfemi.domain.pieces.PlayerColor;
 
 public class Turn {
-    private PlayerColor nextTurn = PlayerColor.WHITE;
+    private static PlayerColor nextTurn = PlayerColor.WHITE;
 
     public PlayerColor nextTurn(){
         PlayerColor turn = nextTurn;
