@@ -1,14 +1,12 @@
 package nl.davidfemi.domain.board;
 
-import nl.davidfemi.domain.game.Move;
+import nl.davidfemi.domain.game.utility.CastlingMove;
+import nl.davidfemi.domain.game.utility.Move;
 import nl.davidfemi.domain.pieces.Piece;
 import nl.davidfemi.domain.pieces.PieceType;
 import nl.davidfemi.domain.pieces.PlayerColor;
-import nl.davidfemi.exception.BoardException;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class Board {
@@ -17,8 +15,8 @@ public class Board {
     public Board(){
         initBoard();
         initPieces();
-        movePieceTo(new Move(new Position(4,2), new Position (4,3)));
     }
+
     private void initBoard(){
         squares = new TreeMap<>();
         for (int rank = 1; rank<9; rank++){
@@ -85,9 +83,13 @@ public class Board {
     }
 
     public boolean movePieceTo(Move move){
-        squares.put(move.newPosition(), getPieceAt(move.oldPosition()));
-        squares.remove(move.oldPosition());
+        squares.put(move.to(), getPieceAt(move.from()));
+        squares.put(move.from(), null);
         return true;
+    }
+
+    public boolean movePieceTo(CastlingMove move){
+        return (movePieceTo(move.moveKing()) && movePieceTo(move.moveRook()));
     }
 
     public List<Position> getPositions(){
@@ -96,10 +98,25 @@ public class Board {
         return positions;
     }
 
+    public boolean promotePawnTo(Position position, PieceType pieceType){
+        PlayerColor color = getPieceAt(position).getColor();
+        squares.put(position, new Piece(pieceType, color));
+        return true;
+    }
+
     public void printBoard(){
+        int sz = 0;
         for(Position p: squares.keySet()){
-            if (squares.get(p) != null)
+            if (squares.get(p) != null) {
+                sz++;
                 System.out.println("" + p.getPosition() + squares.get(p).getType() + squares.get(p).getColor().name());
+            }
         }
+        System.out.println("Total: " + sz + " pieces");
+    }
+
+    public Board (Board other){
+        this.squares = new TreeMap<>();
+        other.squares.forEach(this.squares::put);
     }
 }

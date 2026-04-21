@@ -2,10 +2,10 @@ package nl.davidfemi.domain.game;
 
 import nl.davidfemi.domain.pieces.PlayerColor;
 
-public class Turn {
+public class TurnGenerator {
     private static PlayerColor nextTurn = PlayerColor.WHITE;
 
-    public PlayerColor nextTurn(){
+    protected PlayerColor nextTurn(){
         PlayerColor turn = nextTurn;
         if (nextTurn == PlayerColor.BLACK) {
             nextTurn = PlayerColor.WHITE;
@@ -14,9 +14,5 @@ public class Turn {
             nextTurn = PlayerColor.BLACK;
         }
         return turn;
-    }
-
-    public boolean hasTurn(PlayerColor playerColor){
-        return nextTurn == playerColor;
     }
 }
