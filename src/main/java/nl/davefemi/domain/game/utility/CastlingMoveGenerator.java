@@ -3,11 +3,13 @@ package nl.davefemi.domain.game.utility;
 import nl.davefemi.domain.board.Board;
 import nl.davefemi.domain.board.BoardScanner;
 import nl.davefemi.domain.board.Position;
-import nl.davefemi.domain.game.move.CastlingMove;
-import nl.davefemi.domain.game.move.SingleMove;
+import nl.davefemi.domain.game.actions.move.CastlingMove;
+import nl.davefemi.domain.game.actions.move.SingleMove;
 import nl.davefemi.domain.game.rule.MoveEvaluator;
-import nl.davefemi.domain.piece.PieceType;
-import nl.davefemi.domain.piece.PlayerColor;
+import nl.davefemi.domain.board.PieceType;
+import nl.davefemi.domain.board.PlayerColor;
+import nl.davefemi.exception.BoardException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public final class CastlingMoveGenerator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static List<CastlingMove> generateCastlingMoves(Board board, PlayerColor color, boolean isActiveColor) {
+    public static List<CastlingMove> generateCastlingMoves(Board board, PlayerColor color, boolean isActiveColor) throws BoardException {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
         PlayerColor enemyColor = color == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE;
         Position king = BoardScanner.getCurrentSinglePosition(board, PieceType.KING, color);

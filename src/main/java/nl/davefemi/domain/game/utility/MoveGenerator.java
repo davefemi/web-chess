@@ -3,17 +3,19 @@ package nl.davefemi.domain.game.utility;
 import nl.davefemi.domain.board.Board;
 import nl.davefemi.domain.board.BoardScanner;
 import nl.davefemi.domain.board.Position;
-import nl.davefemi.domain.game.move.SingleMove;
+import nl.davefemi.domain.game.actions.move.SingleMove;
 import nl.davefemi.domain.game.rule.MoveEvaluator;
-import nl.davefemi.domain.piece.PieceType;
-import nl.davefemi.domain.piece.PlayerColor;
+import nl.davefemi.domain.board.PieceType;
+import nl.davefemi.domain.board.PlayerColor;
+import nl.davefemi.exception.BoardException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public final class MoveGenerator {
 
-    public static List<SingleMove> generateMoves(Board board, PlayerColor color, boolean isActiveColor){
+    public static List<SingleMove> generateMoves(Board board, PlayerColor color, boolean isActiveColor) throws BoardException {
         List<SingleMove> moves = new ArrayList<>();
         PlayerColor enemyColor =
                 color == PlayerColor.WHITE
@@ -28,7 +30,7 @@ public final class MoveGenerator {
         return moves;
     }
 
-    private static List<SingleMove> getKingMoves(Board board, Position position, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getKingMoves(Board board, Position position, PlayerColor enemyColor, boolean isActiveColor) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (position != null) {
             for (int file = Math.max(position.file() - 1, 1); file <= Math.min(position.file() + 1, 8); file++) {
@@ -45,7 +47,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getQueenMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getQueenMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor) throws BoardException {
         List<SingleMove> legalMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -56,7 +58,7 @@ public final class MoveGenerator {
         return legalMoves;
     }
 
-    private static List<SingleMove> getBishopMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getBishopMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -104,7 +106,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getKnightMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getKnightMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position p : positions) {
@@ -128,7 +130,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getRookMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getRookMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -160,7 +162,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getPawnMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getPawnMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {

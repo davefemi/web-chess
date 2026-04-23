@@ -2,9 +2,9 @@ package nl.davefemi.domain.game.rule;
 
 import nl.davefemi.domain.board.Board;
 import nl.davefemi.domain.board.Position;
-import nl.davefemi.domain.game.move.PromotionMove;
-import nl.davefemi.domain.piece.PieceType;
-import nl.davefemi.domain.piece.PlayerColor;
+import nl.davefemi.domain.game.actions.move.PromotionMove;
+import nl.davefemi.domain.board.PieceType;
+import nl.davefemi.domain.board.PlayerColor;
 import nl.davefemi.exception.BoardException;
 import nl.davefemi.exception.TypeException;
 
@@ -23,7 +23,7 @@ public final class PromotionMoveEvaluator {
         return false;
     }
 
-    public static boolean isPromotionLegal(Board board, PromotionMove move){
+    public static boolean isPromotionLegal(Board board, PromotionMove move) throws BoardException {
         PieceType type = board.getPieceType(move.newPiece());
         Position pawnPos = move.position();
         if (type == null)

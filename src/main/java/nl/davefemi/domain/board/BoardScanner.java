@@ -1,8 +1,5 @@
 package nl.davefemi.domain.board;
 
-import nl.davefemi.domain.piece.Piece;
-import nl.davefemi.domain.piece.PieceType;
-import nl.davefemi.domain.piece.PlayerColor;
 import java.util.ArrayList;
 import java.util.List;
 

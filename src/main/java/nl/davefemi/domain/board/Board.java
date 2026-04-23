@@ -1,13 +1,11 @@
 package nl.davefemi.domain.board;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.domain.game.move.CastlingMove;
-import nl.davefemi.domain.game.move.Move;
-import nl.davefemi.domain.game.move.PromotionMove;
-import nl.davefemi.domain.game.move.SingleMove;
-import nl.davefemi.domain.piece.Piece;
-import nl.davefemi.domain.piece.PieceType;
-import nl.davefemi.domain.piece.PlayerColor;
+import nl.davefemi.domain.game.PieceIdGenerator;
+import nl.davefemi.domain.game.actions.move.CastlingMove;
+import nl.davefemi.domain.game.actions.move.Move;
+import nl.davefemi.domain.game.actions.move.PromotionMove;
+import nl.davefemi.domain.game.actions.move.SingleMove;
 import nl.davefemi.exception.BoardException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +14,23 @@ import java.util.TreeMap;
 @Slf4j
 public class Board {
     private TreeMap<Position, Piece> positions;
+    private final List<Integer> originalRooks = new ArrayList<>();
 
-    public Board(){
+    public Board(PieceIdGenerator pieceIdGenerator){
         initBoard();
-        initPieces();
+        initPieces(pieceIdGenerator);
+    }
+
+    public Board (Board other){
+        this.positions = new TreeMap<>();
+        this.positions.putAll(other.positions);
+        this.originalRooks.addAll(other.originalRooks);
+    }
+
+    public Board(TreeMap<Position, Piece> positions, List<Integer> originalRooks){
+        this.positions = new TreeMap<>();
+        this.positions.putAll(positions);
+        this.originalRooks.addAll(originalRooks);
     }
 
     private void initBoard(){
@@ -31,50 +42,54 @@ public class Board {
         }
     }
 
-    private void initPieces(){
+    private void initPieces(PieceIdGenerator pieceIdGenerator){
         for (PlayerColor c : PlayerColor.values()){
-            createPawns(c);
-            createRooks(c);
-            createKnights(c);
-            createBishops(c);
-            createQueen(c);
-            createKing(c);
+            createPawns(pieceIdGenerator, c);
+            createRooks(pieceIdGenerator, c);
+            createKnights(pieceIdGenerator, c);
+            createBishops(pieceIdGenerator, c);
+            createQueen(pieceIdGenerator, c);
+            createKing(pieceIdGenerator, c);
         }
     }
 
-    private void createPawns(PlayerColor color){
+    private void createPawns(PieceIdGenerator pieceIdGenerator, PlayerColor color){
         int rank = color == PlayerColor.WHITE? 2 : 7;
         for (int file = 1; file<9; file++){
-            positions.put(new Position (file,rank), new Piece(PieceType.PAWN, color));
+            positions.put(new Position (file,rank), new Piece(pieceIdGenerator.getNextId(), PieceType.PAWN, color));
         }
     }
 
-    private void createRooks(PlayerColor color){
+    private void createRooks(PieceIdGenerator pieceIdGenerator, PlayerColor color){
         int rank = color == PlayerColor.WHITE? 1 : 8;
-        positions.put(new Position(1, rank), new Piece(PieceType.ROOK, color));
-        positions.put(new Position(8, rank), new Piece(PieceType.ROOK, color));
+        Piece queenSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
+        Piece kingSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
+        positions.put(new Position(1, rank), queenSideRook);
+        positions.put(new Position(8, rank), kingSideRook);
+        originalRooks.add(queenSideRook.getId());
+        originalRooks.add(kingSideRook.getId());
     }
 
-    private void createKnights(PlayerColor color){
+    private void createKnights(PieceIdGenerator pieceIdGenerator, PlayerColor color){
         int rank = color == PlayerColor.WHITE? 1 : 8;
-        positions.put(new Position(2, rank), new Piece(PieceType.KNIGHT, color));
-        positions.put(new Position(7, rank), new Piece(PieceType.KNIGHT, color));
+        positions.put(new Position(2, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.KNIGHT, color));
+        positions.put(new Position(7, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.KNIGHT, color));
     }
 
-    private void createBishops(PlayerColor color){
+    private void createBishops(PieceIdGenerator pieceIdGenerator, PlayerColor color){
         int rank = color == PlayerColor.WHITE? 1 : 8;
-        positions.put(new Position(3, rank), new Piece(PieceType.BISHOP, color));
-        positions.put(new Position(6, rank), new Piece(PieceType.BISHOP, color));
+        positions.put(new Position(3, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.BISHOP, color));
+        positions.put(new Position(6, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.BISHOP, color));
     }
 
-    private void createQueen(PlayerColor color){
+    private void createQueen(PieceIdGenerator pieceIdGenerator, PlayerColor color){
         int rank = color == PlayerColor.WHITE? 1 : 8;
-        positions.put(new Position(4, rank), new Piece(PieceType.QUEEN, color));
+        positions.put(new Position(4, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.QUEEN, color));
     }
 
-    private void createKing(PlayerColor color){
+    private void createKing(PieceIdGenerator pieceIdGenerator, PlayerColor color){
         int rank = color == PlayerColor.WHITE? 1 : 8;
-        positions.put(new Position(5, rank), new Piece(PieceType.KING, color));
+        positions.put(new Position(5, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.KING, color));
     }
 
     public boolean isOccupied(Position position){
@@ -87,14 +102,23 @@ public class Board {
         return positions.get(position);
     }
 
-    public Piece movePieceTo(Move move){
+    public Piece movePieceTo(PieceIdGenerator pieceIdGenerator, Move move) throws BoardException {
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
             updatePositions((moveKing));
             updatePositions(moveRook);
             return null;
         }
         if (move instanceof PromotionMove(Position position, String newPiece)){
-            return promotePawnTo(position, newPiece);
+            return promotePawnTo(pieceIdGenerator, position, newPiece);
+        }
+        return updatePositions((SingleMove) move);
+    }
+
+    public Piece movePieceTo(Move move) throws BoardException {
+        if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
+            updatePositions((moveKing));
+            updatePositions(moveRook);
+            return null;
         }
         return updatePositions((SingleMove) move);
     }
@@ -112,6 +136,14 @@ public class Board {
         return new ArrayList<>(this.positions.keySet());
     }
 
+    public List<Integer> getOriginalRooks(){
+        return new ArrayList<>(originalRooks);
+    }
+
+    public boolean isOriginalRook(int pieceId){
+        return originalRooks.contains(pieceId);
+    }
+
     public PieceType getPieceType(String pieceType) {
         PieceType[] types = PieceType.values();
         for (PieceType p : types) {
@@ -122,18 +154,15 @@ public class Board {
         return null;
     }
 
-    private Piece promotePawnTo(Position position, String pieceType){
+    private Piece promotePawnTo(PieceIdGenerator pieceIdGenerator, Position position, String pieceType) throws BoardException {
         PieceType type = getPieceType(pieceType);
         if (type == null)
             throw new BoardException("Piece does not exist");
         PlayerColor color = getPieceAt(position).getColor();
         Piece p = positions.get(position);
-        positions.put(position, new Piece(type, color));
+        positions.put(position, new Piece(pieceIdGenerator.getNextId(), type, color));
         return p;
     }
 
-    public Board (Board other){
-        this.positions = new TreeMap<>();
-        this.positions.putAll(other.positions);
-    }
+
 }

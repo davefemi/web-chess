@@ -1,9 +1,16 @@
 package nl.davefemi.domain.game;
 
-import nl.davefemi.domain.piece.PlayerColor;
+import nl.davefemi.domain.board.PlayerColor;
 
-public class TurnGenerator {
-    private static PlayerColor nextTurn = PlayerColor.WHITE;
+public class TurnGenerator{
+    private PlayerColor nextTurn;
+
+    protected TurnGenerator(){
+        nextTurn = PlayerColor.WHITE;
+    }
+    protected TurnGenerator(PlayerColor firstTurn){
+        this.nextTurn = firstTurn;
+    }
 
     protected PlayerColor nextTurn(){
         PlayerColor turn = nextTurn;
@@ -14,5 +21,9 @@ public class TurnGenerator {
             nextTurn = PlayerColor.BLACK;
         }
         return turn;
+    }
+
+    protected PlayerColor peek(){
+        return nextTurn;
     }
 }
