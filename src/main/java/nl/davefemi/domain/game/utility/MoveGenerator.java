@@ -19,7 +19,7 @@ public final class MoveGenerator {
                 color == PlayerColor.WHITE
                 ?PlayerColor.BLACK
                 :PlayerColor.WHITE;
-        moves.addAll(getKingMoves(board, BoardScanner.getCurrentPosition(board, PieceType.KING, color), enemyColor, isActiveColor));
+        moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePosition(board, PieceType.KING, color), enemyColor, isActiveColor));
         moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPositions(board, PieceType.QUEEN, color), enemyColor, isActiveColor));
         moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPositions(board, PieceType.BISHOP, color), enemyColor, isActiveColor));
         moves.addAll(getRookMoves(board, BoardScanner.getCurrentPositions(board, PieceType.ROOK, color), enemyColor, isActiveColor));
@@ -28,7 +28,7 @@ public final class MoveGenerator {
         return moves;
     }
 
-    private static List<SingleMove>  getKingMoves(Board board, Position position, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getKingMoves(Board board, Position position, PlayerColor enemyColor, boolean isActiveColor){
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (position != null) {
             for (int file = Math.max(position.file() - 1, 1); file <= Math.min(position.file() + 1, 8); file++) {
@@ -45,7 +45,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove>  getQueenMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getQueenMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
         List<SingleMove> legalMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -56,7 +56,7 @@ public final class MoveGenerator {
         return legalMoves;
     }
 
-    private static List<SingleMove>  getBishopMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getBishopMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -104,7 +104,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove>  getKnightMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getKnightMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position p : positions) {
@@ -160,7 +160,7 @@ public final class MoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove>  getPawnMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
+    private static List<SingleMove> getPawnMoves(Board board, List<Position> positions, PlayerColor enemyColor, boolean isActiveColor){
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {

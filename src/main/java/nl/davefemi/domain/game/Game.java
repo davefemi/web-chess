@@ -8,12 +8,10 @@ import nl.davefemi.domain.piece.PieceType;
 import nl.davefemi.domain.piece.PlayerColor;
 import nl.davefemi.exception.GameException;
 import nl.davefemi.exception.MoveException;
-import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Component
 public class Game {
     private final UUID gameId;
     private final Board gameBoard;
@@ -34,7 +32,7 @@ public class Game {
         return gameId;
     }
 
-    public PlayerColor getTurn(){
+    public PlayerColor getPlayerTurn(){
         return turn;
     }
 
@@ -56,10 +54,10 @@ public class Game {
 
     public boolean executeMove(PlayerColor color, Move move){
         if (!RuleEngine.isMoveAllowed(this, color, move)) {
-            if (isCheck(color))
-                throw new MoveException(color + " is in check");
             if (isCheckMate(color))
                 throw new GameException(color + " is check mate");
+            if (isCheck(color))
+                throw new MoveException(color + " is in check");
             throw new MoveException("Illegal move");
         }
         Piece p = gameBoard.movePieceTo(move);

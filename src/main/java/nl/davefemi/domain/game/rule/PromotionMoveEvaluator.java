@@ -8,9 +8,9 @@ import nl.davefemi.domain.piece.PlayerColor;
 import nl.davefemi.exception.BoardException;
 import nl.davefemi.exception.TypeException;
 
-public final class PromotionVerifier {
+public final class PromotionMoveEvaluator {
 
-    private PromotionVerifier(){
+    private PromotionMoveEvaluator(){
         throw new AssertionError("This class cannot be instantiated");
     }
 

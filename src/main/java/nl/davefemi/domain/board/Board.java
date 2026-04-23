@@ -134,6 +134,6 @@ public class Board {
 
     public Board (Board other){
         this.positions = new TreeMap<>();
-        other.positions.putAll(this.positions);
+        this.positions.putAll(other.positions);
     }
 }

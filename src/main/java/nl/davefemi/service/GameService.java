@@ -56,7 +56,7 @@ public class GameService {
 
     public GameReponseDTO getPlayerTurn(String gameId) throws FileNotFoundException {
         Game game = getGame(UUID.fromString(gameId));
-        return gameResponseMapper.mapToDTO(game.getGameId(), game.getTurn(), null, null);
+        return gameResponseMapper.mapToDTO(game.getGameId(), game.getPlayerTurn(), null, null);
     }
 
     public GameReponseDTO isCheck(String gameId, String color) throws FileNotFoundException {

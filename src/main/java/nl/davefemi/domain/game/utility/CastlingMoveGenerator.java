@@ -20,7 +20,7 @@ public final class CastlingMoveGenerator {
     public static List<CastlingMove> generateCastlingMoves(Board board, PlayerColor color, boolean isActiveColor) {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
         PlayerColor enemyColor = color == PlayerColor.WHITE ? PlayerColor.BLACK : PlayerColor.WHITE;
-        Position king = BoardScanner.getCurrentPosition(board, PieceType.KING, color);
+        Position king = BoardScanner.getCurrentSinglePosition(board, PieceType.KING, color);
         List<Position> rooks = BoardScanner.getCurrentPositions(board, PieceType.ROOK, color);
         for (CastlingMove c : getCastlingMoves(color)) {
             if (c.moveKing().from().equals(king)) {

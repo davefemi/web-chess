@@ -12,7 +12,7 @@ public final class BoardScanner {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static Position getCurrentPosition(Board board, PieceType type, PlayerColor color) {
+    public static Position getCurrentSinglePosition(Board board, PieceType type, PlayerColor color) {
         for (Position p : board.getPositions()) {
             Piece piece = board.getPieceAt(p);
             if (piece != null && piece.getColor() == color) {

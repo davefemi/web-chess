@@ -22,18 +22,18 @@ public class MoveMapper {
     private final PromotionMoveMapper promotionMoveMapper;
 
     public MoveDTO mapDomainToDTO(Move move){
-        if (move instanceof CastlingMove)
-            return castlingMoveMapper.mapDomainToDTO((CastlingMove) move);
-        if (move instanceof PromotionMove)
-            return promotionMoveMapper.mapDomainToDTO((PromotionMove) move);
+        if (move instanceof CastlingMove m)
+            return castlingMoveMapper.mapDomainToDTO(m);
+        if (move instanceof PromotionMove m)
+            return promotionMoveMapper.mapDomainToDTO(m);
         return singleMoveMapper.mapDomainToDTO((SingleMove) move);
     }
 
     public Move mapDTOtoDomain(MoveDTO move){
-        if (move instanceof CastlingMoveDTO)
-            return castlingMoveMapper.mapDTOtoDomain((CastlingMoveDTO) move);
-        if (move instanceof PromotionMoveDTO)
-            return promotionMoveMapper.mapDTOtoDomain((PromotionMoveDTO) move);
+        if (move instanceof CastlingMoveDTO m)
+            return castlingMoveMapper.mapDTOtoDomain(m);
+        if (move instanceof PromotionMoveDTO m)
+            return promotionMoveMapper.mapDTOtoDomain(m);
         return singleMoveMapper.mapDTOtoDomain((SingleMoveDTO) move);
     }
 

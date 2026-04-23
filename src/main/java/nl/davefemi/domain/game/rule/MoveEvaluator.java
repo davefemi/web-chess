@@ -10,7 +10,6 @@ import nl.davefemi.domain.game.utility.CastlingMoveGenerator;
 import nl.davefemi.domain.game.utility.MoveGenerator;
 import nl.davefemi.domain.piece.PieceType;
 import nl.davefemi.domain.piece.PlayerColor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public final class MoveEvaluator {
         List<SingleMove> legalMoves = new ArrayList<>();
         for (SingleMove m : pseudoMoves) {
             Board fictitiousBoard = fictitiousMove(board, m);
-            Position kingPosition = BoardScanner.getCurrentPosition(fictitiousBoard, PieceType.KING, enemyColor == PlayerColor.WHITE
+            Position kingPosition = BoardScanner.getCurrentSinglePosition(fictitiousBoard, PieceType.KING, enemyColor == PlayerColor.WHITE
                     ?PlayerColor.BLACK
                     :PlayerColor.WHITE);
             if (!MoveEvaluator.isKingCheck(fictitiousBoard, kingPosition, enemyColor))
