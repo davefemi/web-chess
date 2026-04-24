@@ -1,6 +1,6 @@
-package nl.davefemi.data.mapper.record;
+package nl.davefemi.data.mapper.move.record;
 
-import nl.davefemi.data.dto.record.SingleMoveRecordData;
+import nl.davefemi.data.dto.move.record.SingleMoveRecordData;
 import nl.davefemi.domain.board.PieceType;
 import nl.davefemi.domain.board.PlayerColor;
 import nl.davefemi.domain.board.Position;
@@ -22,7 +22,7 @@ public class SingleMoveRecordMapper {
                 data.getCapturedPieceId());
     }
 
-    protected SingleMoveRecordData getSingleMoveRecordDTO(SingleMoveRecord record){
+    protected SingleMoveRecordData mapDomainToData(SingleMoveRecord record){
         SingleMoveRecordData dto = new SingleMoveRecordData();
         dto.setOldPosFile(record.move().from().file());
         dto.setOldPosRank(record.move().from().rank());

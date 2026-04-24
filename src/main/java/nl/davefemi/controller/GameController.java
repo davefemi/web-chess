@@ -21,11 +21,11 @@ import java.io.FileNotFoundException;
 @RequiredArgsConstructor
 public class GameController {
     private final GameService gameService;
-    private final GameSessionService sessionService;
+    private final GameSessionService gameSessionService;
 
     @PostMapping
     public ResponseEntity<?> getNewGame() throws GameException {
-        return ResponseEntity.ok(sessionService.getNewGame());
+        return ResponseEntity.ok(gameSessionService.getNewGame());
     }
 
     @GetMapping("/{id}/positions")
@@ -34,7 +34,7 @@ public class GameController {
     }
 
     @GetMapping("/{id}/get-player-turn")
-    public GameReponseDTO getPlayerTurn(@PathVariable("id") String gameId) throws FileNotFoundException, GameException {
+    public GameResponseDTO getPlayerTurn(@PathVariable("id") String gameId) throws FileNotFoundException, GameException {
         return gameService.getPlayerTurn(gameId);
     }
 

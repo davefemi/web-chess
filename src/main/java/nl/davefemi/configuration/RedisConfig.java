@@ -1,5 +1,7 @@
 package nl.davefemi.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.entity.GameSessionEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +10,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.*;
 
 @Configuration
+@RequiredArgsConstructor
 public class RedisConfig {
+    public final ObjectMapper objectMapper;
 
     @Bean
     public RedisTemplate<String, GameSessionEntity> gameSessionRedisTemplate(
@@ -16,13 +20,14 @@ public class RedisConfig {
     ) {
         RedisTemplate<String, GameSessionEntity> template = new RedisTemplate<>();
 
+
         template.setConnectionFactory(connectionFactory);
 
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, GameSessionEntity.class));
 
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, GameSessionEntity.class));
 
         template.afterPropertiesSet();
 

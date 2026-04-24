@@ -24,7 +24,7 @@ public final class PromotionMoveEvaluator {
     }
 
     public static boolean isPromotionLegal(Board board, PromotionMove move) throws BoardException {
-        PieceType type = board.getPieceType(move.newPiece());
+        PieceType type = move.newPiece();
         Position pawnPos = move.position();
         if (type == null)
             throw new TypeException("Invalid type");

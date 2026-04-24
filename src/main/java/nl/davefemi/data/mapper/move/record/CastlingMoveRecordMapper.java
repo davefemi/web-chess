@@ -1,6 +1,6 @@
-package nl.davefemi.data.mapper.record;
+package nl.davefemi.data.mapper.move.record;
 
-import nl.davefemi.data.dto.record.CastlingMoveRecordData;
+import nl.davefemi.data.dto.move.record.CastlingMoveRecordData;
 import nl.davefemi.domain.board.PlayerColor;
 import nl.davefemi.domain.board.Position;
 import nl.davefemi.domain.game.actions.move.CastlingMove;

@@ -1,4 +1,4 @@
-package nl.davefemi.data.dto.record;
+package nl.davefemi.data.dto.move.record;
 
 import lombok.Data;
 

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.data.dto.BoardDTO;
 import nl.davefemi.data.dto.GameSessionDTO;
 import nl.davefemi.data.dto.move.MoveDTO;
-import nl.davefemi.data.dto.GameReponseDTO;
+import nl.davefemi.data.dto.GameResponseDTO;
 import nl.davefemi.data.mapper.*;
 import nl.davefemi.data.mapper.move.MoveMapper;
 import nl.davefemi.domain.game.Game;
@@ -17,52 +17,51 @@ import nl.davefemi.exception.MoveException;
 import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameService {
-    private final GameSessionService sessionService;
     private final MoveMapper moveMapper;
     private final GameResponseMapper gameResponseMapper;
     private final BoardMapper boardMapper;
-
+    private final GameSessionMapper gameSessionMapper;
+    private final GameSessionService gameSessionService;
 
     public BoardDTO getPositions(String gameId) throws FileNotFoundException {
-        Game game = sessionService.getGame(UUID.fromString(gameId));
+        Game game = gameSessionService.collectGame(gameId);
         return boardMapper.mapDomainToDTO(game.getGameId(), game.getCopyOfBoard());
     }
 
-    public GameReponseDTO getPlayerTurn(String gameId) throws FileNotFoundException, GameException {
-        Game game = sessionService.getGame(UUID.fromString(gameId));
+    public GameResponseDTO getPlayerTurn(String gameId) throws GameException, FileNotFoundException {
+        Game game = gameSessionService.collectGame(gameId);
         return gameResponseMapper.mapToDTO(game.getGameId(), game.getPlayerTurn().getColor(),  null);
     }
 
-    public GameReponseDTO isCheck(String gameId, String color) throws FileNotFoundException, BoardException {
-        Game game = sessionService.getGame(UUID.fromString(gameId));
+    public GameResponseDTO isCheck(String gameId, String color) throws BoardException, FileNotFoundException {
+        Game game = gameSessionService.collectGame(gameId);
         return gameResponseMapper.mapToDTO(game.getGameId(), color,  game.isCheck(PlayerColor.fromString(color)));
     }
 
-    public GameReponseDTO isCheckMate(String gameId, String color) throws FileNotFoundException, BoardException {
-        Game game = sessionService.getGame(UUID.fromString(gameId));
+    public GameResponseDTO isCheckMate(String gameId, String color) throws BoardException, FileNotFoundException {
+        Game game = gameSessionService.collectGame(gameId);
         return gameResponseMapper.mapToDTO(game.getGameId(), color,  game.isCheckMate(PlayerColor.fromString(color)));
     }
 
-    public GameReponseDTO getAvailableMoves(String gameId, String color) throws FileNotFoundException, BoardException {
-        Game game = sessionService.getGame(UUID.fromString(gameId));
+    public GameResponseDTO getAvailableMoves(String gameId, String color) throws BoardException, FileNotFoundException {
+        Game game = gameSessionService.collectGame(gameId);
         List<Move> moves = game.getAvailableMoves(PlayerColor.fromString(color));
         return gameResponseMapper.mapToDTO(game.getGameId(), color, moveMapper.mapDomainToDTO(moves));
     }
 
-    public GameSessionDTO executeMove(String gameId, String color, MoveDTO move) throws FileNotFoundException, BoardException, MoveException, GameException {
-        Game game = sessionService.getGame(UUID.fromString(gameId));
+    public GameSessionDTO executeMove(String gameId, String color, MoveDTO move) throws BoardException, MoveException, GameException, FileNotFoundException {
+        Game game = gameSessionService.collectGame(gameId);
         game.executeMove(PlayerColor.fromString(color), moveMapper.mapDTOtoDomain(move));
         String playerColor = null;
         try {
             playerColor = game.getPlayerTurn().getColor();
         } catch (GameException e) {}
-        return sessionService.updateSession(game, playerColor);
+        gameSessionService.storeGame(game, playerColor);
+        return gameSessionMapper.mapDomainToDTO(game, playerColor, "Move executed");
     }
-
 }

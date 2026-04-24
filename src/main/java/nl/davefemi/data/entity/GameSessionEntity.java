@@ -1,7 +1,7 @@
 package nl.davefemi.data.entity;
 
 import lombok.Data;
-import nl.davefemi.data.dto.record.MoveRecordData;
+import nl.davefemi.data.dto.move.record.MoveRecordData;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import java.util.ArrayList;

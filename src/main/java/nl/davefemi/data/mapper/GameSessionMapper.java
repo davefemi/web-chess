@@ -2,10 +2,11 @@ package nl.davefemi.data.mapper;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.dto.GameSessionDTO;
-import nl.davefemi.data.dto.record.MoveRecordData;
+import nl.davefemi.data.dto.move.record.MoveRecordData;
 import nl.davefemi.data.entity.GameSessionEntity;
 import nl.davefemi.data.entity.PositionPieceEntity;
-import nl.davefemi.data.mapper.record.MoveRecordMapper;
+import nl.davefemi.data.mapper.move.PositionPieceMapper;
+import nl.davefemi.data.mapper.move.record.MoveRecordMapper;
 import nl.davefemi.domain.board.Piece;
 import nl.davefemi.domain.board.PlayerColor;
 import nl.davefemi.domain.game.Game;
@@ -35,6 +36,16 @@ public class GameSessionMapper {
         session.setNextTurn(turn);
         game.getMoveHistory().forEach(m -> session.getMoveHistory().add(moveRecordMapper.mapDomainToDTO(m)));
         return session;
+    }
+
+    public GameSessionDTO mapDomainToDTO(Game game, String turn, String message){
+        GameSessionDTO dto = new GameSessionDTO();
+        dto.setGameId(game.getGameId().toString());
+        dto.setNextTurn(turn);
+        dto.setActiveGame(game.isGameActive());
+        dto.setMessage(message);
+        game.getMoveHistory().forEach(m -> dto.getMoveHistory().add(moveRecordMapper.mapDomainToDTO(m)));
+        return dto;
     }
 
     public GameSessionDTO mapEntityToDTO(GameSessionEntity session, String message){

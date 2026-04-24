@@ -1,10 +1,10 @@
-package nl.davefemi.data.mapper.record;
+package nl.davefemi.data.mapper.move.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.data.dto.record.CastlingMoveRecordData;
-import nl.davefemi.data.dto.record.MoveRecordData;
-import nl.davefemi.data.dto.record.PromotionMoveRecordData;
-import nl.davefemi.data.dto.record.SingleMoveRecordData;
+import nl.davefemi.data.dto.move.record.CastlingMoveRecordData;
+import nl.davefemi.data.dto.move.record.MoveRecordData;
+import nl.davefemi.data.dto.move.record.PromotionMoveRecordData;
+import nl.davefemi.data.dto.move.record.SingleMoveRecordData;
 import nl.davefemi.domain.game.actions.record.CastlingMoveRecord;
 import nl.davefemi.domain.game.actions.record.MoveRecord;
 import nl.davefemi.domain.game.actions.record.PromotionMoveRecord;
@@ -23,10 +23,10 @@ public class MoveRecordMapper {
             return castlingMoveRecordMapper.mapDomainToData(r);
         }
         if (record instanceof PromotionMoveRecord r){
-            return promotionMoveRecordMapper.getPromotionMoveRecordDTO(r);
+            return promotionMoveRecordMapper.mapDomainToData(r);
         }
         SingleMoveRecord r = (SingleMoveRecord) record;
-        return singleMoveRecordMapper.getSingleMoveRecordDTO(r);
+        return singleMoveRecordMapper.mapDomainToData(r);
     }
 
     public MoveRecord mapDataToDomain(MoveRecordData data){

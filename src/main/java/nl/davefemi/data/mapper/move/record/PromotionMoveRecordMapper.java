@@ -1,7 +1,7 @@
-package nl.davefemi.data.mapper.record;
+package nl.davefemi.data.mapper.move.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.data.dto.record.PromotionMoveRecordData;
+import nl.davefemi.data.dto.move.record.PromotionMoveRecordData;
 import nl.davefemi.domain.board.PieceType;
 import nl.davefemi.domain.board.PlayerColor;
 import nl.davefemi.domain.board.Position;
@@ -16,13 +16,13 @@ public class PromotionMoveRecordMapper {
     protected PromotionMoveRecord mapDataToDomain(PromotionMoveRecordData data){
         return new PromotionMoveRecord(
                 new PromotionMove(new Position(data.getPosFile(), data.getPosRank()),
-                        data.getPieceType()),
+                        PieceType.fromString(data.getPieceType())),
                 PlayerColor.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getPieceType()),
                 data.getPieceId());
     }
 
-    protected PromotionMoveRecordData getPromotionMoveRecordDTO(PromotionMoveRecord record){
+    protected PromotionMoveRecordData mapDomainToData(PromotionMoveRecord record){
         PromotionMoveRecordData data = new PromotionMoveRecordData();
         data.setPosFile(record.move().position().file());
         data.setPosRank(record.move().position().rank());

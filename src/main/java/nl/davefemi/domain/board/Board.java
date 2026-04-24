@@ -108,7 +108,7 @@ public class Board {
             updatePositions(moveRook);
             return null;
         }
-        if (move instanceof PromotionMove(Position position, String newPiece)){
+        if (move instanceof PromotionMove(Position position, PieceType newPiece)){
             return promotePawnTo(pieceIdGenerator, position, newPiece);
         }
         return updatePositions((SingleMove) move);
@@ -144,23 +144,11 @@ public class Board {
         return originalRooks.contains(pieceId);
     }
 
-    public PieceType getPieceType(String pieceType) {
-        PieceType[] types = PieceType.values();
-        for (PieceType p : types) {
-            if (p.getLabel().equals(pieceType)) {
-                return p;
-            }
-        }
-        return null;
-    }
 
-    private Piece promotePawnTo(PieceIdGenerator pieceIdGenerator, Position position, String pieceType) throws BoardException {
-        PieceType type = getPieceType(pieceType);
-        if (type == null)
-            throw new BoardException("Piece does not exist");
+    private Piece promotePawnTo(PieceIdGenerator pieceIdGenerator, Position position, PieceType pieceType) throws BoardException {
         PlayerColor color = getPieceAt(position).getColor();
         Piece p = positions.get(position);
-        positions.put(position, new Piece(pieceIdGenerator.getNextId(), type, color));
+        positions.put(position, new Piece(pieceIdGenerator.getNextId(), pieceType, color));
         return p;
     }
 

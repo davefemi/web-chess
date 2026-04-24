@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.dto.BoardDTO;
 import nl.davefemi.data.entity.BoardStateEntity;
 import nl.davefemi.data.entity.PositionPieceEntity;
+import nl.davefemi.data.mapper.move.PositionPieceMapper;
 import nl.davefemi.domain.board.*;
 import org.springframework.stereotype.Component;
 import java.util.TreeMap;
@@ -34,6 +35,7 @@ public class BoardMapper {
             if(piece != null) {
                 positionPiece.setPieceType(piece.getType().getLabel());
                 positionPiece.setColor(piece.getColor().getColor());
+                positionPiece.setPieceId(piece.getId());
             }
             entity.getPositions().add(positionPiece);
         }

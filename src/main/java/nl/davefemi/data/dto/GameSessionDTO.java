@@ -1,7 +1,7 @@
 package nl.davefemi.data.dto;
 
 import lombok.Data;
-import nl.davefemi.data.dto.record.MoveRecordData;
+import nl.davefemi.data.dto.move.record.MoveRecordData;
 import java.util.ArrayList;
 import java.util.List;
 

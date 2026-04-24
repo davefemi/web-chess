@@ -1,7 +1,7 @@
-package nl.davefemi.data.mapper;
+package nl.davefemi.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.data.dto.PositionPieceDTO;
+import nl.davefemi.data.dto.move.PositionPieceDTO;
 import nl.davefemi.data.entity.PositionPieceEntity;
 import nl.davefemi.domain.board.PieceType;
 import nl.davefemi.domain.board.PlayerColor;
