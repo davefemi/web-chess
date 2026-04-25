@@ -17,15 +17,15 @@ public class SessionStore implements GameSessionRepository {
     private final int timeToLive = 60;
 
     @Override
-    public GameSessionEntity retrieveGameByGameId(String gameId) throws FileNotFoundException {
-        GameSessionEntity sessionEntity = redisTemplate.opsForValue().get("game: " + gameId.toString());
+    public GameSessionEntity retrieveGameSessionById(String sessionId) throws FileNotFoundException {
+        GameSessionEntity sessionEntity = redisTemplate.opsForValue().get("session: " + sessionId);
         if (sessionEntity == null)
-            throw new FileNotFoundException("Game not found");
+            throw new FileNotFoundException("Session not found");
         return sessionEntity;
     }
 
     @Override
-    public void saveGame(GameSessionEntity game) {
-        redisTemplate.opsForValue().set("game: " + game.getGameId(), game, Duration.of(timeToLive, ChronoUnit.SECONDS));
+    public void saveGameSession(GameSessionEntity game) {
+        redisTemplate.opsForValue().set("session: " + game.getSessionId(), game, Duration.of(timeToLive, ChronoUnit.HOURS));
     }
 }

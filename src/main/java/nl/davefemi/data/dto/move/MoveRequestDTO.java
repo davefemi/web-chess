@@ -3,7 +3,7 @@ package nl.davefemi.data.dto.move;
 import lombok.Data;
 
 @Data
-public class MoveRequestDTO <T extends MoveDTO>{
+public class MoveRequestDTO {
     private String color;
-    private T move;
+    private MoveDTO move;
 }

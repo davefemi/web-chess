@@ -1,18 +1,16 @@
 package nl.davefemi.data.mapper;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.data.dto.GameSessionDTO;
-import nl.davefemi.data.dto.move.record.MoveRecordData;
 import nl.davefemi.data.entity.GameSessionEntity;
-import nl.davefemi.data.entity.PositionPieceEntity;
-import nl.davefemi.data.mapper.move.PositionPieceMapper;
-import nl.davefemi.data.mapper.move.record.MoveRecordMapper;
-import nl.davefemi.domain.board.Piece;
-import nl.davefemi.domain.board.PlayerColor;
-import nl.davefemi.domain.game.Game;
-import nl.davefemi.domain.game.actions.record.MoveRecord;
+import nl.davefemi.data.entity.GameStateEntity;
+import nl.davefemi.data.entity.PlayerEntity;
+import nl.davefemi.exception.SessionException;
+import nl.davefemi.game.board.PieceColor;
+import nl.davefemi.game.Game;
+import nl.davefemi.exception.BoardException;
+import nl.davefemi.session.GameSession;
+import nl.davefemi.session.Player;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,60 +18,40 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class GameSessionMapper {
-    private final MoveRecordMapper moveRecordMapper;
-    private final BoardMapper boardMapper;
-    private final PositionPieceMapper positionPieceMapper;
+    private final GameStateMapper gameStateMapper;
 
-    public GameSessionEntity mapDomainToEntity(Game game, String turn){
-        GameSessionEntity session = new GameSessionEntity();
-        session.setGameId(game.getGameId().toString());
-        session.setBoardState(boardMapper.mapDomainToEntity(game.getGameId(), game.getCopyOfBoard()));
-        for (Piece p: game.getCapturedPieces()){
-            session.getCapturedPieces().add(positionPieceMapper.mapDomainToEntity(p));
+    public GameSessionEntity mapDomainToEntity(GameSession session){
+        GameSessionEntity sessionEntity = new GameSessionEntity();
+        for (Game g: session.getGames()){
+            sessionEntity.getGames().add(gameStateMapper.mapDomainToEntity(g));
         }
-        session.setNextPieceId(game.getLatestPieceId());
-        session.setActiveGame(game.isGameActive());
-        session.setNextTurn(turn);
-        game.getMoveHistory().forEach(m -> session.getMoveHistory().add(moveRecordMapper.mapDomainToDTO(m)));
-        return session;
+        sessionEntity.setSessionId(session.getSessionId().toString());
+        sessionEntity.setPlayers(mapPlayersToEntities(session.getPlayers()));
+        return sessionEntity;
     }
 
-    public GameSessionDTO mapDomainToDTO(Game game, String turn, String message){
-        GameSessionDTO dto = new GameSessionDTO();
-        dto.setGameId(game.getGameId().toString());
-        dto.setNextTurn(turn);
-        dto.setActiveGame(game.isGameActive());
-        dto.setMessage(message);
-        game.getMoveHistory().forEach(m -> dto.getMoveHistory().add(moveRecordMapper.mapDomainToDTO(m)));
-        return dto;
-    }
-
-    public GameSessionDTO mapEntityToDTO(GameSessionEntity session, String message){
-        GameSessionDTO dto = new GameSessionDTO();
-        dto.setGameId(session.getGameId());
-        dto.setNextTurn(session.getNextTurn());
-        dto.setActiveGame(session.isActiveGame());
-        dto.setMessage(message);
-        dto.getMoveHistory().addAll(session.getMoveHistory());
-        return dto;
-    }
-
-    public Game mapEntityToDomain(GameSessionEntity entity){
-        List<MoveRecord> moveHistory = new ArrayList<>();
-        List<Piece> capturedPiece = new ArrayList<>();
-        for (MoveRecordData d : entity.getMoveHistory()) {
-            moveHistory.add(moveRecordMapper.mapDataToDomain(d));
+    private List<PlayerEntity> mapPlayersToEntities(List<Player> players){
+        List<PlayerEntity> entities = new ArrayList<>();
+        for (Player player : players){
+            PlayerEntity entity = new PlayerEntity();
+            entity.setId(player.getId().toString());
+            entity.setPlayerColor(player.getPlayerColor().getColor());
+            entities.add(entity);
         }
-        for (PositionPieceEntity e : entity.getCapturedPieces()) {
-            capturedPiece.add(positionPieceMapper.mapEntityToPiece(e));
-        }
-        return new Game(
-                UUID.fromString(entity.getGameId()),
-                        entity.getNextPieceId(),
-                        boardMapper.mapEntityToDomain(entity.getBoardState()),
-                                entity.isActiveGame(),
-                                PlayerColor.fromString(entity.getNextTurn()),
-                                moveHistory,
-                                capturedPiece);
+        return entities;
     }
+
+    public GameSession mapEntityToDomain(GameSessionEntity entity) throws BoardException, SessionException {
+        List<Player> players = new ArrayList<>();
+        for (PlayerEntity player : entity.getPlayers()){
+            players.add(new Player(UUID.fromString(player.getId()), PieceColor.fromString(player.getPlayerColor())));
+        }
+        List<Game> games = new ArrayList<>();
+        for (GameStateEntity g: entity.getGames()){
+            games.add(gameStateMapper.mapEntityToDomain(g));
+        }
+        return new GameSession(UUID.fromString(entity.getSessionId()), games, players);
+    }
+
+
 }

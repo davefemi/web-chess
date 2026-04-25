@@ -1,7 +1,7 @@
 package nl.davefemi.data.mapper.move;
 
 import nl.davefemi.data.dto.move.PositionDTO;
-import nl.davefemi.domain.board.Position;
+import nl.davefemi.game.board.Position;
 import org.springframework.stereotype.Component;
 
 @Component

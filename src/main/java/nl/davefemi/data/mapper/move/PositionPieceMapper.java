@@ -3,10 +3,10 @@ package nl.davefemi.data.mapper.move;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.dto.move.PositionPieceDTO;
 import nl.davefemi.data.entity.PositionPieceEntity;
-import nl.davefemi.domain.board.PieceType;
-import nl.davefemi.domain.board.PlayerColor;
-import nl.davefemi.domain.board.Position;
-import nl.davefemi.domain.board.Piece;
+import nl.davefemi.game.board.PieceType;
+import nl.davefemi.game.board.PieceColor;
+import nl.davefemi.game.board.Position;
+import nl.davefemi.game.board.Piece;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -50,7 +50,7 @@ public class PositionPieceMapper {
         if (entity.getPieceType() != null){
             return new Piece(entity.getPieceId(),
                     PieceType.fromString(entity.getPieceType()),
-                    PlayerColor.fromString(entity.getColor()));
+                    PieceColor.fromString(entity.getColor()));
         }
         return null;
     }

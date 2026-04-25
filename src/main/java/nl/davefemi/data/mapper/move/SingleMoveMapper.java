@@ -1,8 +1,8 @@
 package nl.davefemi.data.mapper.move;
 
 import nl.davefemi.data.dto.move.SingleMoveDTO;
-import nl.davefemi.domain.board.Position;
-import nl.davefemi.domain.game.actions.move.SingleMove;
+import nl.davefemi.game.board.Position;
+import nl.davefemi.game.actions.SingleMove;
 import org.springframework.stereotype.Component;
 
 @Component

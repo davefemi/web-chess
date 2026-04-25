@@ -2,8 +2,8 @@ package nl.davefemi.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.dto.move.PromotionMoveDTO;
-import nl.davefemi.domain.board.PieceType;
-import nl.davefemi.domain.game.actions.move.PromotionMove;
+import nl.davefemi.game.board.PieceType;
+import nl.davefemi.game.actions.PromotionMove;
 import org.springframework.stereotype.Component;
 
 @Component

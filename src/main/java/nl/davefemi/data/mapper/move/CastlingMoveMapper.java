@@ -2,7 +2,7 @@ package nl.davefemi.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.dto.move.CastlingMoveDTO;
-import nl.davefemi.domain.game.actions.move.CastlingMove;
+import nl.davefemi.game.actions.CastlingMove;
 import org.springframework.stereotype.Component;
 
 @Component
