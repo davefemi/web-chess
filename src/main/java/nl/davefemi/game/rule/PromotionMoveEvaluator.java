@@ -1,10 +1,8 @@
 package nl.davefemi.game.rule;
 
-import nl.davefemi.game.board.Board;
-import nl.davefemi.game.board.Position;
+import nl.davefemi.exception.MoveException;
+import nl.davefemi.game.board.*;
 import nl.davefemi.game.actions.PromotionMove;
-import nl.davefemi.game.board.PieceType;
-import nl.davefemi.game.board.PieceColor;
 import nl.davefemi.exception.BoardException;
 import nl.davefemi.exception.TypeException;
 
@@ -14,28 +12,23 @@ public final class PromotionMoveEvaluator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static boolean checkForPromotion(Board board){
-        for (Position p : board.getBoardPositions()){
-            if (board.isBoardPositionOccupied(p) && board.getPieceAt(p).getType() == PieceType.PAWN &&
-                    (p.rank() == 1 || p.rank() == 8 ))
-                return true;
+    public static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException {
+        PieceType newPieceType = move.newPieceType();
+        Position oldPawnPos = move.move().from();
+        Piece piece = board.getPieceAt(oldPawnPos);
+        if (piece == null){
+            throw new MoveException("There is no piece at the position to be moved");
         }
-        return false;
-    }
-
-    public static boolean isPromotionLegal(Board board, PromotionMove move) throws BoardException {
-        PieceType type = move.newPiece();
-        Position pawnPos = move.position();
-        if (type == null)
-            throw new TypeException("Invalid type");
-        PieceColor color = board.getPieceAt(pawnPos).getColor();
-        if (board.getPieceAt(pawnPos).getType() != PieceType.PAWN)
+        if (newPieceType == null)
+            throw new TypeException("For promotion you have to specify a valid replacement type");
+        PieceColor color = board.getPieceAt(oldPawnPos).getColor();
+        if (board.getPieceAt(oldPawnPos).getType() != PieceType.PAWN)
             throw new TypeException("Piece to be replaced is not a pawn");
-        if (color == PieceColor.WHITE && pawnPos.rank() == 1 || color == PieceColor.BLACK && pawnPos.rank() == 8)
-            throw new BoardException("This piece is not up for promotion");
-        if (type == PieceType.PAWN || type == PieceType.KING)
-            throw new TypeException("Replacement piece cannot be of type " + type.getLabel());
+        if (color == PieceColor.WHITE && oldPawnPos.rank() != 7 ||
+                color == PieceColor.BLACK && oldPawnPos.rank() != 2)
+                throw new MoveException("This piece is not up for promotion");
+        if (newPieceType == PieceType.PAWN || newPieceType == PieceType.KING)
+            throw new TypeException("Replacement piece cannot be of type " + newPieceType.getLabel());
         return true;
     }
-
 }

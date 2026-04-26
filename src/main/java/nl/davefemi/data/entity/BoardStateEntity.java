@@ -7,5 +7,4 @@ import java.util.*;
 @Data
 public class BoardStateEntity {
     private List<PositionPieceEntity> positions = new ArrayList<>();
-    private List<Integer> originalRooks = new ArrayList<>();
 }

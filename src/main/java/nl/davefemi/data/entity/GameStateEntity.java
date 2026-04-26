@@ -12,5 +12,6 @@ public class GameStateEntity {
     private BoardStateEntity boardState;
     private boolean activeGame;
     private List<PositionPieceEntity> capturedPieces = new ArrayList<>();
+    private List<Integer> originalRooks = new ArrayList<>();
     private List<MoveRecordData> moveHistory = new ArrayList<>();
 }

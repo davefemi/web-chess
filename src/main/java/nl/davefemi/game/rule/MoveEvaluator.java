@@ -26,12 +26,12 @@ public final class MoveEvaluator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static boolean isCastlingLegal(Board board, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException {
+    public static boolean isCastlingMoveLegal(Board board, List<Integer> originalRooks, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException, BoardException {
         Piece king = board.getPieceAt(move.moveKing().from());
         Piece rook = board.getPieceAt(move.moveRook().from());
         if (king != null && king.getType() == PieceType.KING &&
                 rook != null && rook.getType() == PieceType.ROOK){
-            if (!board.isOriginalRook(rook.getId()))
+            if (!originalRooks.contains(rook.getId()))
                 throw new MoveException("Not allowed: this is not an original " + rook.getType());
             for (MoveRecord m : moveHistory){
                 if (m instanceof CastlingMoveRecord cm){
@@ -51,7 +51,7 @@ public final class MoveEvaluator {
         throw new MoveException("Invalid positions");
     }
 
-    public static List<CastlingMove> filterAgainstCheckAfterCastling(Board board, List<CastlingMove> pseudoMoves, PieceColor enemyColor) throws BoardException {
+    public static List<CastlingMove> filterAgainstCheckAfterCastlingMove(Board board, List<CastlingMove> pseudoMoves, PieceColor enemyColor) throws BoardException {
         List<CastlingMove> legalMoves = new ArrayList<>();
         for (CastlingMove c : pseudoMoves) {
             if (!MoveEvaluator.isKingCheck(MoveEvaluator.fictitiousMove(board, c.moveKing()), c.moveKing().to(), enemyColor))
@@ -84,7 +84,7 @@ public final class MoveEvaluator {
         return false;
     }
 
-    public static boolean filterForBlockingCapturePositions(Board board, Position oldPos, Position newPos, List<SingleMove> moves){
+    public static boolean filterForBlockingCapturePositions(Board board, Position oldPos, Position newPos, List<SingleMove> moves) {
         if (board.isBoardPositionOccupied(newPos)) {
             if (board.getPieceAt(oldPos).getColor() == board.getPieceAt(newPos).getColor())
                 return true;
@@ -94,7 +94,7 @@ public final class MoveEvaluator {
         return false;
     }
 
-    public static boolean isPawnMoveLegal(Board board, Position oldPos, Position newPos){
+    public static boolean isPawnMoveLegal(Board board, Position oldPos, Position newPos) {
         if (board.isBoardPositionOccupied(newPos) &&
                 board.getPieceAt(newPos).getColor() != board.getPieceAt(oldPos).getColor() &&
                 oldPos.file() != newPos.file())

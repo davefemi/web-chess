@@ -14,6 +14,7 @@ import nl.davefemi.game.board.PieceColor;
 import nl.davefemi.exception.BoardException;
 import nl.davefemi.exception.GameException;
 import nl.davefemi.exception.MoveException;
+import nl.davefemi.session.GameSession;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
@@ -30,35 +31,41 @@ public class GameService {
     private final GameSessionService gameSessionService;
 
     public SessionResponseDTO getChessPositions(String sessionId) throws FileNotFoundException, BoardException, GameException, SessionException {
-        Game game = gameSessionService.getGame(sessionId);
+        Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return sessionResponseMapper.mapToDTO(sessionId, game.getPlayerTurn().getColor(), boardMapper.mapDomainToDTO(game.getCopyOfBoard()));
     }
 
     public SessionResponseDTO getPlayerTurn(String sessionId) throws GameException, FileNotFoundException, BoardException, SessionException {
-        Game game = gameSessionService.getGame(sessionId);
+        Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return sessionResponseMapper.mapToDTO(sessionId, game.getPlayerTurn().getColor(),  null);
     }
 
     public SessionResponseDTO getStatus(String sessionId, String color) throws FileNotFoundException, BoardException, SessionException {
-        Game game = gameSessionService.getGame(sessionId);
+        Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return sessionResponseMapper.mapToDTO(sessionId, color, game.getStatus(PieceColor.fromString(color)).getStatus());
     }
 
     public SessionResponseDTO getAvailableMoves(String sessionId, String color) throws BoardException, FileNotFoundException, SessionException {
-        Game game = gameSessionService.getGame(sessionId);
+        Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         List<Move> moves = game.getAvailableMoves(PieceColor.fromString(color));
         return sessionResponseMapper.mapToDTO(sessionId, color, moveMapper.mapDomainToDTO(moves));
     }
 
     public GameStateDTO executeMove(String playerId, String sessionId, MoveDTO move) throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
-        Pair<PieceColor, Game> gamePair = gameSessionService.getGameAndPlayerColor(playerId, sessionId);
-        Game game = gamePair.getSecond();
-        game.executeMove(gamePair.getFirst(), moveMapper.mapDTOtoDomain(move));
-        String playerColor = null;
-        try {
-            playerColor = game.getPlayerTurn().getColor();
-        } catch (GameException e) {}
-        gameSessionService.saveGame(game);
-        return gameStateMapper.mapDomainToDTO(game, playerColor);
+        Pair<PieceColor, GameSession> gamePair = gameSessionService.getSessionAndPlayerColor(playerId, sessionId);
+        GameSession gameSession = gamePair.getSecond();
+        Game game = gameSession.getCurrentGame();
+        if (game.isGameActive()) {
+            game.executeMove(gamePair.getFirst(), moveMapper.mapDTOtoDomain(move));
+            String playerColor = null;
+            try {
+                playerColor = game.getPlayerTurn().getColor();
+            } catch (GameException e) {
+            }
+            gameSessionService.saveGameSession(gameSession);
+            log.info("SessionId=" + gameSession.getSessionId().toString() + " {}", game.getLastMove().toString());
+            return gameStateMapper.mapDomainToDTO(game, playerColor);
+        }
+        throw new GameException("Game is not active");
     }
 }

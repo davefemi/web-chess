@@ -2,6 +2,7 @@ package nl.davefemi.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.data.dto.record.PromotionMoveRecordData;
+import nl.davefemi.game.actions.SingleMove;
 import nl.davefemi.game.board.PieceType;
 import nl.davefemi.game.board.PieceColor;
 import nl.davefemi.game.board.Position;
@@ -15,20 +16,22 @@ public class PromotionMoveRecordMapper {
 
     protected PromotionMoveRecord mapDataToDomain(PromotionMoveRecordData data){
         return new PromotionMoveRecord(
-                new PromotionMove(new Position(data.getPosFile(), data.getPosRank()),
-                        PieceType.fromString(data.getPieceType())),
+                new PromotionMove(new SingleMove(new Position(data.getOldPosFile(), data.getOldPosRank()),
+                        new Position(data.getNewPosFile(), data.getNewPosRank())),
+                        PieceType.fromString(data.getNewPieceType())),
                 PieceColor.fromString(data.getPlayerColor()),
-                PieceType.fromString(data.getPieceType()),
-                data.getPieceId());
+                PieceType.fromString(data.getNewPieceType()),
+                data.getOldPieceId());
     }
 
     protected PromotionMoveRecordData mapDomainToData(PromotionMoveRecord record){
         PromotionMoveRecordData data = new PromotionMoveRecordData();
-        data.setPosFile(record.move().position().file());
-        data.setPosRank(record.move().position().rank());
+        data.setOldPosFile(record.move().move().from().file());
+        data.setOldPosRank(record.move().move().from().rank());
+        data.setNewPosFile(record.move().move().to().file());
+        data.setNewPosRank(record.move().move().to().rank());
         data.setPlayerColor(record.playerColor().getColor());
-        data.setPieceType(record.newPiece().getLabel());
-        data.setPieceId(record.pieceId());
+        data.setNewPieceType(record.newPiece().getLabel());
         return data;
     }
 

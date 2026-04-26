@@ -55,8 +55,8 @@ public class MoveRecordBuilder {
         return new PromotionMoveRecord(
                 move,
                 color,
-                board.getPieceAt(move.position()).getType(),
-                board.getPieceAt(move.position()).getId());
+                board.getPieceAt(move.move().to()).getType(),
+                board.getPieceAt(move.move().to()).getId());
     }
 
 }

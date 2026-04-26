@@ -13,7 +13,6 @@ import java.util.*;
 @Slf4j
 public class Board {
     private TreeMap<Position, Piece> positions;
-    private final List<Integer> originalRooks = new ArrayList<>();
 
     public Board(IdGenerator pieceIdGenerator){
         initBoard();
@@ -23,15 +22,13 @@ public class Board {
     public Board (Board other){
         this.positions = new TreeMap<>();
         this.positions.putAll(other.positions);
-        this.originalRooks.addAll(other.originalRooks);
     }
 
-    public Board(TreeMap<Position, Piece> positions, List<Integer> originalRooks) throws BoardException {
+    public Board(TreeMap<Position, Piece> positions) throws BoardException {
         initBoard();
         if (validateSubmittedBoard(positions.keySet()) &&
-                validateSubmittedPieces(positions.values(), originalRooks)) {
+                validateSubmittedPieces(positions.values())) {
             this.positions = new TreeMap<>(positions);
-            this.originalRooks.addAll(originalRooks);
         }
     }
 
@@ -44,21 +41,11 @@ public class Board {
     }
 
     public Piece getPieceAt(Position position){
-        if (!isBoardPositionOccupied(position))
-            return null;
         return positions.get(position);
     }
 
     public List<Position> getBoardPositions(){
         return new ArrayList<>(this.positions.keySet());
-    }
-
-    public List<Integer> getOriginalRooks(){
-        return new ArrayList<>(originalRooks);
-    }
-
-    public boolean isOriginalRook(int pieceId){
-        return originalRooks.contains(pieceId);
     }
 
     public Piece applyValidatedMove(IdGenerator pieceIdGenerator, Move move) throws BoardException {
@@ -67,8 +54,8 @@ public class Board {
             updatePiecePositions(moveRook);
             return null;
         }
-        if (move instanceof PromotionMove(Position position, PieceType newPiece)){
-            return promotePawnTo(pieceIdGenerator, position, newPiece);
+        if (move instanceof PromotionMove(SingleMove pawnMove, PieceType newPiece)){
+            return promotePawnTo(pieceIdGenerator, pawnMove, newPiece);
         }
         return updatePiecePositions((SingleMove) move);
     }
@@ -93,9 +80,7 @@ public class Board {
 
     }
 
-    //TODO: Fix the processing of captured Rooks
-    // Move the Original Rooks to Game
-    private boolean validateSubmittedPieces(Collection<Piece> newPieces, List<Integer> originalRooks)
+    private boolean validateSubmittedPieces(Collection<Piece> newPieces)
             throws BoardException {
         Set<PieceColor> kingsByColor = new HashSet<>();
         for (Piece p: newPieces){
@@ -113,9 +98,6 @@ public class Board {
         }
         if (uniquePieces.isEmpty())
             throw new BoardException("No pieces have been presented");
-        for (Integer r : originalRooks)
-            if (!uniquePieces.contains(r))
-                throw new BoardException("Rook " + r + " is not on this board");
         return true;
     }
 
@@ -152,8 +134,6 @@ public class Board {
         Piece kingSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
         positions.put(new Position(1, rank), queenSideRook);
         positions.put(new Position(8, rank), kingSideRook);
-        originalRooks.add(queenSideRook.getId());
-        originalRooks.add(kingSideRook.getId());
     }
 
     private void createKnights(IdGenerator pieceIdGenerator, PieceColor color){
@@ -187,10 +167,11 @@ public class Board {
         return p;
     }
 
-    private Piece promotePawnTo(IdGenerator pieceIdGenerator, Position position, PieceType pieceType) {
-        PieceColor color = getPieceAt(position).getColor();
-        Piece p = positions.get(position);
-        positions.put(position, new Piece(pieceIdGenerator.getNextId(), pieceType, color));
+    private Piece promotePawnTo(IdGenerator pieceIdGenerator, SingleMove pawnMove, PieceType pieceType) throws BoardException {
+        Piece p = positions.get(pawnMove.from());
+        PieceColor color = p.getColor();
+        updatePiecePositions(pawnMove);
+        positions.put(pawnMove.to(), new Piece(pieceIdGenerator.getNextId(), pieceType, color));
         return p;
     }
 }

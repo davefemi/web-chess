@@ -40,6 +40,7 @@ public class GameStateMapper {
             turn = null;
         }
         entity.setNextTurn(turn);
+        entity.setOriginalRooks(game.getOriginalRooks());
         game.getMoveHistory().forEach(m -> entity.getMoveHistory().add(moveRecordMapper.mapDomainToDTO(m)));
         return entity;
     }
@@ -58,7 +59,7 @@ public class GameStateMapper {
                 entity.isActiveGame(),
                 PieceColor.fromString(entity.getNextTurn()),
                 moveHistory,
-                capturedPiece);
+                capturedPiece, entity.getOriginalRooks());
     }
 
     public GameStateDTO mapDomainToDTO(Game game, String turn){

@@ -40,7 +40,6 @@ public class BoardMapper {
             }
             entity.getPositions().add(positionPiece);
         }
-        entity.setOriginalRooks(board.getOriginalRooks());
         return entity;
     }
 
@@ -49,6 +48,6 @@ public class BoardMapper {
         for (PositionPieceEntity p : entity.getPositions()) {
             positions.put(piecePositionMapper.mapEntityToPosition(p), piecePositionMapper.mapEntityToPiece(p));
         }
-        return new Board(positions, entity.getOriginalRooks());
+        return new Board(positions);
     }
 }

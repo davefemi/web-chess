@@ -44,7 +44,7 @@ public final class CastlingMoveGenerator {
         }
 
         if (isActiveColor) {
-            return MoveEvaluator.filterAgainstCheckAfterCastling(board, pseudoMoves, enemyColor);
+            return MoveEvaluator.filterAgainstCheckAfterCastlingMove(board, pseudoMoves, enemyColor);
         }
         return pseudoMoves;
     }

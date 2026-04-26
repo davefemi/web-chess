@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class PromotionMoveDTO implements MoveDTO{
-    private PositionDTO position;
+    private SingleMoveDTO move;
     private String pieceType;
 }

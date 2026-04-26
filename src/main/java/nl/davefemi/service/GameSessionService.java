@@ -22,7 +22,6 @@ import nl.davefemi.session.Player;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,6 @@ public class GameSessionService {
     private final GameStateMapper gameStateMapper;
     private final GameSessionRepository sessionStore;
     private final SessionResponseMapper sessionResponseMapper;
-    private final ConcurrentHashMap<Game, GameSession> gameSessions = new ConcurrentHashMap<>();
     private final String inviteUrl = "/games/join?code=%s";
     private final AccessCodeMapper accessCodeMapper;
 
@@ -49,6 +47,7 @@ public class GameSessionService {
         AccessCodeEntity code = retrieveAccessCode(accessCode);
         GameSession session =  retrieveSession(code.getSessionId());
         Player player = session.createPlayer();
+        session.getCurrentGame().start();
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, player.getPlayerColor().getColor(),"Successfully joined session");
     }
@@ -89,34 +88,24 @@ public class GameSessionService {
         sessionStore.saveAccessCode(accessCodeEntity, timeToLive);
     }
 
-    protected Pair<PieceColor, Game> getGameAndPlayerColor(String playerId, String sessionId) throws FileNotFoundException, SessionException, BoardException {
+    protected Pair<PieceColor, GameSession> getSessionAndPlayerColor(String playerId, String sessionId) throws FileNotFoundException, SessionException, BoardException {
         GameSession session = retrieveSession(sessionId);
         for (Player p : session.getPlayers()){
             if (p.getId().toString().equals(playerId)) {
-                cacheGame(session);
-                return Pair.of(p.getPlayerColor(), session.getCurrentGame());
+                return Pair.of(p.getPlayerColor(), session);
             }
         }
         throw new SessionException("This player does not belong to this session");
     }
 
-    protected Game getGame(String sessionId) throws FileNotFoundException, BoardException, SessionException {
-        GameSession session = retrieveSession(sessionId);
-        cacheGame(session);
-        return session.getCurrentGame();
+    protected GameSession getGameSession (String sessionId) throws FileNotFoundException, BoardException, SessionException {
+        return retrieveSession(sessionId);
     }
 
-    private void cacheGame(GameSession session){
-        if(!gameSessions.contains(session))
-            gameSessions.put(session.getCurrentGame(), session);
-    }
-
-    public void saveGame(Game game) throws SessionException {
-        GameSession session = gameSessions.remove(game);
-        if (session == null) {
-            throw new SessionException("Could not store game");
-        }
-        storeSession(session);
+    public void saveGameSession(GameSession gameSession) throws SessionException {
+        if (gameSession == null)
+            throw new SessionException("No game session to store");
+        storeSession(gameSession);
     }
 
 }

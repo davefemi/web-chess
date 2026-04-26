@@ -21,25 +21,21 @@ public final class RuleEngine {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static boolean isMoveAllowed(Game game, PieceColor color, Move move) throws BoardException, MoveException, GameException {
-        if (PromotionMoveEvaluator.checkForPromotion(game.getCopyOfBoard())) {
-            if (move instanceof PromotionMove m)
-                return PromotionMoveEvaluator.isPromotionLegal(game.getCopyOfBoard(), m);
-            throw new BoardException("A pawn is up for promotion");
-        }
-        if (!(color == game.getPlayerTurn()))
-            throw new MoveException("It is not " + color +"'s turn yet");
+    public static boolean isMoveAllowed(Game game, PieceColor pieceColor, Move move) throws BoardException, MoveException, GameException {
+        if (!(pieceColor == game.getPlayerTurn()))
+            throw new MoveException("It is not " + pieceColor +"'s turn yet");
         if (move instanceof CastlingMove m)
-            if (!(MoveEvaluator.isCastlingLegal(game.getCopyOfBoard(), game.getMoveHistory(), m)))
+            if (!(MoveEvaluator.isCastlingMoveLegal(game.getCopyOfBoard(), game.getOriginalRooks(), game.getMoveHistory(), m)))
                 throw new MoveException("Castling is not allowed");
-        return getLegalMoves(game, color).contains(move);
+        if (move instanceof PromotionMove m) {
+            if (!PromotionMoveEvaluator.isPromotionMoveLegal(game.getCopyOfBoard(), m))
+                throw new MoveException("Promotion not allowed");
+            move = m.move();
+        }
+        return getAllLegalMovesByPieceColor(game, pieceColor).contains(move);
     }
 
-    public static boolean checkForPromotion(Game game){
-        return PromotionMoveEvaluator.checkForPromotion(game.getCopyOfBoard());
-    }
-
-    public static List<Move> getLegalMoves(Game game, PieceColor color) throws BoardException {
+    public static List<Move> getAllLegalMovesByPieceColor(Game game, PieceColor color) throws BoardException {
         List<Move> moves = new ArrayList<>();
         Board board = game.getCopyOfBoard();
         moves.addAll(MoveGenerator.generateMoves(board, color, true));
@@ -51,11 +47,10 @@ public final class RuleEngine {
         return MoveEvaluator.isKingCheck(game.getCopyOfBoard(),
                 BoardScanner.getCurrentSinglePiecePosition(game.getCopyOfBoard(), PieceType.KING, color),
                 PieceColor.getOpponent(color));
-
     }
 
     public static boolean isCheckMate(Game game, PieceColor color) throws BoardException {
-        return isCheck(game, color) && getLegalMoves(game, color).isEmpty();
+        return isCheck(game, color) && getAllLegalMovesByPieceColor(game, color).isEmpty();
     }
 
 }

@@ -4,9 +4,13 @@ import lombok.Data;
 
 @Data
 public class PromotionMoveRecordData implements MoveRecordData {
-    private int posFile;
-    private int posRank;
+    private int oldPosFile;
+    private int oldPosRank;
+    private int newPosFile;
+    private int newPosRank;
     private String playerColor;
-    private String pieceType;
-    private int pieceId;
+    private int oldPieceId;
+    private String newPieceType;
+    private int newPieceId;
+
 }

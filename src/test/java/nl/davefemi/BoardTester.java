@@ -50,34 +50,57 @@ public class BoardTester {
         assertTrue("Succeeded", game.executeMove(PieceColor.WHITE, getSingleMove(2,2,2,4)));
     }
 
+    private void setUpPromotionMoves(Game game) throws MoveException, BoardException, GameException {
+        game.executeMove(PieceColor.WHITE, getSingleMove(2,2,2,4));
+        game.executeMove(PieceColor.BLACK, getSingleMove(1,7,1,5));
+        game.executeMove(PieceColor.WHITE, getSingleMove(2,4,2,5));
+        game.executeMove(PieceColor.BLACK, getSingleMove(1,5,1,4));
+        game.executeMove(PieceColor.WHITE, getSingleMove(2,5,2,6));
+        game.executeMove(PieceColor.BLACK, getSingleMove(1,4,1,3));
+    }
 
     @Test
-    public void testCheck() throws BoardException {
-        //Arrange
-        board.applyValidatedMove(getSingleMove(4,1,4,8));
+    public void illegalPromotionTest() throws MoveException, BoardException, GameException {
+        Game game = new Game();
+        setUpPromotionMoves(game);
+        Exception exception = assertThrows(MoveException.class, () ->{
+            game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(2,6,3, 7), PieceType.QUEEN));
+        });
 
-        //Act
-        board.applyValidatedMove(new IdGenerator(), new PromotionMove(new Position(4,8), PieceType.QUEEN));
+        String expectedMessage = "up for promotion";
+        String actualMessage = exception.getMessage();
 
         //Assert
-        assertEquals(PieceType.QUEEN, board.getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
-        assertEquals(PieceColor.WHITE, board.getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
+        assertTrue(actualMessage.contains(expectedMessage), "Pawn is not up for promotion");
+    }
+
+    @Test
+    public void successfulPromotionTest() throws BoardException, MoveException, GameException {
+        Game game = new Game();
+        //Arrange
+        setUpPromotionMoves(game);
+
+        //Act
+        game.executeMove(PieceColor.WHITE, getSingleMove(2,6,3,7));
+        game.executeMove(PieceColor.BLACK, getSingleMove(8,7,8,6));
+        game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(3,7,4, 8), PieceType.QUEEN));
+
+        //Assert
+        assertEquals(PieceType.QUEEN, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
+        assertEquals(PieceColor.WHITE, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
         assertTrue("King is check", MoveEvaluator
                 .isKingCheck(
-                        board,
+                        game.getCopyOfBoard(),
                         BoardScanner.getCurrentSinglePiecePosition(
                                 board,
                                 PieceType.KING,
                                 PieceColor.BLACK),
                         PieceColor.WHITE));
 
-        assertEquals(31, board.piecesOnBoard(), "Number of pieces");
-
-        AccessCode code = AccessCodeGenerator.getAccessCode("",60);
-        System.out.println(code);
-        System.out.println(code.getExpiresAt());
-
+        assertEquals(30, game.getCopyOfBoard().piecesOnBoard(), "Number of pieces");
     }
+
+
 
     @Test
     public void checkmateTest() throws MoveException, BoardException, GameException {
