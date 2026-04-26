@@ -14,7 +14,7 @@ public enum PieceColor {
 
     public static PieceColor fromString(String color){
         if (color == null)
-            return null;
+            throw new IllegalArgumentException("Color cannot be null");
         for (PieceColor c : values()){
             if (c.getColor().equalsIgnoreCase(color))
                     return c;
@@ -23,10 +23,10 @@ public enum PieceColor {
     }
 
     public static PieceColor getOpponent(PieceColor color) {
+        if (color == null)
+            throw new IllegalArgumentException("Color cannot be null");
         if (color == WHITE)
             return BLACK;
-        if (color == BLACK)
-            return WHITE;
-        return null;
+        return WHITE;
     }
 }

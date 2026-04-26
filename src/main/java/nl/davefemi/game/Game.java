@@ -72,7 +72,7 @@ public class Game {
             return Status.CHECK;
         if (isCheckMate(PieceColor.getOpponent(color)))
             return Status.WINNER;
-        if (RuleEngine.getLegalMoves(this, color).isEmpty() && !isCheckMate(color))
+        if (RuleEngine.getLegalMoves(this, color).isEmpty() && !isCheck(color))
             return Status.STALEMATE;
         return Status.ACTIVE;
     }
@@ -93,7 +93,7 @@ public class Game {
                 throw new MoveException(color + " is in check");
             throw new MoveException("Illegal move");
         }
-        Piece p = gameBoard.movePieceTo(pieceIdGenerator, move);
+        Piece p = gameBoard.applyValidatedMove(pieceIdGenerator, move);
         if (!RuleEngine.checkForPromotion(this))
             turnGenerator.nextTurn();
         if (isCheckMate(getPlayerTurn())) {
@@ -102,6 +102,10 @@ public class Game {
         updateMoveHistory(move, color, p);
         log.info(getLastMove().toString());
         return true;
+    }
+
+    public void setInactive(){
+        gameActive = false;
     }
 
     public MoveRecord getLastMove(){

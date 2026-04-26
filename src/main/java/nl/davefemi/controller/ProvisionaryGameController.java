@@ -20,6 +20,6 @@ public class ProvisionaryGameController {
 
     @PostMapping("/{id}/moves")
     public ResponseEntity<?> executeMove(@PathVariable("id") String sessionId, @RequestBody MoveRequestDTO request) throws FileNotFoundException, MoveException, BoardException, GameException, SessionException {
-        return ResponseEntity.ok(gameService.executeMove(sessionId, request.getColor(), request.getMove()));
+        return ResponseEntity.ok(gameService.executeMove(request.getPlayerId(), sessionId, request.getMove()));
     }
 }

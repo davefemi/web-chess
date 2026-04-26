@@ -104,7 +104,7 @@ public final class MoveEvaluator {
 
     public static Board fictitiousMove(Board board, Move move) throws BoardException {
         Board newBoard = new Board(board);
-            newBoard.movePieceTo(move);
+            newBoard.applyValidatedMove(move);
         return newBoard;
     }
 }

@@ -1,4 +1,4 @@
-package nl.davefemi.data.dto;
+package nl.davefemi.data.dto.session;
 
 import lombok.Data;
 import nl.davefemi.data.dto.move.MoveRequestDTO;

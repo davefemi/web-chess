@@ -2,13 +2,13 @@ package nl.davefemi.game;
 
 import nl.davefemi.game.board.PieceColor;
 
-public class TurnGenerator{
+class TurnGenerator{
     private PieceColor nextTurn;
 
-    protected TurnGenerator(){
+    TurnGenerator(){
         nextTurn = PieceColor.WHITE;
     }
-    protected TurnGenerator(PieceColor firstTurn){
+    TurnGenerator(PieceColor firstTurn){
         this.nextTurn = firstTurn;
     }
 

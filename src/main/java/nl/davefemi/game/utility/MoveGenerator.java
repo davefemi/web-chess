@@ -17,10 +17,7 @@ public final class MoveGenerator {
 
     public static List<SingleMove> generateMoves(Board board, PieceColor color, boolean isActiveColor) throws BoardException {
         List<SingleMove> moves = new ArrayList<>();
-        PieceColor enemyColor =
-                color == PieceColor.WHITE
-                ? PieceColor.BLACK
-                : PieceColor.WHITE;
+        PieceColor enemyColor = PieceColor.getOpponent(color);
         moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color), enemyColor, isActiveColor));
         moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.QUEEN, color), enemyColor, isActiveColor));
         moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color), enemyColor, isActiveColor));

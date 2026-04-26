@@ -15,6 +15,8 @@ import nl.davefemi.game.rule.Status;
 import nl.davefemi.exception.BoardException;
 import nl.davefemi.exception.GameException;
 import nl.davefemi.exception.MoveException;
+import nl.davefemi.session.AccessCode;
+import nl.davefemi.session.AccessCodeGenerator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,10 +54,10 @@ public class BoardTester {
     @Test
     public void testCheck() throws BoardException {
         //Arrange
-        board.movePieceTo(getSingleMove(4,1,4,8));
+        board.applyValidatedMove(getSingleMove(4,1,4,8));
 
         //Act
-        board.movePieceTo(new IdGenerator(), new PromotionMove(new Position(4,8), PieceType.QUEEN));
+        board.applyValidatedMove(new IdGenerator(), new PromotionMove(new Position(4,8), PieceType.QUEEN));
 
         //Assert
         assertEquals(PieceType.QUEEN, board.getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
@@ -68,6 +70,12 @@ public class BoardTester {
                                 PieceType.KING,
                                 PieceColor.BLACK),
                         PieceColor.WHITE));
+
+        assertEquals(31, board.piecesOnBoard(), "Number of pieces");
+
+        AccessCode code = AccessCodeGenerator.getAccessCode("",60);
+        System.out.println(code);
+        System.out.println(code.getExpiresAt());
 
     }
 

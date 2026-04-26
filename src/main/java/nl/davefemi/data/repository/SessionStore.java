@@ -2,6 +2,7 @@ package nl.davefemi.data.repository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.data.entity.AccessCodeEntity;
 import nl.davefemi.data.entity.GameSessionEntity;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,8 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class SessionStore implements GameSessionRepository {
     private final RedisTemplate<String, GameSessionEntity> redisTemplate;
-    private final int timeToLive = 60;
+    private final RedisTemplate<String, AccessCodeEntity> accessCodeRedisTemplate;
+    private final int sessionTimeToLive = 2;
 
     @Override
     public GameSessionEntity retrieveGameSessionById(String sessionId) throws FileNotFoundException {
@@ -25,7 +27,20 @@ public class SessionStore implements GameSessionRepository {
     }
 
     @Override
-    public void saveGameSession(GameSessionEntity game) {
-        redisTemplate.opsForValue().set("session: " + game.getSessionId(), game, Duration.of(timeToLive, ChronoUnit.HOURS));
+    public void saveGameSession(GameSessionEntity entity) {
+        redisTemplate.opsForValue().set("session: " + entity.getSessionId(), entity, Duration.of(sessionTimeToLive, ChronoUnit.HOURS));
+    }
+
+    @Override
+    public void saveAccessCode(AccessCodeEntity accessCode, int timeToLive){
+        accessCodeRedisTemplate.opsForValue().set("access_code: " + accessCode.getToken(), accessCode, Duration.of(timeToLive, ChronoUnit.SECONDS));
+    }
+
+    @Override
+    public AccessCodeEntity retrieveAccessCode(String code) throws FileNotFoundException {
+        AccessCodeEntity accessCode = accessCodeRedisTemplate.opsForValue().get("access_code: " + code);
+        if (accessCode == null)
+            throw new FileNotFoundException("Code not found");
+        return accessCode;
     }
 }

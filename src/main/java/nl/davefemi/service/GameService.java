@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.data.dto.GameStateDTO;
 import nl.davefemi.data.dto.move.MoveDTO;
-import nl.davefemi.data.dto.SessionResponseDTO;
+import nl.davefemi.data.dto.session.SessionResponseDTO;
 import nl.davefemi.data.mapper.*;
 import nl.davefemi.data.mapper.move.MoveMapper;
 import nl.davefemi.exception.SessionException;
@@ -14,6 +14,7 @@ import nl.davefemi.game.board.PieceColor;
 import nl.davefemi.exception.BoardException;
 import nl.davefemi.exception.GameException;
 import nl.davefemi.exception.MoveException;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -49,9 +50,10 @@ public class GameService {
         return sessionResponseMapper.mapToDTO(sessionId, color, moveMapper.mapDomainToDTO(moves));
     }
 
-    public GameStateDTO executeMove(String sessionId, String color, MoveDTO move) throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
-        Game game = gameSessionService.getGame(sessionId);
-        game.executeMove(PieceColor.fromString(color), moveMapper.mapDTOtoDomain(move));
+    public GameStateDTO executeMove(String playerId, String sessionId, MoveDTO move) throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
+        Pair<PieceColor, Game> gamePair = gameSessionService.getGameAndPlayerColor(playerId, sessionId);
+        Game game = gamePair.getSecond();
+        game.executeMove(gamePair.getFirst(), moveMapper.mapDTOtoDomain(move));
         String playerColor = null;
         try {
             playerColor = game.getPlayerTurn().getColor();

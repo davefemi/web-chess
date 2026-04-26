@@ -12,6 +12,7 @@ public class GameSessionEntity {
 
     @Id
     private String sessionId;
+    private boolean isActive;
     private List<PlayerEntity> players = new ArrayList<>();
     private List<GameStateEntity> games = new ArrayList<>();
 }

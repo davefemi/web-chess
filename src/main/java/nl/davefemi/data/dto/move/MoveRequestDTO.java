@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class MoveRequestDTO {
-    private String color;
+    private String playerId;
     private MoveDTO move;
 }
