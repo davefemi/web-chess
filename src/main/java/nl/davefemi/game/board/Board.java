@@ -7,10 +7,8 @@ import nl.davefemi.game.actions.Move;
 import nl.davefemi.game.actions.PromotionMove;
 import nl.davefemi.game.actions.SingleMove;
 import nl.davefemi.exception.BoardException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TreeMap;
+
+import java.util.*;
 
 @Slf4j
 public class Board {
@@ -30,8 +28,11 @@ public class Board {
 
     public Board(TreeMap<Position, Piece> positions, List<Integer> originalRooks) throws BoardException {
         initBoard();
-        matchBoard(positions);
-        this.originalRooks.addAll(originalRooks);
+        if (validateSubmittedBoard(positions.keySet()) &&
+                validateSubmittedPieces(positions.values(), originalRooks)) {
+            this.positions = new TreeMap<>(positions);
+            this.originalRooks.addAll(originalRooks);
+        }
     }
 
     public boolean isBoardPositionOccupied(Position position){
@@ -83,14 +84,39 @@ public class Board {
         return updatePiecePositions((SingleMove) move);
     }
 
-    private void matchBoard(TreeMap<Position, Piece> positions) throws BoardException {
-        HashSet<Position> newPos = new HashSet<>(positions.keySet());
-        HashSet<Position> pos = new HashSet<>(this.positions.keySet());
-        if(!pos.equals(newPos))
-            throw new BoardException("Positions are incorrect");
-        for (Position p : pos){
-            this.positions.put(p, positions.get(p));
+    private boolean validateSubmittedBoard(Collection<Position> newPositions) throws BoardException {
+        if(newPositions.size() != 64)
+            throw new BoardException("Board must contain exactly 64 positions");
+        if(this.positions.size() != new HashSet<>(newPositions).size())
+            throw new BoardException("Board contains duplicate positions");
+        return true;
+
+    }
+
+    //TODO: Fix the processing of captured Rooks
+    // Move the Original Rooks to Game
+    private boolean validateSubmittedPieces(Collection<Piece> newPieces, List<Integer> originalRooks)
+            throws BoardException {
+        Set<PieceColor> kingsByColor = new HashSet<>();
+        for (Piece p: newPieces){
+            if (p != null && p.getType() == PieceType.KING) {
+                if (!kingsByColor.add(p.getColor()))
+                    throw new BoardException("Board cannot have two kings of the same color");
+            }
         }
+        if (kingsByColor.size() != 2)
+            throw new BoardException("There can only be exactly one king of each color on the board");
+        HashSet<Integer> uniquePieces = new HashSet<>();
+        for (Piece p : newPieces){
+            if (p != null && !uniquePieces.add(p.getId()))
+                throw new BoardException("Pieces are not unique");
+        }
+        if (uniquePieces.isEmpty())
+            throw new BoardException("No pieces have been presented");
+        for (Integer r : originalRooks)
+            if (!uniquePieces.contains(r))
+                throw new BoardException("Rook " + r + " is not on this board");
+        return true;
     }
 
     private void initBoard(){
