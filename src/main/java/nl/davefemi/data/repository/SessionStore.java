@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 public class SessionStore implements GameSessionRepository {
     private final RedisTemplate<String, GameSessionEntity> redisTemplate;
     private final RedisTemplate<String, AccessCodeEntity> accessCodeRedisTemplate;
-    private final int sessionTimeToLive = 2;
+    private final int sessionTimeToLive = 5;
 
     @Override
     public GameSessionEntity retrieveGameSessionById(String sessionId) throws FileNotFoundException {
@@ -28,7 +28,7 @@ public class SessionStore implements GameSessionRepository {
 
     @Override
     public void saveGameSession(GameSessionEntity entity) {
-        redisTemplate.opsForValue().set("session: " + entity.getSessionId(), entity, Duration.of(sessionTimeToLive, ChronoUnit.HOURS));
+        redisTemplate.opsForValue().set("session: " + entity.getSessionId(), entity, Duration.of(sessionTimeToLive, ChronoUnit.MINUTES));
     }
 
     @Override
@@ -39,8 +39,13 @@ public class SessionStore implements GameSessionRepository {
     @Override
     public AccessCodeEntity retrieveAccessCode(String code) throws FileNotFoundException {
         AccessCodeEntity accessCode = accessCodeRedisTemplate.opsForValue().get("access_code: " + code);
+        deleteAccessCode(code);
         if (accessCode == null)
             throw new FileNotFoundException("Code not found");
         return accessCode;
+    }
+
+    private void deleteAccessCode(String code){
+        accessCodeRedisTemplate.delete("access_code: " + code);
     }
 }

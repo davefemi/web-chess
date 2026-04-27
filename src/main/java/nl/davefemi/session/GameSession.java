@@ -27,6 +27,10 @@ public class GameSession {
         return game;
     }
 
+    public void startSession(){
+        games.getLast().start();
+    }
+
     public boolean endCurrentGame(){
         games.getLast().setInactive();
         return true;

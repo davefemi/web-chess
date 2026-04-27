@@ -43,11 +43,11 @@ public class GameSessionService {
         return sessionResponseMapper.mapInvitationToDTO(session, player, String.format(inviteUrl, accessCode.getToken()));
     }
 
-    public SessionResponseDTO joinGameSession(String accessCode) throws GameException, SessionException, FileNotFoundException, BoardException {
+    public SessionResponseDTO joinGameSession(String accessCode) throws SessionException, FileNotFoundException, BoardException {
         AccessCodeEntity code = retrieveAccessCode(accessCode);
         GameSession session =  retrieveSession(code.getSessionId());
         Player player = session.createPlayer();
-        session.getCurrentGame().start();
+        session.startSession();
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, player.getPlayerColor().getColor(),"Successfully joined session");
     }
