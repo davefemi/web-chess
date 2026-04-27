@@ -1,0 +1,20 @@
+services:
+  api-services:
+    build: .
+    image: web-chess
+    container_name: web-chess-backend
+#    env_file:
+#      - ../ENV-SCRIPTS/localdev/postgres17/prik2go-docker-compose.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+  database:
+    image: redis:8.6
+    container_name: redis-for-webchess
+    restart: unless-stopped
+#    env_file:
+#      - ../ENV-SCRIPTS/localdev/postgres17/prik2go-docker-compose.env
+    ports:
+      - "6379:6379"
+
