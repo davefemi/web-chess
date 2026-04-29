@@ -14,8 +14,6 @@ import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.MoveException;
-import nl.davefemi.webchess.game.utility.PseudoCastlingMoveGenerator;
-import nl.davefemi.webchess.game.utility.PseudoSingleMoveGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public final class MoveEvaluator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static boolean isCastlingMoveLegal(Board board, List<Integer> originalRooks, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException {
+    static boolean isCastlingMoveLegal(Board board, List<Integer> originalRooks, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException {
         Piece king = board.getPieceAt(move.moveKing().from());
         Piece rook = board.getPieceAt(move.moveRook().from());
         if (king != null && king.getType() == PieceType.KING &&
@@ -50,7 +48,7 @@ public final class MoveEvaluator {
         throw new MoveException("Invalid positions");
     }
 
-    public static List<Move> evaluateIfKingIsInCheckAfterMove(Game game, List<Move> pseudoMoves, PieceColor player) throws BoardException {
+    static List<Move> evaluateIfKingIsInCheckAfterMove(Game game, List<Move> pseudoMoves, PieceColor player) throws BoardException {
         PieceColor opponent = PieceColor.getOpponent(player);
         List<Move> legalMoves = new ArrayList<>();
         for (Move initialMove : pseudoMoves) {
@@ -87,7 +85,7 @@ public final class MoveEvaluator {
         return legalMoves;
     }
 
-    public static boolean isKingInCheck(Board board, Move lastMove, Position kingPosition, PieceColor opposingColor) throws BoardException {
+    static boolean isKingInCheck(Board board, Move lastMove, Position kingPosition, PieceColor opposingColor) {
         for (SingleMove m: PseudoSingleMoveGenerator.generateMoves(board, lastMove, opposingColor)){
             if (m.to().equals(kingPosition))
                 return true;
@@ -98,16 +96,14 @@ public final class MoveEvaluator {
         return false;
     }
 
-    private static List<Move> getPseudoMoves(Board board, Move lastMove, PieceColor color) throws BoardException {
+    private static List<Move> getPseudoMoves(Board board, Move lastMove, PieceColor color) {
         List<Move> totalMoves = new ArrayList<>();
         totalMoves.addAll(PseudoSingleMoveGenerator.generateMoves(board, lastMove, color));
         totalMoves.addAll(PseudoCastlingMoveGenerator.generateMoves(board, color));
         return totalMoves;
     }
 
-
-
-    public static boolean filterForBlockingCapturePositions(Board board, Position oldPos, Position newPos, List<SingleMove> moves) {
+    static boolean filterForBlockingCapturePositions(Board board, Position oldPos, Position newPos, List<SingleMove> moves) {
         if (board.isBoardPositionOccupied(newPos)) {
             if (board.getPieceAt(oldPos).getColor() == board.getPieceAt(newPos).getColor())
                 return true;
@@ -117,7 +113,7 @@ public final class MoveEvaluator {
         return false;
     }
 
-    public static boolean isPawnMoveLegal(Board board, Move lastMove, Position oldPos, Position newPos) {
+    static boolean isPawnMoveLegal(Board board, Move lastMove, Position oldPos, Position newPos) {
         if (board.isBoardPositionOccupied(newPos) &&
                 board.getPieceAt(newPos).getColor() != board.getPieceAt(oldPos).getColor() &&
                 oldPos.file() != newPos.file())

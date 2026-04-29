@@ -1,9 +1,5 @@
-package nl.davefemi.webchess.game.utility;
+package nl.davefemi.webchess.game.record;
 
-import nl.davefemi.webchess.game.record.CastlingMoveRecord;
-import nl.davefemi.webchess.game.record.MoveRecord;
-import nl.davefemi.webchess.game.record.PromotionMoveRecord;
-import nl.davefemi.webchess.game.record.SingleMoveRecord;
 import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.Move;

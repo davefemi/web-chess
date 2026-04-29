@@ -33,4 +33,3 @@ public final class BoardScanner {
         return positions;
     }
 }
-

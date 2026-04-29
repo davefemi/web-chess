@@ -6,8 +6,6 @@ import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.Move;
 import nl.davefemi.webchess.game.actions.PromotionMove;
-import nl.davefemi.webchess.game.utility.PseudoCastlingMoveGenerator;
-import nl.davefemi.webchess.game.utility.PseudoSingleMoveGenerator;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
@@ -52,7 +50,7 @@ public final class RuleEngine {
         return MoveEvaluator.evaluateIfKingIsInCheckAfterMove(game, moves, color);
     }
 
-    public static boolean isKingInCheck(Game game, PieceColor color) throws BoardException {
+    public static boolean isKingInCheck(Game game, PieceColor color) {
         return MoveEvaluator.isKingInCheck(game.getCopyOfBoard(), null,
                 BoardScanner.getCurrentSinglePiecePosition(game.getCopyOfBoard(), PieceType.KING, color),
                 PieceColor.getOpponent(color));

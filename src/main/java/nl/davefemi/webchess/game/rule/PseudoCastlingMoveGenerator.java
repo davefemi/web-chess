@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.game.utility;
+package nl.davefemi.webchess.game.rule;
 
 import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.board.BoardScanner;
@@ -16,7 +16,7 @@ public final class PseudoCastlingMoveGenerator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static List<CastlingMove> generateMoves(Board board, PieceColor color) {
+    static List<CastlingMove> generateMoves(Board board, PieceColor color) {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
         Position king = BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color);
         List<Position> rooks = BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color);

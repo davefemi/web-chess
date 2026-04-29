@@ -1,11 +1,10 @@
-package nl.davefemi.webchess.game.utility;
+package nl.davefemi.webchess.game.rule;
 
 import nl.davefemi.webchess.game.actions.Move;
 import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.board.BoardScanner;
 import nl.davefemi.webchess.game.board.Position;
 import nl.davefemi.webchess.game.actions.SingleMove;
-import nl.davefemi.webchess.game.rule.MoveEvaluator;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.exception.BoardException;
@@ -15,9 +14,8 @@ import java.util.List;
 
 public final class PseudoSingleMoveGenerator {
 
-    public static List<SingleMove> generateMoves(Board board, Move lastMove, PieceColor color) throws BoardException {
+    static List<SingleMove> generateMoves(Board board, Move lastMove, PieceColor color) {
         List<SingleMove> moves = new ArrayList<>();
-        PieceColor enemyColor = PieceColor.getOpponent(color);
         moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color)));
         moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.QUEEN, color)));
         moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color)));
@@ -189,7 +187,7 @@ public final class PseudoSingleMoveGenerator {
         return pseudoMoves;
     }
 
-    public static Board applyFictitiousMove(Board board, Move move) throws BoardException {
+    static Board applyFictitiousMove(Board board, Move move) throws BoardException {
         Board newBoard = new Board(board);
         newBoard.applyValidatedMove(move);
         return newBoard;

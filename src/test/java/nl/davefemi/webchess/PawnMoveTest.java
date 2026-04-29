@@ -4,15 +4,13 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.Game;
-import nl.davefemi.webchess.game.IdGenerator;
+import nl.davefemi.webchess.game.GameStatus;
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
-import nl.davefemi.webchess.game.rule.MoveEvaluator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.*;
@@ -22,13 +20,11 @@ import static org.springframework.test.util.AssertionErrors.*;
 @SpringBootTest
 public class PawnMoveTest {
     private Game game;
-    private Board board;
 
 
     @BeforeEach
     public void setUp(){
         game = new Game();
-        board = new Board(new IdGenerator());
     }
 
     private SingleMove getSingleMove(int file_start, int rank_start, int file_end, int rank_end){
@@ -135,14 +131,8 @@ public class PawnMoveTest {
         //Assert
         assertEquals(PieceType.QUEEN, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
         assertEquals(PieceColor.WHITE, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
-        assertTrue("King is check", MoveEvaluator
-                .isKingInCheck(
-                        game.getCopyOfBoard(), null,
-                        BoardScanner.getCurrentSinglePiecePosition(
-                                board,
-                                PieceType.KING,
-                                PieceColor.BLACK),
-                        PieceColor.WHITE));
+        assertTrue("King is check", game.getStatus(PieceColor.BLACK) == GameStatus.CHECK);
+
 
         assertEquals(30, game.getCopyOfBoard().piecesOnBoard(), "Number of pieces");
     }

@@ -11,7 +11,7 @@ public final class PromotionMoveEvaluator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException {
+    static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException {
         PieceType newPieceType = move.newPieceType();
         Position oldPawnPos = move.move().from();
         Piece piece = board.getPieceAt(oldPawnPos);

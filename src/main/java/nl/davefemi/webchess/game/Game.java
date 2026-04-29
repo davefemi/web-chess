@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.actions.Move;
 import nl.davefemi.webchess.game.record.MoveRecord;
-import nl.davefemi.webchess.game.utility.MoveRecordBuilder;
+import nl.davefemi.webchess.game.record.MoveRecordBuilder;
 import nl.davefemi.webchess.game.rule.RuleEngine;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
@@ -141,7 +141,7 @@ public class Game {
         return originalRooks;
     }
 
-    private boolean isPlayerInCheck(PieceColor color) throws BoardException {
+    private boolean isPlayerInCheck(PieceColor color) {
         return RuleEngine.isKingInCheck(this, color);
     }
 
