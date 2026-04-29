@@ -7,7 +7,6 @@ import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.exception.BoardException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +16,8 @@ public final class PseudoCastlingMoveGenerator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static List<CastlingMove> generateMoves(Board board, PieceColor color) throws BoardException {
+    public static List<CastlingMove> generateMoves(Board board, PieceColor color) {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
-        PieceColor enemyColor = color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
         Position king = BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color);
         List<Position> rooks = BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color);
         for (CastlingMove c : getMoves(color)) {

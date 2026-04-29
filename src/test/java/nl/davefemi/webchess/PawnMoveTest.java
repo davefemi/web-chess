@@ -20,7 +20,7 @@ import static org.springframework.test.util.AssertionErrors.*;
 
 
 @SpringBootTest
-public class PawnMoveTester {
+public class PawnMoveTest {
     private Game game;
     private Board board;
 
@@ -37,7 +37,7 @@ public class PawnMoveTester {
 
 
     @Test
-    public void illegalPawnMoveTest() throws MoveException, BoardException, GameException {
+    public void illegalPawnMoveTest() {
         Exception exception = assertThrows(MoveException.class, ()-> {
                     game.executeMove(PieceColor.WHITE, getSingleMove(2, 2, 2, 4));
                     game.executeMove(PieceColor.BLACK, getSingleMove(1, 7, 1, 5));
@@ -69,9 +69,9 @@ public class PawnMoveTester {
     @Test
     public void promotionFromIllegalPositionTest() throws MoveException, BoardException, GameException {
         setUpPromotionMoves(game);
-        Exception exception = assertThrows(MoveException.class, () ->{
-            game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(2,6,3, 7), PieceType.QUEEN));
-        });
+        Exception exception = assertThrows(MoveException.class, () ->
+            game.executeMove(PieceColor.WHITE,
+                    new PromotionMove(getSingleMove(2,6,3, 7), PieceType.QUEEN)));
 
         String expectedMessage = "up for promotion";
         String actualMessage = exception.getMessage();
@@ -81,9 +81,9 @@ public class PawnMoveTester {
 
         game.executeMove(PieceColor.WHITE, getSingleMove(2,6,3,7));
 
-        exception = assertThrows(MoveException.class, () ->{
-            game.executeMove(PieceColor.BLACK, new PromotionMove(getSingleMove(8,3,7, 2), PieceType.QUEEN));
-        });
+        exception = assertThrows(MoveException.class, () ->
+            game.executeMove(PieceColor.BLACK,
+                    new PromotionMove(getSingleMove(8,3,7, 2), PieceType.QUEEN)));
 
         expectedMessage = "up for promotion";
         actualMessage = exception.getMessage();

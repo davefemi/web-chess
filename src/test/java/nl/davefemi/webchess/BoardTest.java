@@ -21,7 +21,7 @@ import static org.springframework.test.util.AssertionErrors.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class BoardTester {
+public class BoardTest {
     private Game game;
     private Board board;
 
@@ -120,7 +120,7 @@ public class BoardTester {
 
     @Test
     public void kingCheckTest() throws BoardException, MoveException, GameException {
-        TreeMap positions = new TreeMap<>();
+        TreeMap <Position, Piece> positions = new TreeMap<>();
         for (int rank = 1; rank<9; rank++){
             for (int file = 1; file<9; file++){
                 positions.put(new Position (file, rank), null);
