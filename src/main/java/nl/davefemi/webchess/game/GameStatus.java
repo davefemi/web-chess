@@ -1,6 +1,6 @@
-package nl.davefemi.webchess.game.rule;
+package nl.davefemi.webchess.game;
 
-public enum Status {
+public enum GameStatus {
     ACTIVE("active"),
     CHECK("check"),
     CHECKMATE("check-mate"),
@@ -9,7 +9,7 @@ public enum Status {
 
 
     private final String status;
-    Status(String status){
+    GameStatus(String status){
         this.status=status;
     }
 
@@ -17,8 +17,8 @@ public enum Status {
         return status;
     }
 
-    public static Status fromString(String type){
-        for (Status s : values()){
+    public static GameStatus fromString(String type){
+        for (GameStatus s : values()){
             if (s.status.equalsIgnoreCase(type))
                 return s;
         }

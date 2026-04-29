@@ -5,26 +5,24 @@ import nl.davefemi.webchess.game.board.BoardScanner;
 import nl.davefemi.webchess.game.board.Position;
 import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
-import nl.davefemi.webchess.game.rule.MoveEvaluator;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.exception.BoardException;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CastlingMoveGenerator {
+public final class PseudoCastlingMoveGenerator {
 
-    private CastlingMoveGenerator(){
+    private PseudoCastlingMoveGenerator(){
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    public static List<CastlingMove> generateCastlingMoves(Board board, PieceColor color, boolean isActiveColor) throws BoardException {
+    public static List<CastlingMove> generateMoves(Board board, PieceColor color) throws BoardException {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
         PieceColor enemyColor = color == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
         Position king = BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color);
         List<Position> rooks = BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color);
-        for (CastlingMove c : getCastlingMoves(color)) {
+        for (CastlingMove c : getMoves(color)) {
             if (c.moveKing().from().equals(king)) {
                 int lowerFile  = Math.min(c.moveKing().from().file(), c.moveRook().from().file());
                 int higherFile = Math.max(c.moveKing().from().file(), c.moveRook().from().file());
@@ -42,14 +40,10 @@ public final class CastlingMoveGenerator {
                 }
             }
         }
-
-        if (isActiveColor) {
-            return MoveEvaluator.filterAgainstCheckAfterCastlingMove(board, pseudoMoves, enemyColor);
-        }
         return pseudoMoves;
     }
 
-    private static List<CastlingMove> getCastlingMoves(PieceColor color){
+    private static List<CastlingMove> getMoves(PieceColor color){
         List<CastlingMove>  moves = new ArrayList<>();
         int rank = 0;
         if (color == PieceColor.WHITE)

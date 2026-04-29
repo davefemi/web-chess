@@ -1,14 +1,11 @@
 package nl.davefemi.webchess;
 
-import nl.davefemi.webchess.game.board.Board;
-import nl.davefemi.webchess.game.board.Position;
+import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.game.IdGenerator;
 import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
-import nl.davefemi.webchess.game.board.PieceType;
-import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.rule.Status;
+import nl.davefemi.webchess.game.GameStatus;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
@@ -16,6 +13,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.TreeMap;
+
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +61,8 @@ public class BoardTester {
         game.executeMove(PieceColor.WHITE, getSingleMove(8,5,6,7));
 
         //Assert
-        assertTrue("King is check", game.getStatus(PieceColor.BLACK) == Status.CHECKMATE);
+        assertTrue("King is check-mate", game.getStatus(PieceColor.BLACK) == GameStatus.CHECKMATE);
+        assertTrue("White player is the winner", game.getStatus(PieceColor.WHITE) == GameStatus.WINNER);
     }
 
     @Test
@@ -114,7 +116,26 @@ public class BoardTester {
 
         //Assert
         assertTrue(actualMessage.contains(expectedMessage), "King has moved before");
+    }
 
+    @Test
+    public void kingCheckTest() throws BoardException, MoveException, GameException {
+        TreeMap positions = new TreeMap<>();
+        for (int rank = 1; rank<9; rank++){
+            for (int file = 1; file<9; file++){
+                positions.put(new Position (file, rank), null);
+            }
+        }
+        positions.put(new Position(1,8), new Piece(1, PieceType.ROOK, PieceColor.WHITE));
+        positions.put(new Position(4,8), new Piece(2, PieceType.QUEEN, PieceColor.BLACK));
+        positions.put(new Position(5,8), new Piece(3, PieceType.KING, PieceColor.BLACK));
+        positions.put(new Position(5,2), new Piece(4, PieceType.KING, PieceColor.WHITE));
+        positions.put(new Position(5,1), new Piece(5, PieceType.QUEEN, PieceColor.WHITE));
 
+        board = new Board(positions);
+
+        Game game = new Game(6, board, true, PieceColor.WHITE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+
+        game.executeMove(PieceColor.WHITE, getSingleMove(5,2, 4,2));
     }
 }

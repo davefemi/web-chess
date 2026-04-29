@@ -136,8 +136,8 @@ public class PawnMoveTester {
         assertEquals(PieceType.QUEEN, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
         assertEquals(PieceColor.WHITE, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
         assertTrue("King is check", MoveEvaluator
-                .isKingCheck(
-                        game.getCopyOfBoard(),
+                .isKingInCheck(
+                        game.getCopyOfBoard(), null,
                         BoardScanner.getCurrentSinglePiecePosition(
                                 board,
                                 PieceType.KING,

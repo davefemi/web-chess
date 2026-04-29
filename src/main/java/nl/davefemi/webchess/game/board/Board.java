@@ -32,6 +32,31 @@ public class Board {
         }
     }
 
+    public Position getPositionById(int id){
+        for (Piece p: positions.values()){
+            if (p.getId() == id){
+                for (Position pos : positions.keySet()) {
+                    if (positions.get(pos) == p)
+                        return pos;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Position> getPositionsByTypeAndColor(PieceType type, PieceColor color){
+        List<Position> foundPositions = new ArrayList<>();
+        for (Piece p: positions.values()){
+            if (p!=null && p.getType() == type && p.getColor() == color){
+                for (Position pos : positions.keySet()) {
+                    if (positions.get(pos) == p)
+                        foundPositions.add(pos);
+                }
+            }
+        }
+        return foundPositions;
+    }
+
     public boolean isBoardPositionOccupied(Position position){
         return positions.get(position) != null;
     }

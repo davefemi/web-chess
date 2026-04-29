@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.actions.Move;
 import nl.davefemi.webchess.game.record.MoveRecord;
-import nl.davefemi.webchess.game.rule.Status;
 import nl.davefemi.webchess.game.utility.MoveRecordBuilder;
 import nl.davefemi.webchess.game.rule.RuleEngine;
 import nl.davefemi.webchess.exception.BoardException;
@@ -12,6 +11,7 @@ import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import java.util.ArrayList;
 import java.util.List;
+import static nl.davefemi.webchess.game.GameStatus.*;
 
 @Slf4j
 public class Game {
@@ -71,16 +71,16 @@ public class Game {
         return turnGenerator.peek();
     }
 
-    public Status getStatus(PieceColor color) throws BoardException {
-        if (isCheckMate(color))
-            return Status.CHECKMATE;
-        if (isCheck(color))
-            return Status.CHECK;
-        if (isCheckMate(PieceColor.getOpponent(color)))
-            return Status.WINNER;
-        if (RuleEngine.getAllLegalMovesByPieceColor(this, color).isEmpty() && !isCheck(color))
-            return Status.STALEMATE;
-        return Status.ACTIVE;
+    public GameStatus getStatus(PieceColor color) throws BoardException {
+        if (isPlayerCheckMate(color))
+            return CHECKMATE;
+        if (isPlayerInCheck(color))
+            return CHECK;
+        if (isPlayerCheckMate(PieceColor.getOpponent(color)))
+            return WINNER;
+        if (RuleEngine.getAllLegalMovesByPieceColor(this, color).isEmpty() && !isPlayerInCheck(color))
+            return STALEMATE;
+        return ACTIVE;
     }
 
     public Board getCopyOfBoard() {
@@ -93,15 +93,15 @@ public class Game {
 
     public boolean executeMove(PieceColor color, Move move) throws GameException, MoveException, BoardException {
         if (!RuleEngine.isMoveAllowed(this, color, move)) {
-            if (isCheckMate(color))
+            if (isPlayerCheckMate(color))
                 throw new GameException(color + " is check mate");
-            if (isCheck(color))
+            if (isPlayerInCheck(color))
                 throw new MoveException(color + " is in check");
             throw new MoveException("Illegal move");
         }
         Piece p = gameBoard.applyValidatedMove(pieceIdGenerator, move);
         turnGenerator.nextTurn();
-        if (isCheckMate(getPlayerTurn())) {
+        if (isPlayerCheckMate(getPlayerTurn())) {
             gameActive = false;
         }
         updateMoveHistory(move, color, p);
@@ -114,7 +114,9 @@ public class Game {
     }
 
     public MoveRecord getLastMove(){
-        return moveHistory.getLast();
+        if (!moveHistory.isEmpty())
+            return moveHistory.getLast();
+        return null;
     }
 
     public List<MoveRecord> getMoveHistory(){
@@ -139,12 +141,12 @@ public class Game {
         return originalRooks;
     }
 
-    private boolean isCheck(PieceColor color) throws BoardException {
-        return RuleEngine.isCheck(this, color);
+    private boolean isPlayerInCheck(PieceColor color) throws BoardException {
+        return RuleEngine.isKingInCheck(this, color);
     }
 
-    private boolean isCheckMate(PieceColor color) throws BoardException {
-        return RuleEngine.isCheckMate(this, color);
+    private boolean isPlayerCheckMate(PieceColor color) throws BoardException {
+        return RuleEngine.isPlayerCheckMate(this, color);
     }
 
     private void updateMoveHistory(Move move, PieceColor color, Piece capturedPiece){

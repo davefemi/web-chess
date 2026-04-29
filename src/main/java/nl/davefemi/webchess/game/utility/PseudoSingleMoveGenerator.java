@@ -5,31 +5,29 @@ import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.board.BoardScanner;
 import nl.davefemi.webchess.game.board.Position;
 import nl.davefemi.webchess.game.actions.SingleMove;
-import nl.davefemi.webchess.game.record.MoveRecord;
 import nl.davefemi.webchess.game.rule.MoveEvaluator;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.exception.BoardException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class MoveGenerator {
+public final class PseudoSingleMoveGenerator {
 
-    public static List<SingleMove> generateMoves(Board board, Move lastMove, PieceColor color, boolean isActiveColor) throws BoardException {
+    public static List<SingleMove> generateMoves(Board board, Move lastMove, PieceColor color) throws BoardException {
         List<SingleMove> moves = new ArrayList<>();
         PieceColor enemyColor = PieceColor.getOpponent(color);
-        moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color), enemyColor, isActiveColor));
-        moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.QUEEN, color), enemyColor, isActiveColor));
-        moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color), enemyColor, isActiveColor));
-        moves.addAll(getRookMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color), enemyColor, isActiveColor));
-        moves.addAll(getKnightMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.KNIGHT, color), enemyColor, isActiveColor));
-        moves.addAll(getPawnMoves(board, lastMove, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color), enemyColor, isActiveColor));
+        moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color)));
+        moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.QUEEN, color)));
+        moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color)));
+        moves.addAll(getRookMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color)));
+        moves.addAll(getKnightMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.KNIGHT, color)));
+        moves.addAll(getPawnMoves(board, lastMove, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color)));
         return moves;
     }
 
-    private static List<SingleMove> getKingMoves(Board board, Position position, PieceColor enemyColor, boolean isActiveColor) throws BoardException {
+    private static List<SingleMove> getKingMoves(Board board, Position position) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (position != null) {
             for (int file = Math.max(position.file() - 1, 1); file <= Math.min(position.file() + 1, 8); file++) {
@@ -39,25 +37,22 @@ public final class MoveGenerator {
                         pseudoMoves.add(new SingleMove(position, newPos));
                 }
             }
-            if (isActiveColor) {
-                return MoveEvaluator.filterAgainstCheckAfterMove(board, pseudoMoves, enemyColor);
-            }
         }
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getQueenMoves(Board board, List<Position> positions, PieceColor enemyColor, boolean isActiveColor) throws BoardException {
+    private static List<SingleMove> getQueenMoves(Board board, List<Position> positions) {
         List<SingleMove> legalMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
-                legalMoves.addAll(getBishopMoves(board, Collections.singletonList(position), enemyColor, isActiveColor));
-                legalMoves.addAll(getRookMoves(board, Collections.singletonList(position), enemyColor, isActiveColor));
+                legalMoves.addAll(getBishopMoves(board, Collections.singletonList(position)));
+                legalMoves.addAll(getRookMoves(board, Collections.singletonList(position)));
             }
         }
         return legalMoves;
     }
 
-    private static List<SingleMove> getBishopMoves(Board board, List<Position> positions, PieceColor enemyColor, boolean isActiveColor) throws BoardException {
+    private static List<SingleMove> getBishopMoves(Board board, List<Position> positions) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -99,13 +94,10 @@ public final class MoveGenerator {
                 }
             }
         }
-        if (isActiveColor) {
-            return MoveEvaluator.filterAgainstCheckAfterMove(board, pseudoMoves, enemyColor);
-        }
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getKnightMoves(Board board, List<Position> positions, PieceColor enemyColor, boolean isActiveColor) throws BoardException {
+    private static List<SingleMove> getKnightMoves(Board board, List<Position> positions) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position p : positions) {
@@ -123,13 +115,10 @@ public final class MoveGenerator {
                 }
             }
         }
-        if (isActiveColor) {
-            return MoveEvaluator.filterAgainstCheckAfterMove(board, pseudoMoves, enemyColor);
-        }
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getRookMoves(Board board, List<Position> positions, PieceColor enemyColor, boolean isActiveColor) throws BoardException {
+    private static List<SingleMove> getRookMoves(Board board, List<Position> positions) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -155,14 +144,11 @@ public final class MoveGenerator {
                 }
             }
         }
-        if (isActiveColor) {
-            return MoveEvaluator.filterAgainstCheckAfterMove(board, pseudoMoves, enemyColor);
-        }
         return pseudoMoves;
     }
 
     //TODO implement en passant moves
-    private static List<SingleMove> getPawnMoves(Board board, Move lastMove,List<Position> positions, PieceColor enemyColor, boolean isActiveColor) throws BoardException {
+    private static List<SingleMove> getPawnMoves(Board board, Move lastMove,List<Position> positions) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -176,9 +162,10 @@ public final class MoveGenerator {
                         if (position.file() + 1 < 9)
                             newPos.add(new Position(position.file() + 1, position.rank() + 1));
                     }
-                    if (position.rank() == 2)
+                    if (position.rank() == 2) {
                         if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, onePositionUp))
                             newPos.add(new Position(position.file(), position.rank() + 2));
+                    }
                 }
                 if (board.getPieceAt(position).getColor() == PieceColor.BLACK) {
                     Position onePositionDown = new Position(position.file(), position.rank() - 1);
@@ -199,9 +186,12 @@ public final class MoveGenerator {
                 }
             }
         }
-        if (isActiveColor) {
-            return MoveEvaluator.filterAgainstCheckAfterMove(board, pseudoMoves, enemyColor);
-        }
         return pseudoMoves;
+    }
+
+    public static Board applyFictitiousMove(Board board, Move move) throws BoardException {
+        Board newBoard = new Board(board);
+        newBoard.applyValidatedMove(move);
+        return newBoard;
     }
 }
