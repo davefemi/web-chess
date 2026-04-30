@@ -107,6 +107,7 @@ public final class MoveEvaluator {
         return legalMoves;
     }
 
+    //TODO Make sure that method also reconciles with potential moves that block opponent from attacking player's King
     static boolean isKingInCheck(Board board, Move lastMove, Position kingPosition, PieceColor opposingColor) {
         for (SingleMove m: PseudoSingleMoveGenerator.generateMoves(board, lastMove, opposingColor)){
             if (m.to().equals(kingPosition))

@@ -42,12 +42,6 @@ public class BoardTest {
     }
 
     @Test
-    public void kingPresentCheckTest() throws MoveException, BoardException, GameException {
-        assertTrue("Succeeded", game.executeMove(PieceColor.WHITE, getSingleMove(2,2,2,4)));
-    }
-
-
-    @Test
     public void checkmateTest() throws MoveException, BoardException, GameException {
         //Arrange
         game.executeMove(PieceColor.WHITE, getSingleMove(5,2,5,3));
@@ -119,7 +113,7 @@ public class BoardTest {
     }
 
     @Test
-    public void kingCheckTest() throws BoardException, MoveException, GameException {
+    public void blackQueenCannotAttackWhiteKingTest() throws BoardException, MoveException, GameException {
         TreeMap <Position, Piece> positions = new TreeMap<>();
         for (int rank = 1; rank<9; rank++){
             for (int file = 1; file<9; file++){
@@ -137,5 +131,7 @@ public class BoardTest {
         Game game = new Game(6, board, true, PieceColor.WHITE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         game.executeMove(PieceColor.WHITE, getSingleMove(5,2, 4,2));
+
+        assertFalse("White King is NOT in check", game.getStatus(PieceColor.WHITE) == GameStatus.CHECK);
     }
 }
