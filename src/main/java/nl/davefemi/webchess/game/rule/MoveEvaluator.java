@@ -142,7 +142,7 @@ public final class MoveEvaluator {
             return true;
         if (isEnpassantLegal ( board,  lastMove,  oldPos,  newPos))
             return true;
-        return (!board.isBoardPositionOccupied(newPos) && oldPos.file() == newPos.file());
+        return !board.isBoardPositionOccupied(newPos) && oldPos.file() == newPos.file();
     }
 
     private static boolean isEnpassantLegal(Board board, Move lastMove, Position oldPos, Position newPos){
