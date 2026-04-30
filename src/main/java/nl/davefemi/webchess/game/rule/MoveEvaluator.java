@@ -1,6 +1,8 @@
 package nl.davefemi.webchess.game.rule;
 
+import nl.davefemi.webchess.exception.TypeException;
 import nl.davefemi.webchess.game.Game;
+import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.board.Position;
 import nl.davefemi.webchess.game.actions.CastlingMove;
@@ -46,6 +48,26 @@ public final class MoveEvaluator {
             return true;
         }
         throw new MoveException("Invalid positions");
+    }
+
+    static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException {
+        PieceType newPieceType = move.newPieceType();
+        Position oldPawnPos = move.move().from();
+        Piece piece = board.getPieceAt(oldPawnPos);
+        if (piece == null){
+            throw new MoveException("There is no piece at the position to be moved");
+        }
+        if (newPieceType == null)
+            throw new TypeException("For promotion you have to specify a valid replacement type");
+        PieceColor color = board.getPieceAt(oldPawnPos).getColor();
+        if (board.getPieceAt(oldPawnPos).getType() != PieceType.PAWN)
+            throw new TypeException("Piece to be replaced is not a pawn");
+        if (color == PieceColor.WHITE && oldPawnPos.rank() != 7 ||
+                color == PieceColor.BLACK && oldPawnPos.rank() != 2)
+            throw new MoveException("This piece is not up for promotion");
+        if (newPieceType == PieceType.PAWN || newPieceType == PieceType.KING)
+            throw new TypeException("Replacement piece cannot be of type " + newPieceType.getLabel());
+        return true;
     }
 
     static List<Move> evaluateIfKingIsInCheckAfterMove(Game game, List<Move> pseudoMoves, PieceColor player) throws BoardException {
@@ -118,6 +140,27 @@ public final class MoveEvaluator {
                 board.getPieceAt(newPos).getColor() != board.getPieceAt(oldPos).getColor() &&
                 oldPos.file() != newPos.file())
             return true;
+        if (isEnpassantLegal ( board,  lastMove,  oldPos,  newPos))
+            return true;
         return (!board.isBoardPositionOccupied(newPos) && oldPos.file() == newPos.file());
+    }
+
+    private static boolean isEnpassantLegal(Board board, Move lastMove, Position oldPos, Position newPos){
+        boolean newFileDifferenceOfOne = newPos.file() - oldPos.file() == Math.abs(1);
+        if (newPos.rank() == 6 && oldPos.rank() == 5 && newFileDifferenceOfOne &&
+                lastMove instanceof SingleMove singleMove &&
+                singleMove.to().rank() == 5 && singleMove.from().rank() == 7
+                && singleMove.to().file() == newPos.file()){
+                    Piece piece = board.getPieceAt(singleMove.to());
+                    return piece.getType() == PieceType.PAWN && piece.getColor() != board.getPieceAt(oldPos).getColor();
+                }
+        if (newPos.rank() == 3 && oldPos.rank() == 4 && newFileDifferenceOfOne &&
+                lastMove instanceof SingleMove singleMove &&
+                singleMove.to().rank() == 4 && singleMove.from().rank() == 2
+                && singleMove.to().file() == newPos.file()){
+                    Piece piece = board.getPieceAt(singleMove.to());
+                    return piece.getType() == PieceType.PAWN && piece.getColor() != board.getPieceAt(oldPos).getColor();
+                }
+        return false;
     }
 }

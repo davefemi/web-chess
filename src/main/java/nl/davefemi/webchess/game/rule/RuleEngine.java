@@ -32,7 +32,7 @@ public final class RuleEngine {
                 }
         }
         if (move instanceof PromotionMove m) {
-            if (!PromotionMoveEvaluator.isPromotionMoveLegal(game.getCopyOfBoard(), m))
+            if (!MoveEvaluator.isPromotionMoveLegal(game.getCopyOfBoard(), m))
                 throw new MoveException("Promotion not allowed");
             move = m.move();
         }

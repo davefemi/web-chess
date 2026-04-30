@@ -136,4 +136,14 @@ public class PawnMoveTest {
 
         assertEquals(30, game.getCopyOfBoard().piecesOnBoard(), "Number of pieces");
     }
+
+    @Test
+    public void enPassantTest() throws MoveException, BoardException, GameException {
+        game.executeMove(PieceColor.WHITE, getSingleMove(1,2,1,3));
+        game.executeMove(PieceColor.BLACK, getSingleMove(6,7,6,5));
+        game.executeMove(PieceColor.WHITE, getSingleMove(1,3,1,4));
+        game.executeMove(PieceColor.BLACK, getSingleMove(6,5,6,4));
+        game.executeMove(PieceColor.WHITE, getSingleMove(7,2,7,4));
+        game.executeMove(PieceColor.BLACK, getSingleMove(6,4,7,3));
+    }
 }

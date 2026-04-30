@@ -164,6 +164,12 @@ public final class PseudoSingleMoveGenerator {
                         if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, onePositionUp))
                             newPos.add(new Position(position.file(), position.rank() + 2));
                     }
+                    if (position.rank() == 5){
+                        for (int file = Math.max(1, position.file()-1); file <= Math.min(8, position.file()+1); file++){
+                            Position enPassant = new Position(file, position.rank()+1);
+                            if (enPassant.file() != position.file())
+                                newPos.add(enPassant);                        }
+                    }
                 }
                 if (board.getPieceAt(position).getColor() == PieceColor.BLACK) {
                     Position onePositionDown = new Position(position.file(), position.rank() - 1);
@@ -177,6 +183,13 @@ public final class PseudoSingleMoveGenerator {
                     if (position.rank() == 7)
                         if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, onePositionDown))
                             newPos.add(new Position(position.file(), position.rank() - 2));
+                    if (position.rank() == 4){
+                        for (int file = Math.max(1, position.file()-1); file <= Math.min(8, position.file()+1); file++){
+                            Position enPassant = new Position(file, position.rank()-1);
+                            if (enPassant.file() != position.file())
+                                newPos.add(enPassant);
+                        }
+                    }
                 }
                 for (Position p : newPos) {
                     if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, p))
