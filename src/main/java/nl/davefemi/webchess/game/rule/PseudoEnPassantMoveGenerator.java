@@ -9,28 +9,28 @@ import java.util.List;
 public class PseudoEnPassantMoveGenerator {
 
     static List<EnPassantMove> generateMoves(Board board, Move lastMove, PieceColor color) {
-        return getMoves(board, lastMove, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color));
+        return getMoves(board, lastMove, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color), color);
     }
 
-    private static List<EnPassantMove> getMoves(Board board, Move lastMove, List<Position> positions) {
+    private static List<EnPassantMove> getMoves(Board board, Move lastMove, List<Position> positions, PieceColor color) {
         List<EnPassantMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
-                if (board.getPieceAt(position).getColor() == PieceColor.WHITE) {
+                if (color == PieceColor.WHITE) {
                     int startingRank = 5;
                     int destinationRank = position.rank()+1;
-                    pseudoMoves.addAll(getEnpassantMoves(board, lastMove, position, startingRank, destinationRank));
+                    pseudoMoves.addAll(getEnpassantMoves(board, lastMove, position, startingRank, destinationRank, color));
                 }
-                if (board.getPieceAt(position).getColor() == PieceColor.BLACK) {
+                if (color == PieceColor.BLACK) {
                     int startingRank = 4;
                     int destinationRank = position.rank()-1;
-                    pseudoMoves.addAll(getEnpassantMoves(board, lastMove, position, startingRank, destinationRank));                  }
+                    pseudoMoves.addAll(getEnpassantMoves(board, lastMove, position, startingRank, destinationRank, color));                  }
                 }
             }
         return pseudoMoves;
     }
 
-    private static List<EnPassantMove> getEnpassantMoves(Board board, Move lastMove, Position position, int startingRank, int destinationRank){
+    private static List<EnPassantMove> getEnpassantMoves(Board board, Move lastMove, Position position, int startingRank, int destinationRank, PieceColor color){
         List<EnPassantMove> pseudoMoves = new ArrayList<>();
         List<Position> newPos = new ArrayList<>();
         if (position.rank() == startingRank){
@@ -41,7 +41,7 @@ public class PseudoEnPassantMoveGenerator {
             }
         }
         for (Position p : newPos) {
-            if (MoveEvaluator.isEnpassantLegal(board, lastMove, position, p))
+            if (MoveEvaluator.isEnpassantLegal(board, lastMove, position, p, color))
                 pseudoMoves.add(new EnPassantMove(position, p));
         }
         return pseudoMoves;

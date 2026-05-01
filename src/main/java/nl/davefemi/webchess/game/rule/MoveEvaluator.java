@@ -128,21 +128,19 @@ public final class MoveEvaluator {
         return !board.isBoardPositionOccupied(newPos) && oldPos.file() == newPos.file();
     }
 
-    static boolean isEnpassantLegal(Board board, Move lastMove, Position oldPos, Position newPos){
+    static boolean isEnpassantLegal(Board board, Move lastMove, Position oldPos, Position newPos, PieceColor color){
         boolean newFileDifferenceOfOne = newPos.file() - oldPos.file() == Math.abs(1);
-        if (newPos.rank() == 6 && oldPos.rank() == 5 && newFileDifferenceOfOne &&
+        boolean white = color == PieceColor.WHITE;
+        int startingRank = white ? 5 : 4;
+        int newRank = white ? 6 : 3;
+        int startingRankOpponent = white ? 7 : 2;
+        int newRankOpponent = white ? 5 : 4;
+        if (newPos.rank() == newRank && oldPos.rank() == startingRank && newFileDifferenceOfOne &&
                 lastMove instanceof SingleMove singleMove &&
-                singleMove.to().rank() == 5 && singleMove.from().rank() == 7
+                singleMove.to().rank() == newRankOpponent && singleMove.from().rank() == startingRankOpponent
                 && singleMove.to().file() == newPos.file()){
                     Piece piece = board.getPieceAt(singleMove.to());
-                    return piece.getType() == PieceType.PAWN && piece.getColor() != board.getPieceAt(oldPos).getColor();
-                }
-        if (newPos.rank() == 3 && oldPos.rank() == 4 && newFileDifferenceOfOne &&
-                lastMove instanceof SingleMove singleMove &&
-                singleMove.to().rank() == 4 && singleMove.from().rank() == 2
-                && singleMove.to().file() == newPos.file()){
-                    Piece piece = board.getPieceAt(singleMove.to());
-                    return piece.getType() == PieceType.PAWN && piece.getColor() != board.getPieceAt(oldPos).getColor();
+                    return piece.getType() == PieceType.PAWN && piece.getColor() != color;
                 }
         return false;
     }
