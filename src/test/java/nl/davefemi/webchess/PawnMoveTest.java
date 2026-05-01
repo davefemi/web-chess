@@ -9,12 +9,16 @@ import nl.davefemi.webchess.game.actions.EnPassantMove;
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
+import nl.davefemi.webchess.game.rule.RuleEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.*;
+import static org.assertj.core.api.Assertions.*;
 
 
 
@@ -36,6 +40,20 @@ public class PawnMoveTest {
         return new EnPassantMove(new Position(file_start, rank_start),new Position(file_end, rank_end));
     }
 
+
+    @ParameterizedTest
+    @CsvSource({
+            "1,2,0,3, false",
+            "2,2,2,4, true",
+            "2,2,2,3, true",
+            "2,2,2,1, false",
+            "2,2,3,2, false",
+            "2,2,2,5, false",
+            "2,2,2,5, false"
+    })
+    public void startingMoveTest(int fromFile, int fromRank, int toFile, int toRank, boolean expected) throws MoveException, BoardException, GameException {
+        assertThat(RuleEngine.isMoveAllowed(game, PieceColor.WHITE, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
+    }
 
     @Test
     public void illegalPawnMoveTest() {

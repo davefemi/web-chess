@@ -21,7 +21,7 @@ public final class PseudoSingleMoveGenerator {
         moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color)));
         moves.addAll(getRookMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color)));
         moves.addAll(getKnightMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.KNIGHT, color)));
-        moves.addAll(getPawnMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color)));
+        moves.addAll(getPawnMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color), color));
         return moves;
     }
 
@@ -121,69 +121,62 @@ public final class PseudoSingleMoveGenerator {
         if (!positions.isEmpty()) {
             for (Position position : positions) {
                 for (int file = Math.max(position.file() - 1, 1); file >= 1; file--) {
-                    Position newPos = new Position(file, position.rank());
-                    if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
-                    pseudoMoves.add(new SingleMove(position, newPos));
+                    if (!rookMoveHasBeenGenerated(board, file, position.rank(), position, pseudoMoves)) break;
                 }
                 for (int file = Math.min(position.file() + 1, 8); file <= 8; file++) {
-                    Position newPos = new Position(file, position.rank());
-                    if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
-                    pseudoMoves.add(new SingleMove(position, newPos));
+                    if (!rookMoveHasBeenGenerated(board, file, position.rank(), position, pseudoMoves)) break;
                 }
                 for (int rank = Math.max(position.rank() - 1, 1); rank >= 1; rank--) {
-                    Position newPos = new Position(position.file(), rank);
-                    if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
-                    pseudoMoves.add(new SingleMove(position, newPos));
+                    if (!rookMoveHasBeenGenerated(board, position.file(), rank, position, pseudoMoves)) break;
                 }
                 for (int rank = Math.min(position.rank() + 1, 8); rank <= 8; rank++) {
-                    Position newPos = new Position(position.file(), rank);
-                    if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
-                    pseudoMoves.add(new SingleMove(position, newPos));
+                    if (!rookMoveHasBeenGenerated(board, position.file(), rank, position, pseudoMoves)) break;
                 }
             }
         }
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getPawnMoves(Board board,List<Position> positions) {
+    //TODO Test case to see if the last addition to pseudoMoves is redundant
+    private static boolean rookMoveHasBeenGenerated(Board board, int file, int rank, Position position, List<SingleMove> pseudoMoves){
+        Position newPos = new Position(file, rank);
+        if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) return false;
+        pseudoMoves.add(new SingleMove(position, newPos));
+        return true;
+    }
+
+    private static List<SingleMove> getPawnMoves(Board board,List<Position> positions, PieceColor color) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
-                List<Position> newPos = new ArrayList<>();
-                if (board.getPieceAt(position).getColor() == PieceColor.WHITE) {
-                    Position onePositionUp = new Position(position.file(), position.rank() + 1);
-                    if (position.rank() < 8) {
-                        newPos.add(onePositionUp);
-                        if (position.file() - 1 > 0)
-                            newPos.add(new Position(position.file() - 1, position.rank() + 1));
-                        if (position.file() + 1 < 9)
-                            newPos.add(new Position(position.file() + 1, position.rank() + 1));
-                    }
-                    if (position.rank() == 2) {
-                        if (MoveEvaluator.isPawnMoveLegal(board, position, onePositionUp))
-                            newPos.add(new Position(position.file(), position.rank() + 2));
-                    }
-                }
-                if (board.getPieceAt(position).getColor() == PieceColor.BLACK) {
-                    Position onePositionDown = new Position(position.file(), position.rank() - 1);
-                    if (position.rank() > 1) {
-                        newPos.add(onePositionDown);
-                        if (position.file() - 1 > 0)
-                            newPos.add(new Position(position.file() - 1, position.rank() - 1));
-                        if (position.file() + 1 < 9)
-                            newPos.add(new Position(position.file() + 1, position.rank() - 1));
-                    }
-                    if (position.rank() == 7)
-                        if (MoveEvaluator.isPawnMoveLegal(board, position, onePositionDown))
-                            newPos.add(new Position(position.file(), position.rank() - 2));
-                }
-                for (Position p : newPos) {
+                boolean isWhite = color == PieceColor.WHITE;
+                int movement = isWhite ? 1 : -1;
+                int promotionRank = isWhite ? 8 : 1;
+                int startingRank = isWhite ? 2: 7;
+                for (Position p : generatePawnMoves(board, position, movement, promotionRank, startingRank)) {
                     if (MoveEvaluator.isPawnMoveLegal(board, position, p))
                         pseudoMoves.add(new SingleMove(position, p));
                 }
             }
         }
         return pseudoMoves;
+    }
+
+    private static List<Position> generatePawnMoves(Board board, Position position, int movement, int promotionRank, int startingRank) {
+        List<Position> newPos = new ArrayList<>();
+        Position nextRank = new Position(position.file(), position.rank() + movement);
+        if (position.rank() != promotionRank) {
+            newPos.add(nextRank);
+            if (position.file() - 1 > 0)
+                newPos.add(new Position(position.file() - 1, position.rank() + movement));
+            if (position.file() + 1 < 9)
+                newPos.add(new Position(position.file() + 1, position.rank() + movement));
+        }
+        if (position.rank() == startingRank) {
+            if (MoveEvaluator.isPawnMoveLegal(board, position, nextRank))
+                newPos.add(new Position(position.file(), position.rank() + movement * 2));
+        }
+        return newPos;
     }
 
     static Board applyFictitiousMove(Board board, Move move) throws BoardException {

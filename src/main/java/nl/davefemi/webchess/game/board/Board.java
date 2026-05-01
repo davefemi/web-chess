@@ -76,8 +76,8 @@ public class Board {
             updatePiecePositions(moveRook);
             return null;
         }
-        if (move instanceof PromotionMove(SingleMove pawnMove, PieceType newPiece)){
-            return promotePawnTo(pieceIdGenerator, pawnMove, newPiece);
+        if (move instanceof PromotionMove(SingleMove pawnMove, PieceType newPiece) ){
+            return promotePawnTo(pieceIdGenerator.getNextId(), pawnMove, newPiece);
         }
         if (move instanceof EnPassantMove m)
             return applyEnPassantMove(m);
@@ -185,6 +185,12 @@ public class Board {
     }
 
     private Piece updatePiecePositions(SingleMove move) throws BoardException{
+        if (move == null)
+            return null;
+        if (!positions.containsKey(move.from()))
+            throw new BoardException("Position " + move.from().toString() + " does not exist");
+        if (!positions.containsKey(move.to()))
+            throw new BoardException("Position " + move.from().toString() + " does not exist");
         if (positions.get(move.from()) == null)
             throw new BoardException("There is no piece at " + move.from().toString());
         Piece p = positions.get(move.to());
@@ -193,11 +199,15 @@ public class Board {
         return p;
     }
 
-    private Piece promotePawnTo(IdGenerator pieceIdGenerator, SingleMove pawnMove, PieceType pieceType) throws BoardException {
+    private Piece promotePawnTo(int id, SingleMove pawnMove, PieceType pieceType) throws BoardException {
+        for (Piece t : positions.values()) {
+            if (t != null && t.getId() == id)
+                throw new BoardException("New id cannot already exist");
+        }
         Piece p = positions.get(pawnMove.from());
         PieceColor color = p.getColor();
         updatePiecePositions(pawnMove);
-        positions.put(pawnMove.to(), new Piece(pieceIdGenerator.getNextId(), pieceType, color));
+        positions.put(pawnMove.to(), new Piece(id, pieceType, color));
         return p;
     }
 
