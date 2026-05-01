@@ -49,7 +49,7 @@ public class GameSessionService {
         Player player = session.createPlayer();
         session.startSession();
         storeSession(session);
-        return sessionResponseMapper.mapToDTO(session, player.getPlayerColor().getColor(),"Successfully joined session");
+        return sessionResponseMapper.mapToDTO(session, player.getPlayingColor().getColor(),"Successfully joined session");
     }
 
     public SessionResponseDTO endGame(String sessionId) throws FileNotFoundException, SessionException, BoardException {
@@ -92,7 +92,7 @@ public class GameSessionService {
         GameSession session = retrieveSession(sessionId);
         for (Player p : session.getPlayers()){
             if (p.getId().toString().equals(playerId)) {
-                return Pair.of(p.getPlayerColor(), session);
+                return Pair.of(p.getPlayingColor(), session);
             }
         }
         throw new SessionException("This player does not belong to this session");

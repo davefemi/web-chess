@@ -70,7 +70,7 @@ public class Board {
         return new ArrayList<>(this.positions.keySet());
     }
 
-    public Piece applyValidatedMove(IdGenerator pieceIdGenerator, Move move) throws BoardException {
+    public synchronized Piece applyValidatedMove(IdGenerator pieceIdGenerator, Move move) throws BoardException {
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
             updatePiecePositions((moveKing));
             updatePiecePositions(moveRook);
@@ -84,7 +84,7 @@ public class Board {
         return updatePiecePositions((SingleMove) move);
     }
 
-    public Piece applyValidatedMove(Move move) throws BoardException {
+    public synchronized Piece applyValidatedMove(Move move) throws BoardException {
         if (move instanceof PromotionMove)
             throw new IllegalArgumentException("New piece MUST have an id");
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){

@@ -6,18 +6,18 @@ import java.util.UUID;
 
 public class Player {
     private final UUID id;
-    private final PieceColor playerColor;
+    private final PieceColor playingColor;
 
-    public Player(UUID playerId, PieceColor playerColor){
+    public Player(UUID playerId, PieceColor playingColor){
         this.id = playerId;
-        this.playerColor = playerColor;
+        this.playingColor = playingColor;
     }
 
     public UUID getId(){
         return id;
     }
 
-    public PieceColor getPlayerColor(){
-        return playerColor;
+    public PieceColor getPlayingColor(){
+        return playingColor;
     }
 }

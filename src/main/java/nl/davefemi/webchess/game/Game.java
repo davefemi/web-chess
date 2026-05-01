@@ -99,13 +99,15 @@ public class Game {
                 throw new MoveException(color + " is in check");
             throw new MoveException("Illegal move");
         }
-        Piece p = gameBoard.applyValidatedMove(pieceIdGenerator, move);
-        turnGenerator.nextTurn();
-        if (isPlayerCheckMate(getPlayerTurn())) {
-            gameActive = false;
-        }
-        updateMoveHistory(move, color, p);
-//        log.info(getLastMove().toString());
+        synchronized (this) {
+            Piece p = gameBoard.applyValidatedMove(pieceIdGenerator, move);
+            turnGenerator.nextTurn();
+            if (isPlayerCheckMate(getPlayerTurn())) {
+                gameActive = false;
+            }
+                updateMoveHistory(move, color, p);
+                log.info(getLastMove().toString());
+            }
         return true;
     }
 
@@ -149,7 +151,7 @@ public class Game {
         return RuleEngine.isPlayerCheckMate(this, color);
     }
 
-    private void updateMoveHistory(Move move, PieceColor color, Piece capturedPiece){
+    private synchronized void updateMoveHistory(Move move, PieceColor color, Piece capturedPiece){
         if (capturedPiece != null)
             capturedPieces.add(capturedPiece);
         moveHistory.add(MoveRecordBuilder.getMoveRecord(getCopyOfBoard(), move, color, capturedPiece));

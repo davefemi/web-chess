@@ -1,17 +1,14 @@
-package nl.davefemi.webchess;
+package nl.davefemi.webchess.game;
 
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
-import nl.davefemi.webchess.game.Game;
-import nl.davefemi.webchess.game.GameStatus;
 import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +17,6 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 
-@SpringBootTest
 public class KingMoveTest {
     private Game game;
     private Board board ;

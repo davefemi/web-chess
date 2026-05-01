@@ -65,7 +65,7 @@ public class GameSession {
         if (players.size() > 1 )
             throw new SessionException("Amount of players possible exceeded");
         if (players.size() == 1){
-            PieceColor color = PieceColor.getOpponent(players.getLast().getPlayerColor());
+            PieceColor color = PieceColor.getOpponent(players.getLast().getPlayingColor());
             player = new Player(UUID.randomUUID(), color);
             players.add(player);
             return player;
@@ -95,8 +95,8 @@ public class GameSession {
         if (players.size() > 1 )
             throw new SessionException("Amount of players possible exceeded");
         for (Player p : players) {
-            if (p.getPlayerColor() == player.getPlayerColor())
-                throw new SessionException(player.getPlayerColor() + " is already taken");
+            if (p.getPlayingColor() == player.getPlayingColor())
+                throw new SessionException(player.getPlayingColor() + " is already taken");
             if (p.getId() == player.getId())
                 throw new SessionException("Player already joined");
         }

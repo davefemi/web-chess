@@ -32,7 +32,7 @@ public class SessionResponseMapper {
         SessionInvitationDTO dto = new SessionInvitationDTO();
         dto.setSessionId(session.getSessionId().toString());
         dto.setPlayerId(player.getId().toString());
-        dto.setPlayerColor(player.getPlayerColor().getColor());
+        dto.setPlayerColor(player.getPlayingColor().getColor());
         dto.setInviteUrl(inviteUrl);
         return dto;
     }

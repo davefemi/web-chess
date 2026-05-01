@@ -1,10 +1,8 @@
-package nl.davefemi.webchess;
+package nl.davefemi.webchess.game;
 
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
-import nl.davefemi.webchess.game.Game;
-import nl.davefemi.webchess.game.GameStatus;
 import nl.davefemi.webchess.game.actions.EnPassantMove;
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
@@ -14,15 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.assertj.core.api.Assertions.*;
 
-
-
-@SpringBootTest
 public class PawnMoveTest {
     private Game game;
 

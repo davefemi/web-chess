@@ -1,21 +1,15 @@
-package nl.davefemi.webchess;
+package nl.davefemi.webchess.game;
 
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.board.*;
-import nl.davefemi.webchess.game.Game;
-import nl.davefemi.webchess.game.IdGenerator;
 import nl.davefemi.webchess.game.actions.SingleMove;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatException;
 
-
-@SpringBootTest
 public class BoardTest {
     private Game game;
     private Board board;
@@ -28,7 +22,6 @@ public class BoardTest {
 
     }
 
-    @AfterEach
     public void tearDown(){
     }
 

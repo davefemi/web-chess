@@ -36,7 +36,7 @@ public class GameSessionMapper {
         for (Player player : players){
             PlayerEntity entity = new PlayerEntity();
             entity.setId(player.getId().toString());
-            entity.setPlayerColor(player.getPlayerColor().getColor());
+            entity.setPlayerColor(player.getPlayingColor().getColor());
             entities.add(entity);
         }
         return entities;
