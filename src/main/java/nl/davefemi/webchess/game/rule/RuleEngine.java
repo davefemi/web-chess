@@ -1,11 +1,8 @@
 package nl.davefemi.webchess.game.rule;
 
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.Game;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
@@ -44,16 +41,17 @@ public final class RuleEngine {
         Board board = game.getCopyOfBoard();
         Move lastMove = null;
         if (game.getLastMove() != null)
-            lastMove = game.getLastMove().getMove();
-        moves.addAll(PseudoSingleMoveGenerator.generateMoves(board, lastMove, color));
+            lastMove = game.getLastMove();
+        moves.addAll(PseudoSingleMoveGenerator.generateMoves(board, color));
         moves.addAll(PseudoCastlingMoveGenerator.generateMoves(board, color));
+        moves.addAll(PseudoEnPassantMoveGenerator.generateMoves(board, lastMove, color));
         return MoveEvaluator.evaluateIfKingIsInCheckAfterMove(game, moves, color);
     }
 
-    public static boolean isKingInCheck(Game game, PieceColor color) {
-        return MoveEvaluator.isKingInCheck(game.getCopyOfBoard(), null,
+    public static boolean isKingInCheck(Game game, PieceColor color) throws BoardException {
+        return MoveEvaluator.isKingInCheck(game.getCopyOfBoard(), game.getLastMove(),
                 BoardScanner.getCurrentSinglePiecePosition(game.getCopyOfBoard(), PieceType.KING, color),
-                PieceColor.getOpponent(color));
+                color);
     }
 
     public static boolean isPlayerCheckMate(Game game, PieceColor color) throws BoardException {

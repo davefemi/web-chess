@@ -1,10 +1,7 @@
 package nl.davefemi.webchess.game.record;
 
+import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.game.board.Board;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.actions.PromotionMove;
-import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.Piece;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
@@ -17,6 +14,8 @@ public class MoveRecordBuilder {
         if (move instanceof PromotionMove m){
             return getPromotionMoveRecord(board, m, color);
         }
+        if (move instanceof EnPassantMove m)
+            move = new SingleMove(m.from(), m.to());
         return getSingleMoveRecord(board, (SingleMove) move, color, capturedPiece);
     }
 

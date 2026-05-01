@@ -5,6 +5,7 @@ import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.game.GameStatus;
+import nl.davefemi.webchess.game.actions.EnPassantMove;
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
@@ -29,6 +30,10 @@ public class PawnMoveTest {
 
     private SingleMove getSingleMove(int file_start, int rank_start, int file_end, int rank_end){
         return new SingleMove(new Position(file_start, rank_start),new Position(file_end, rank_end));
+    }
+
+    private EnPassantMove getEnPassantMove(int file_start, int rank_start, int file_end, int rank_end){
+        return new EnPassantMove(new Position(file_start, rank_start),new Position(file_end, rank_end));
     }
 
 
@@ -144,6 +149,6 @@ public class PawnMoveTest {
         game.executeMove(PieceColor.WHITE, getSingleMove(1,3,1,4));
         game.executeMove(PieceColor.BLACK, getSingleMove(6,5,6,4));
         game.executeMove(PieceColor.WHITE, getSingleMove(7,2,7,4));
-        game.executeMove(PieceColor.BLACK, getSingleMove(6,4,7,3));
+        game.executeMove(PieceColor.BLACK, getEnPassantMove(6,4,7,3));
     }
 }

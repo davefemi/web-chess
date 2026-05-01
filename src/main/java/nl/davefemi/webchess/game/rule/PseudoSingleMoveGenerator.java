@@ -14,14 +14,14 @@ import java.util.List;
 
 public final class PseudoSingleMoveGenerator {
 
-    static List<SingleMove> generateMoves(Board board, Move lastMove, PieceColor color) {
+    static List<SingleMove> generateMoves(Board board, PieceColor color) {
         List<SingleMove> moves = new ArrayList<>();
         moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color)));
         moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.QUEEN, color)));
         moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color)));
         moves.addAll(getRookMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.ROOK, color)));
         moves.addAll(getKnightMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.KNIGHT, color)));
-        moves.addAll(getPawnMoves(board, lastMove, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color)));
+        moves.addAll(getPawnMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.PAWN, color)));
         return moves;
     }
 
@@ -145,8 +145,7 @@ public final class PseudoSingleMoveGenerator {
         return pseudoMoves;
     }
 
-    //TODO implement en passant moves
-    private static List<SingleMove> getPawnMoves(Board board, Move lastMove,List<Position> positions) {
+    private static List<SingleMove> getPawnMoves(Board board,List<Position> positions) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
@@ -161,14 +160,8 @@ public final class PseudoSingleMoveGenerator {
                             newPos.add(new Position(position.file() + 1, position.rank() + 1));
                     }
                     if (position.rank() == 2) {
-                        if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, onePositionUp))
+                        if (MoveEvaluator.isPawnMoveLegal(board, position, onePositionUp))
                             newPos.add(new Position(position.file(), position.rank() + 2));
-                    }
-                    if (position.rank() == 5){
-                        for (int file = Math.max(1, position.file()-1); file <= Math.min(8, position.file()+1); file++){
-                            Position enPassant = new Position(file, position.rank()+1);
-                            if (enPassant.file() != position.file())
-                                newPos.add(enPassant);                        }
                     }
                 }
                 if (board.getPieceAt(position).getColor() == PieceColor.BLACK) {
@@ -181,18 +174,11 @@ public final class PseudoSingleMoveGenerator {
                             newPos.add(new Position(position.file() + 1, position.rank() - 1));
                     }
                     if (position.rank() == 7)
-                        if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, onePositionDown))
+                        if (MoveEvaluator.isPawnMoveLegal(board, position, onePositionDown))
                             newPos.add(new Position(position.file(), position.rank() - 2));
-                    if (position.rank() == 4){
-                        for (int file = Math.max(1, position.file()-1); file <= Math.min(8, position.file()+1); file++){
-                            Position enPassant = new Position(file, position.rank()-1);
-                            if (enPassant.file() != position.file())
-                                newPos.add(enPassant);
-                        }
-                    }
                 }
                 for (Position p : newPos) {
-                    if (MoveEvaluator.isPawnMoveLegal(board, lastMove, position, p))
+                    if (MoveEvaluator.isPawnMoveLegal(board, position, p))
                         pseudoMoves.add(new SingleMove(position, p));
                 }
             }

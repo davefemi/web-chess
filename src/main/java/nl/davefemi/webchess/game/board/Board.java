@@ -2,10 +2,7 @@ package nl.davefemi.webchess.game.board;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.game.IdGenerator;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.actions.PromotionMove;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.exception.BoardException;
 
 import java.util.*;
@@ -82,6 +79,8 @@ public class Board {
         if (move instanceof PromotionMove(SingleMove pawnMove, PieceType newPiece)){
             return promotePawnTo(pieceIdGenerator, pawnMove, newPiece);
         }
+        if (move instanceof EnPassantMove m)
+            return applyEnPassantMove(m);
         return updatePiecePositions((SingleMove) move);
     }
 
@@ -93,6 +92,8 @@ public class Board {
             updatePiecePositions(moveRook);
             return null;
         }
+        if (move instanceof EnPassantMove m)
+            return applyEnPassantMove(m);
         return updatePiecePositions((SingleMove) move);
     }
 
@@ -198,5 +199,10 @@ public class Board {
         updatePiecePositions(pawnMove);
         positions.put(pawnMove.to(), new Piece(pieceIdGenerator.getNextId(), pieceType, color));
         return p;
+    }
+
+    private Piece applyEnPassantMove(EnPassantMove move) throws BoardException {
+        updatePiecePositions(new SingleMove(move.from(), move.to()));
+        return positions.remove(new Position(move.to().file(), move.from().rank()));
     }
 }

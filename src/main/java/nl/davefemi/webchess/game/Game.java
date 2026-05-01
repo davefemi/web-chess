@@ -113,9 +113,9 @@ public class Game {
         gameActive = false;
     }
 
-    public MoveRecord getLastMove(){
+    public Move getLastMove(){
         if (!moveHistory.isEmpty())
-            return moveHistory.getLast();
+            return moveHistory.getLast().getMove();
         return null;
     }
 
@@ -141,7 +141,7 @@ public class Game {
         return originalRooks;
     }
 
-    private boolean isPlayerInCheck(PieceColor color) {
+    private boolean isPlayerInCheck(PieceColor color) throws BoardException {
         return RuleEngine.isKingInCheck(this, color);
     }
 
