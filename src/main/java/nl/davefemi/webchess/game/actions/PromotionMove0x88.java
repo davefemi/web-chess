@@ -2,8 +2,8 @@ package nl.davefemi.webchess.game.actions;
 
 import nl.davefemi.webchess.game.board.PieceType;
 
-public record PromotionMove(SingleMove move, PieceType newPieceType) implements Move {
-    public PromotionMove{
+public record PromotionMove0x88(SingleMove0x88 move, PieceType newPieceType) implements Move {
+    public PromotionMove0x88 {
         if (move == null){
             throw new IllegalArgumentException("SingleMove cannot be null");
         }

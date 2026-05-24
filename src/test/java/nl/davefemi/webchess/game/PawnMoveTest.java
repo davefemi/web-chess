@@ -37,7 +37,6 @@ public class PawnMoveTest {
 
     @ParameterizedTest
     @CsvSource({
-            "1,2,0,3, false",
             "2,2,2,4, true",
             "2,2,2,3, true",
             "2,2,2,1, false",
@@ -45,8 +44,8 @@ public class PawnMoveTest {
             "2,2,2,5, false",
             "2,2,2,5, false"
     })
-    public void startingMoveTest(int fromFile, int fromRank, int toFile, int toRank, boolean expected) throws MoveException, BoardException, GameException {
-        assertThat(RuleEngine.isMoveAllowed(game, PieceColor.WHITE, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
+    public void startingMoveTest(int fromFile, int fromRank, int toFile, int toRank, boolean expected) throws MoveException, BoardException {
+        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), PieceColor.WHITE, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
     }
 
     @Test
@@ -108,7 +107,7 @@ public class PawnMoveTest {
         game.executeMove(PieceColor.BLACK, getSingleMove(8,3,7,2));
         game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(3,7,4, 8), PieceType.QUEEN));
 
-        Piece newPiece = game.getCopyOfBoard().getPieceAt(new Position(4,8));
+        Piece newPiece = game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new Position(4,8));
 
         assertTrue(newPiece.getType() == PieceType.QUEEN &&
                 newPiece.getColor() == PieceColor.WHITE, "White piece has been promoted to type queen");
@@ -146,12 +145,12 @@ public class PawnMoveTest {
         game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(3,7,4, 8), PieceType.QUEEN));
 
         //Assert
-        assertEquals(PieceType.QUEEN, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
-        assertEquals(PieceColor.WHITE, game.getCopyOfBoard().getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
+        assertEquals(PieceType.QUEEN, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
+        assertEquals(PieceColor.WHITE, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
         assertTrue("King is check", game.getStatus(PieceColor.BLACK) == GameStatus.CHECK);
 
 
-        assertEquals(30, game.getCopyOfBoard().piecesOnBoard(), "Number of pieces");
+        assertEquals(30, game.getCurrentBoardContext().getCopyOfBoard().piecesOnBoard(), "Number of pieces");
     }
 
     @Test

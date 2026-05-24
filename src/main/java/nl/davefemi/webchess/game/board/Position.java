@@ -1,6 +1,14 @@
 package nl.davefemi.webchess.game.board;
 
 public record Position(int file, int rank) implements Comparable<Object> {
+    public Position{
+        if (file < 1 || rank < 1){
+            throw new IllegalArgumentException("File or rank cannot be lower than 1");
+        }
+        if (file > 8 || rank > 8){
+            throw new IllegalArgumentException("File or rank cannot be greater than 8");
+        }
+    }
 
     public String getPosition() {
         return "" + file + rank;

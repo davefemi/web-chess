@@ -4,6 +4,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.board.Board0x88;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.board.Position;
 import nl.davefemi.webchess.game.rule.RuleEngine;
@@ -47,7 +48,12 @@ public class BishopMoveTest {
         game.executeMove(black, getSingleMove(3,7,3,6));
         game.executeMove(white, getSingleMove(4,2,4,3));
         game.executeMove(black, getSingleMove(4,7,4,6));
-        assertThat(RuleEngine.isMoveAllowed(game, white, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
+        int square = 0x42;
+        Board0x88 testb = new Board0x88(new IdGenerator());
+        System.out.println("FILE: " + (square & 7) + " RANK: " + (square >> 4));
+        square = 0x07;
+        System.out.println("Can you move from h1 to h2?: " + ((square + 16 & 0x88) == 0 ));
+        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), white, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
     }
 
 }

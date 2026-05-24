@@ -50,42 +50,39 @@ public final class PseudoSingleMoveGenerator {
         return legalMoves;
     }
 
+    //TODO evaluate effect of changing bounds to 7 and 2
     private static List<SingleMove> getBishopMoves(Board board, List<Position> positions) {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Position position : positions) {
                 int incr = 1;
-                for (int file = position.file() - 1; file >= 1; file--) {
-                    Position newPos = new Position(file, position.rank() - incr);
-                    if (newPos.file() < 1 || newPos.rank() < 1)
-                        break;
+                for (int file = position.file(); file >= 2; file--) {
+                    if (file - 1 < 1 || position.rank() - incr < 1) break;
+                    Position newPos = new Position(file -1, position.rank() - incr);
                     if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
                     pseudoMoves.add(new SingleMove(position, newPos));
                     incr++;
                 }
                 incr = 1;
-                for (int file = position.file() + 1; file <= 8; file++) {
-                    Position newPos = new Position(file, position.rank() + incr);
-                    if (newPos.file() > 8 || newPos.rank() > 8)
-                        break;
+                for (int file = position.file(); file <= 7; file++) {
+                    if (file + 1 > 8 || position.rank() + incr > 8) break;
+                    Position newPos = new Position(file + 1, position.rank() + incr);
                     if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
                     pseudoMoves.add(new SingleMove(position, newPos));
                     incr++;
                 }
                 incr = 1;
-                for (int file = Math.max(position.file() - 1, 1); file >= 1; file--) {
-                    Position newPos = new Position(file, position.rank() + incr);
-                    if (newPos.file() < 1 || newPos.rank() > 8)
-                        break;
+                for (int file = Math.max(position.file(), 1); file >= 2; file--) {
+                    if (file - 1 < 1 || position.rank() + incr > 8) break;
+                    Position newPos = new Position(file - 1, position.rank() + incr);
                     if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
                     pseudoMoves.add(new SingleMove(position, newPos));
                     incr++;
                 }
                 incr = 1;
-                for (int file = Math.min(position.file() + 1, 8); file <= 8; file++) {
-                    Position newPos = new Position(file, position.rank() - incr);
-                    if (newPos.file() > 8 || newPos.rank() < 1)
-                        break;
+                for (int file = Math.min(position.file(), 8); file <= 7; file++) {
+                    if (file + 1 > 8 || position.rank() - incr < 1) break;
+                    Position newPos = new Position(file + 1, position.rank() - incr);
                     if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) break;
                     pseudoMoves.add(new SingleMove(position, newPos));
                     incr++;
@@ -164,17 +161,20 @@ public final class PseudoSingleMoveGenerator {
 
     private static List<Position> generatePawnMoves(Board board, Position position, int movement, int promotionRank, int startingRank) {
         List<Position> newPos = new ArrayList<>();
-        Position nextRank = new Position(position.file(), position.rank() + movement);
-        if (position.rank() != promotionRank) {
-            newPos.add(nextRank);
-            if (position.file() - 1 > 0)
-                newPos.add(new Position(position.file() - 1, position.rank() + movement));
-            if (position.file() + 1 < 9)
-                newPos.add(new Position(position.file() + 1, position.rank() + movement));
-        }
-        if (position.rank() == startingRank) {
-            if (MoveEvaluator.isPawnMoveLegal(board, position, nextRank))
-                newPos.add(new Position(position.file(), position.rank() + movement * 2));
+        int bounds = position.rank() + movement;
+        if (bounds < 9 && bounds > 1) {
+            Position nextRank = new Position(position.file(), position.rank() + movement);
+            if (position.rank() != promotionRank) {
+                newPos.add(nextRank);
+                if (position.file() - 1 > 0)
+                    newPos.add(new Position(position.file() - 1, position.rank() + movement));
+                if (position.file() + 1 < 9)
+                    newPos.add(new Position(position.file() + 1, position.rank() + movement));
+            }
+            if (position.rank() == startingRank) {
+                if (MoveEvaluator.isPawnMoveLegal(board, position, nextRank))
+                    newPos.add(new Position(position.file(), position.rank() + movement * 2));
+            }
         }
         return newPos;
     }

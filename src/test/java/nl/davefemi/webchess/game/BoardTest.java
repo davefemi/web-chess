@@ -18,7 +18,7 @@ public class BoardTest {
     @BeforeEach
     public void setUp(){
         game = new Game();
-        board = new Board(new IdGenerator());
+        board = new Board();
 
     }
 
@@ -31,11 +31,11 @@ public class BoardTest {
 
     @ParameterizedTest
     @CsvSource({
-            "0,0,0,0, does not exist",
-            "2,2, 2,9, does not exist",
-            "2,2, 9,2, does not exist",
-            "9,2, 2,2, does not exist",
-            "2,9, 2,2, does not exist"
+            "0,0,0,0, cannot be lower than 1",
+            "2,2, 2,9, cannot be greater than 8",
+            "2,2, 9,2, cannot be greater than 8",
+            "9,2, 2,2, cannot be greater than 8",
+            "2,9, 2,2, cannot be greater than 8"
     })
     public void validatedMoveTest(int fromFile, int fromRank, int toFile, int toRank, String expected){
         assertThatException().isThrownBy(
@@ -45,10 +45,9 @@ public class BoardTest {
 
     @Test
     public void promotionIdTest(){
-        assertThat(game.getLatestPieceId()).isGreaterThan(new IdGenerator().getNextId());
+        assertThat(game.getCurrentBoardContext().getCopyOfBoard().getNextPieceId()).isGreaterThan(new IdGenerator().getNextId());
         assertThatException().isThrownBy(
                 ()-> board.applyValidatedMove(
-                        new IdGenerator(),
                         new PromotionMove(
                                  getSingleMove(1,1,2,2),
                                 PieceType.QUEEN))).withMessageContaining("id");

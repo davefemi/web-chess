@@ -12,7 +12,7 @@ public class GameSession {
     private final List<Game> games = new ArrayList<>();
     private final List<Player> players = new ArrayList<>();
 
-    public GameSession(){
+    public GameSession() {
         this.sessionId = UUID.randomUUID();
         Game game = new Game();
         games.add(game);

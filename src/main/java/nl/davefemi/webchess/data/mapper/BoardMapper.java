@@ -2,32 +2,35 @@ package nl.davefemi.webchess.data.mapper;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.BoardDTO;
-import nl.davefemi.webchess.data.entity.BoardStateEntity;
+import nl.davefemi.webchess.data.entity.BoardContextEntity;
 import nl.davefemi.webchess.data.entity.PositionPieceEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionPieceMapper;
-import nl.davefemi.webchess.game.board.Board;
-import nl.davefemi.webchess.game.board.Piece;
-import nl.davefemi.webchess.game.board.Position;
+import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.record.MoveRecord;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 @Component
 @RequiredArgsConstructor
 public class BoardMapper {
-    private final PositionPieceMapper piecePositionMapper;
+    private final PositionPieceMapper positionPieceMapper;
 
     public BoardDTO mapDomainToDTO(Board board){
         BoardDTO dto = new BoardDTO();
         for (Position p : board.getBoardPositions()){
-            dto.getPositionList().add(piecePositionMapper.
+            dto.getPositionList().add(positionPieceMapper.
                     mapDomainToDTO(p, board.getPieceAt(p) != null? board.getPieceAt(p): null));
         }
         return dto;
     }
 
-    public BoardStateEntity mapDomainToEntity(Board board){
-        BoardStateEntity entity = new BoardStateEntity();
+    public BoardContextEntity mapDomainToEntity(BoardContext boardContext){
+        BoardContextEntity entity = new BoardContextEntity();
+        Board board = boardContext.getCopyOfBoard();
         for (Position p: board.getBoardPositions()){
             Piece piece = board.getPieceAt(p);
             PositionPieceEntity positionPiece = new PositionPieceEntity();
@@ -40,14 +43,26 @@ public class BoardMapper {
             }
             entity.getPositions().add(positionPiece);
         }
+        for (Piece p: boardContext.getCapturedPieces()){
+            entity.getCapturedPieces().add(positionPieceMapper.mapDomainToEntity(p));
+        }
+        entity.setNextPieceId(boardContext.getCopyOfBoard().getNextPieceId());
+        entity.setOriginalRooks(boardContext.getOriginalRooks());
         return entity;
     }
 
-    public Board mapEntityToDomain(BoardStateEntity entity) throws BoardException {
+    public BoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, PieceColor playerToMove) throws BoardException {
         TreeMap<Position, Piece> positions = new TreeMap<>();
         for (PositionPieceEntity p : entity.getPositions()) {
-            positions.put(piecePositionMapper.mapEntityToPosition(p), piecePositionMapper.mapEntityToPiece(p));
+            positions.put(positionPieceMapper.mapEntityToPosition(p), positionPieceMapper.mapEntityToPiece(p));
         }
-        return new Board(positions);
+        List<Piece> capturedPieces = new ArrayList<>();
+        for (PositionPieceEntity e : entity.getCapturedPieces())
+            capturedPieces.add(positionPieceMapper.mapEntityToPiece(e));
+        return new BoardContext(playerToMove,
+                new Board(positions, entity.getNextPieceId()),
+                lastMove,
+                capturedPieces,
+                entity.getOriginalRooks());
     }
 }

@@ -19,7 +19,7 @@ public class KnightMoveTest {
 
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         game = new Game();
     }
 
@@ -31,7 +31,6 @@ public class KnightMoveTest {
     @CsvSource({
             "2,1,1,3, true",
             "2,1,3,3, true",
-            "2,1,0,3, false",
             "2,1,4,3, false",
             "2,1,4,2, true",
             "7,1,5,2, true"
@@ -41,7 +40,7 @@ public class KnightMoveTest {
         game.executeMove(black, getSingleMove(1,7,1,6));
         game.executeMove(white, getSingleMove(5,2,5,4));
         game.executeMove(black, getSingleMove(1,6,1,5));
-        assertThat(RuleEngine.isMoveAllowed(game, white, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
+        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), white, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
     }
 
 }

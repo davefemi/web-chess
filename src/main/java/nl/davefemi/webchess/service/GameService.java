@@ -34,7 +34,7 @@ public class GameService {
 
     public SessionResponseDTO getChessPositions(String sessionId) throws FileNotFoundException, BoardException, GameException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(sessionId, game.getPlayerTurn().getColor(), boardMapper.mapDomainToDTO(game.getCopyOfBoard()));
+        return sessionResponseMapper.mapToDTO(sessionId, game.getPlayerTurn().getColor(), boardMapper.mapDomainToDTO(game.getCurrentBoardContext().getCopyOfBoard()));
     }
 
     public SessionResponseDTO getPlayerTurn(String sessionId) throws GameException, FileNotFoundException, BoardException, SessionException {

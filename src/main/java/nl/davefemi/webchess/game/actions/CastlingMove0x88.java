@@ -1,7 +1,7 @@
 package nl.davefemi.webchess.game.actions;
 
-public record CastlingMove(SingleMove moveKing, SingleMove moveRook) implements Move {
-    public CastlingMove {
+public record CastlingMove0x88(SingleMove0x88 moveKing, SingleMove0x88 moveRook) implements Move {
+    public CastlingMove0x88 {
         if (moveKing == null) {
             throw new IllegalArgumentException("King move cannot be null");
         }

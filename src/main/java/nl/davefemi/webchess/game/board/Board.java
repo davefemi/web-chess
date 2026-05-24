@@ -9,19 +9,23 @@ import java.util.*;
 
 @Slf4j
 public class Board {
+    private final IdGenerator pieceIdGenerator;
     private TreeMap<Position, Piece> positions;
 
-    public Board(IdGenerator pieceIdGenerator){
+    public Board(){
+        pieceIdGenerator = new IdGenerator();
         initBoard();
         initPieces(pieceIdGenerator);
     }
 
     public Board (Board other){
+        this.pieceIdGenerator = other.pieceIdGenerator;
         this.positions = new TreeMap<>();
         this.positions.putAll(other.positions);
     }
 
-    public Board(TreeMap<Position, Piece> positions) throws BoardException {
+    public Board(TreeMap<Position, Piece> positions, int nextId) throws BoardException {
+        pieceIdGenerator = new IdGenerator(nextId);
         initBoard();
         if (validateSubmittedBoard(positions.keySet()) &&
                 validateSubmittedPieces(positions.values())) {
@@ -54,6 +58,10 @@ public class Board {
         return foundPositions;
     }
 
+    public int getNextPieceId(){
+        return pieceIdGenerator.peek();
+    }
+
     public boolean isBoardPositionOccupied(Position position){
         return positions.get(position) != null;
     }
@@ -70,7 +78,7 @@ public class Board {
         return new ArrayList<>(this.positions.keySet());
     }
 
-    public synchronized Piece applyValidatedMove(IdGenerator pieceIdGenerator, Move move) throws BoardException {
+    public synchronized Piece applyValidatedMove(Move move) throws BoardException {
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
             updatePiecePositions((moveKing));
             updatePiecePositions(moveRook);
@@ -78,19 +86,6 @@ public class Board {
         }
         if (move instanceof PromotionMove(SingleMove pawnMove, PieceType newPiece) ){
             return promotePawnTo(pieceIdGenerator.getNextId(), pawnMove, newPiece);
-        }
-        if (move instanceof EnPassantMove m)
-            return applyEnPassantMove(m);
-        return updatePiecePositions((SingleMove) move);
-    }
-
-    public synchronized Piece applyValidatedMove(Move move) throws BoardException {
-        if (move instanceof PromotionMove)
-            throw new IllegalArgumentException("New piece MUST have an id");
-        if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
-            updatePiecePositions((moveKing));
-            updatePiecePositions(moveRook);
-            return null;
         }
         if (move instanceof EnPassantMove m)
             return applyEnPassantMove(m);
@@ -190,7 +185,7 @@ public class Board {
         if (!positions.containsKey(move.from()))
             throw new BoardException("Position " + move.from().toString() + " does not exist");
         if (!positions.containsKey(move.to()))
-            throw new BoardException("Position " + move.from().toString() + " does not exist");
+            throw new BoardException("Position " + move.to().toString() + " does not exist");
         if (positions.get(move.from()) == null)
             throw new BoardException("There is no piece at " + move.from().toString());
         Piece p = positions.get(move.to());
