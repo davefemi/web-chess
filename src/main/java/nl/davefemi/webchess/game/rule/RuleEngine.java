@@ -15,7 +15,7 @@ public final class RuleEngine {
     }
 
     public static boolean isMoveAllowed(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, MoveException {
-        if (!(pieceColor == boardContext.getPlayerToMove()))
+        if (!(pieceColor == boardContext.getColorToMove()))
             throw new MoveException("It is not " + pieceColor + "'s turn yet");
         if (move instanceof CastlingMove m)
             if (!(MoveEvaluator.isCastlingMoveLegal(boardContext.getCopyOfBoard(), boardContext.getOriginalRooks(), moveHistory, m)))

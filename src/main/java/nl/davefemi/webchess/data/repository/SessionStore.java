@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.data.entity.AccessCodeEntity;
 import nl.davefemi.webchess.data.entity.GameSessionEntity;
+import nl.davefemi.webchess.exception.SessionException;
+import nl.davefemi.webchess.exception.UnauthorizedException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
@@ -19,10 +20,10 @@ public class SessionStore implements GameSessionRepository {
     private final int sessionTimeToLive = 5;
 
     @Override
-    public GameSessionEntity retrieveGameSessionById(String sessionId) throws FileNotFoundException {
+    public GameSessionEntity retrieveGameSessionById(String sessionId) throws SessionException {
         GameSessionEntity sessionEntity = sessionRedisTemplate.opsForValue().get("session: " + sessionId);
         if (sessionEntity == null)
-            throw new FileNotFoundException("Session not found");
+            throw new SessionException("Session not found");
         return sessionEntity;
     }
 
@@ -37,11 +38,11 @@ public class SessionStore implements GameSessionRepository {
     }
 
     @Override
-    public AccessCodeEntity retrieveAccessCode(String code) throws FileNotFoundException {
+    public AccessCodeEntity retrieveAccessCode(String code) {
         AccessCodeEntity accessCode = accessCodeRedisTemplate.opsForValue().get("access_code: " + code);
         deleteAccessCode(code);
         if (accessCode == null)
-            throw new FileNotFoundException("Code not found");
+            throw new UnauthorizedException("Code not found");
         return accessCode;
     }
 

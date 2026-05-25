@@ -9,32 +9,32 @@ import java.util.List;
 
 public final class BoardContext {
     private final Board board;
-    private PieceColor playerToMove;
+    private PieceColor colorToMove;
     private MoveRecord lastMove;
     private final List<Piece> capturedPieces;
     private final List<Integer> originalRooks;
 
-    public BoardContext(PieceColor playerToMove) {
+    public BoardContext(PieceColor colorToMove) {
         this.board = new Board();
-        this.playerToMove = playerToMove;
+        this.colorToMove = colorToMove;
         this.capturedPieces = new ArrayList<>();
         this.originalRooks = new ArrayList<>(fetchOriginalRooksFromBoard());
     }
 
-    public BoardContext(PieceColor playerToMove, Board board, MoveRecord lastMove, List<Piece> capturedPieces, List<Integer> originalRooks){
-        this.playerToMove = playerToMove;
+    public BoardContext(PieceColor colorToMove, Board board, MoveRecord lastMove, List<Piece> capturedPieces, List<Integer> originalRooks){
+        this.colorToMove = colorToMove;
         this.lastMove = lastMove;
         this.board = board;
         this.capturedPieces = capturedPieces;
         this.originalRooks = originalRooks;
     }
 
-    public PieceColor getPlayerToMove(){
-        return playerToMove;
+    public PieceColor getColorToMove(){
+        return colorToMove;
     }
 
-    public void setPlayerToMove(PieceColor playerToMove) {
-        this.playerToMove = playerToMove;
+    public void setColorToMove(PieceColor colorToMove) {
+        this.colorToMove = colorToMove;
     }
 
     public Board getCopyOfBoard() {
@@ -57,9 +57,9 @@ public final class BoardContext {
             Piece p = board.applyValidatedMove(move);
             if (p != null)
                 capturedPieces.add(p);
-            lastMove = MoveRecordBuilder.getMoveRecord(board, move, playerToMove, p);
+            lastMove = MoveRecordBuilder.getMoveRecord(board, move, colorToMove, p);
         }
-        return new BoardContext(this.playerToMove, board, lastMove, new ArrayList<>(capturedPieces), new ArrayList<>(originalRooks));
+        return new BoardContext(this.colorToMove, board, lastMove, new ArrayList<>(capturedPieces), new ArrayList<>(originalRooks));
     }
 
     public List<Integer> getOriginalRooks(){

@@ -11,6 +11,7 @@ import nl.davefemi.webchess.data.mapper.GameStateMapper;
 import nl.davefemi.webchess.data.mapper.SessionResponseMapper;
 import nl.davefemi.webchess.data.repository.GameSessionRepository;
 import nl.davefemi.webchess.exception.SessionException;
+import nl.davefemi.webchess.exception.UnauthorizedException;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
@@ -63,18 +64,18 @@ public class GameSessionService {
         GameSession session =  retrieveSession(sessionId);
         Game game = session.startNewGame();
         storeSession(session);
-        return sessionResponseMapper.mapToDTO(session, null, gameStateMapper.mapDomainToDTO(game, game.getPlayerTurn().getColor()));
+        return sessionResponseMapper.mapToDTO(session, null, gameStateMapper.mapDomainToDTO(game, game.getColorToMove().getColor()));
     }
 
     private GameSession retrieveSession(String sessionId) throws FileNotFoundException, SessionException, BoardException {
         return gameSessionMapper.mapEntityToDomain(sessionStore.retrieveGameSessionById(sessionId));
     }
 
-    private AccessCodeEntity retrieveAccessCode(String accessCode) throws SessionException {
+    private AccessCodeEntity retrieveAccessCode(String accessCode) {
         try{
             return sessionStore.retrieveAccessCode(accessCode);
-        } catch (FileNotFoundException e) {
-            throw new SessionException("Access code has expired");
+        } catch (UnauthorizedException e) {
+            throw new UnauthorizedException("Access code has expired");
         }
     }
 

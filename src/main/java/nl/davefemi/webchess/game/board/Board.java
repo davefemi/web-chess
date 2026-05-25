@@ -1,14 +1,13 @@
 package nl.davefemi.webchess.game.board;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.webchess.game.IdGenerator;
 import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.exception.BoardException;
 
 import java.util.*;
 
 @Slf4j
-public class Board {
+public final class Board {
     private final IdGenerator pieceIdGenerator;
     private TreeMap<Position, Piece> positions;
 

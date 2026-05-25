@@ -22,7 +22,7 @@ public class BoardMapper {
     public BoardDTO mapDomainToDTO(Board board){
         BoardDTO dto = new BoardDTO();
         for (Position p : board.getBoardPositions()){
-            dto.getPositionList().add(positionPieceMapper.
+            dto.getBoard().add(positionPieceMapper.
                     mapDomainToDTO(p, board.getPieceAt(p) != null? board.getPieceAt(p): null));
         }
         return dto;

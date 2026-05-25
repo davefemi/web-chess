@@ -32,9 +32,9 @@ public class RuleEngine0x88 {
     public static BoardContext applyLegalMove(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, GameException, MoveException {
         if (!RuleEngine.isMoveAllowed(boardContext, moveHistory, pieceColor, move)){
              if (RuleEngine.isPlayerCheckMate(boardContext, pieceColor))
-                    throw new GameException(boardContext.getPlayerToMove() + " is check mate");
+                    throw new GameException(boardContext.getColorToMove() + " is check mate");
                 if (RuleEngine.isKingInCheck(boardContext, pieceColor))
-                    throw new MoveException(boardContext.getPlayerToMove() + " is in check");
+                    throw new MoveException(boardContext.getColorToMove() + " is in check");
                 throw new MoveException("Illegal move");
             }
         return boardContext.applyMove(move);

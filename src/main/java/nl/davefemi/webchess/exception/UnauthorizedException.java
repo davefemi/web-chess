@@ -1,0 +1,7 @@
+package nl.davefemi.webchess.exception;
+
+public class UnauthorizedException extends RuntimeException {
+    public UnauthorizedException(String message) {
+        super(message);
+    }
+}

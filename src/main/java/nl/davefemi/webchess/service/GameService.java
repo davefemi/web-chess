@@ -3,7 +3,7 @@ package nl.davefemi.webchess.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.data.dto.GameStateDTO;
-import nl.davefemi.webchess.data.dto.move.MoveDTO;
+import nl.davefemi.webchess.data.MoveDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.data.mapper.BoardMapper;
 import nl.davefemi.webchess.data.mapper.GameStateMapper;
@@ -34,12 +34,12 @@ public class GameService {
 
     public SessionResponseDTO getChessPositions(String sessionId) throws FileNotFoundException, BoardException, GameException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(sessionId, game.getPlayerTurn().getColor(), boardMapper.mapDomainToDTO(game.getCurrentBoardContext().getCopyOfBoard()));
+        return sessionResponseMapper.mapToDTO(sessionId, game.getColorToMove().getColor(), boardMapper.mapDomainToDTO(game.getCurrentBoardContext().getCopyOfBoard()));
     }
 
     public SessionResponseDTO getPlayerTurn(String sessionId) throws GameException, FileNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(sessionId, game.getPlayerTurn().getColor(),  null);
+        return sessionResponseMapper.mapToDTO(sessionId, game.getColorToMove().getColor(),  null);
     }
 
     public SessionResponseDTO getStatus(String sessionId, String color) throws FileNotFoundException, BoardException, SessionException {
@@ -61,7 +61,7 @@ public class GameService {
             game.executeMove(gamePair.getFirst(), moveMapper.mapDTOtoDomain(move));
             String playerColor = null;
             try {
-                playerColor = game.getPlayerTurn().getColor();
+                playerColor = game.getColorToMove().getColor();
             } catch (GameException e) {
             }
             gameSessionService.saveGameSession(gameSession);

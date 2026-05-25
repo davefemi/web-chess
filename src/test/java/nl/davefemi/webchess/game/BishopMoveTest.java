@@ -49,7 +49,7 @@ public class BishopMoveTest {
         game.executeMove(white, getSingleMove(4,2,4,3));
         game.executeMove(black, getSingleMove(4,7,4,6));
         int square = 0x42;
-        Board0x88 testb = new Board0x88(new IdGenerator());
+        Board0x88 testb = new Board0x88();
         System.out.println("FILE: " + (square & 7) + " RANK: " + (square >> 4));
         square = 0x07;
         System.out.println("Can you move from h1 to h2?: " + ((square + 16 & 0x88) == 0 ));

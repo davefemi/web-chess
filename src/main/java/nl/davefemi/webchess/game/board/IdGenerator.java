@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.game;
+package nl.davefemi.webchess.game.board;
 
 public class IdGenerator {
     private int nextId;

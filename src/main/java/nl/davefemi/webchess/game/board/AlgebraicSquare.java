@@ -9,7 +9,7 @@ public record AlgebraicSquare(String value) {
 
     public Square toSquare(){
         int file = value.charAt(0) - 'a';
-        int rank = value.charAt(1) - 1;
+        int rank = value.charAt(1) - '1';
         return Square.fromFileAndRank(file, rank);
     }
 
@@ -18,5 +18,11 @@ public record AlgebraicSquare(String value) {
             throw new IllegalArgumentException("Invalid file or rank");
         }
         return new AlgebraicSquare("" + (char) ('a' + file) + (rank+1));
+    }
+
+    public Position toPosition(){
+        int file = value.charAt(0) -'a' + 1;
+        int rank = value.charAt(1) - '1' + 1;
+        return new Position(file, rank);
     }
 }

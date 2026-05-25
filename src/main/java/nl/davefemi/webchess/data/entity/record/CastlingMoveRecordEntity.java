@@ -1,9 +1,9 @@
-package nl.davefemi.webchess.data.dto.record;
+package nl.davefemi.webchess.data.entity.record;
 
 import lombok.Data;
 
 @Data
-public class CastlingMoveRecordData implements MoveRecordData {
+public class CastlingMoveRecordEntity implements MoveRecordEntity {
     private int kingOldPosFile;
     private int kingOldPosRank;
     private int kingNewPosFile;

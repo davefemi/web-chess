@@ -1,7 +1,5 @@
 package nl.davefemi.webchess.game.board;
 
-import nl.davefemi.webchess.game.IdGenerator;
-
 class PieceFactory {
 
     static boolean populateBoardWithPieces(Piece[] squares, IdGenerator pieceIdGenerator){

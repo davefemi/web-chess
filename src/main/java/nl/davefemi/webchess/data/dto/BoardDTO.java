@@ -8,5 +8,5 @@ import java.util.List;
 
 @Data
 public class BoardDTO {
-    private List<PositionPieceDTO> positionList = new ArrayList<>();
+    private List<PositionPieceDTO> board = new ArrayList<>();
 }

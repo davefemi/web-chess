@@ -21,15 +21,15 @@ public class Game {
 
     public Game() {
         turnGenerator = new TurnGenerator();
-        currentBoardContext = new BoardContext(turnGenerator.nextTurn());
+        currentBoardContext = new BoardContext(turnGenerator.peek());
         moveHistory = new ArrayList<>();
     }
 
-    public Game(BoardContext boardContext, boolean gameActive, PieceColor turn,
+    public Game(BoardContext boardContext, boolean gameActive, PieceColor colorToMove,
                 List<MoveRecord> moveHistory){
         this.currentBoardContext = boardContext;
         this.gameActive = gameActive;
-        this.turnGenerator = new TurnGenerator(turn);
+        this.turnGenerator = new TurnGenerator(colorToMove);
         this.moveHistory = moveHistory;
     }
 
@@ -49,14 +49,14 @@ public class Game {
         return gameActive;
     }
 
-    public PieceColor getPlayerTurn() throws GameException {
+    public PieceColor getColorToMove() throws GameException {
 //        if (!gameActive)
 //            throw new GameException("Game has ended");
         return turnGenerator.peek();
     }
 
     public BoardContext getCurrentBoardContext(){
-        return new BoardContext(currentBoardContext.getPlayerToMove(),
+        return new BoardContext(currentBoardContext.getColorToMove(),
                 currentBoardContext.getCopyOfBoard(),
                 currentBoardContext.getLastMove(),
                 currentBoardContext.getCapturedPieces(),
@@ -75,6 +75,7 @@ public class Game {
         return ACTIVE;
     }
 
+
     public List<Move> getAvailableMoves(PieceColor color) throws BoardException {
         return RuleEngine0x88.getAllLegalMovesByPieceColor(getCurrentBoardContext(), color);
     }
@@ -83,9 +84,10 @@ public class Game {
         BoardContext nextBoardContext = RuleEngine0x88.applyLegalMove(getCurrentBoardContext(), moveHistory, color, move);
         this.currentBoardContext = nextBoardContext;
         updateMoveHistory();
+        turnGenerator.nextTurn();
         log.info(getLastMove().toString());
-        this.currentBoardContext.setPlayerToMove(turnGenerator.nextTurn());
-        if (isPlayerCheckMate(getPlayerTurn())) {
+        this.currentBoardContext.setColorToMove(turnGenerator.peek());
+        if (isPlayerCheckMate(getColorToMove())) {
             gameActive = false;
         }
         return true;

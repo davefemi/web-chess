@@ -2,17 +2,18 @@ package nl.davefemi.webchess.game.board;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.exception.BoardException;
-import nl.davefemi.webchess.game.IdGenerator;
 import nl.davefemi.webchess.game.actions.*;
 
 import java.util.*;
 
 @Slf4j
-public class Board0x88 {
+public final class Board0x88 {
     private final Piece[] squares = new Piece[128];
+    private final IdGenerator pieceIdGenerator;
     private static final int AND_HEX = 0x88;
 
-    public Board0x88(IdGenerator pieceIdGenerator){
+    public Board0x88(){
+        pieceIdGenerator = new IdGenerator();
         PieceFactory.populateBoardWithPieces(squares, pieceIdGenerator);
         for (int i = 0; i<squares.length; i++) {
             Piece p = squares[i];
@@ -25,6 +26,7 @@ public class Board0x88 {
     }
 
     public Board0x88(Board0x88 other){
+        this.pieceIdGenerator = other.pieceIdGenerator;
         for (int i = 0 ; i<0x79; i++){
             if (!isLegalBoardPosition(i)){
                 squares[i] = other.squares[i];
@@ -32,7 +34,8 @@ public class Board0x88 {
         }
     }
 
-    public Board0x88(Piece[] pieces) throws BoardException {
+    public Board0x88(Piece[] pieces, int nextId) throws BoardException {
+        this.pieceIdGenerator = new IdGenerator(nextId);
         if(pieces.length != 128)
             throw new IllegalArgumentException("Array length must be exactly 128");
         addPiecesToBoard(pieces);
@@ -79,7 +82,7 @@ public class Board0x88 {
         return Arrays.stream(squares).toList();
     }
 
-    synchronized Piece applyValidatedMove(IdGenerator pieceIdGenerator, Move move) throws BoardException {
+    synchronized Piece applyValidatedMove(Move move) throws BoardException {
         if (move instanceof CastlingMove0x88(SingleMove0x88 moveKing, SingleMove0x88 moveRook)){
             updatePiecePositions((moveKing));
             updatePiecePositions(moveRook);
@@ -87,19 +90,6 @@ public class Board0x88 {
         }
         if (move instanceof PromotionMove0x88(SingleMove0x88 pawnMove, PieceType newPiece) ){
             return promotePawnTo(pieceIdGenerator.getNextId(), pawnMove, newPiece);
-        }
-        if (move instanceof EnPassantMove0x88 m)
-            return applyEnPassantMove(m);
-        return updatePiecePositions((SingleMove0x88) move);
-    }
-
-    synchronized Piece applyValidatedMove(Move move) throws BoardException {
-        if (move instanceof PromotionMove0x88)
-            throw new IllegalArgumentException("New piece MUST have an id");
-        if (move instanceof CastlingMove0x88(SingleMove0x88 moveKing, SingleMove0x88 moveRook)){
-            updatePiecePositions((moveKing));
-            updatePiecePositions(moveRook);
-            return null;
         }
         if (move instanceof EnPassantMove0x88 m)
             return applyEnPassantMove(m);

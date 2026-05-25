@@ -16,7 +16,7 @@ public class PositionPieceMapper {
 
     public PositionPieceDTO mapDomainToDTO(Position position, Piece piece){
         PositionPieceDTO dto = new PositionPieceDTO();
-        dto.setPosition(positionMapper.mapDomainToDTO(position));
+        dto.setSquare(positionMapper.mapDomainToDTO(position));
         dto.setPieceType(piece == null ? "vacant" : piece.getType().getLabel());
         dto.setColor(piece == null ? "vacant": piece.getColor().getColor());
         return dto;

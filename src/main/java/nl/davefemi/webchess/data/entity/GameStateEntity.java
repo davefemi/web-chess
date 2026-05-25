@@ -1,14 +1,15 @@
 package nl.davefemi.webchess.data.entity;
 
 import lombok.Data;
-import nl.davefemi.webchess.data.dto.record.MoveRecordData;
+import nl.davefemi.webchess.data.entity.record.MoveRecordEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class GameStateEntity {
-    private String nextTurn;
+    private String colorToMove;
     private BoardContextEntity currentBoardContext;
     private boolean activeGame;
-    private List<MoveRecordData> moveHistory = new ArrayList<>();
+    private List<MoveRecordEntity> moveHistory = new ArrayList<>();
 }

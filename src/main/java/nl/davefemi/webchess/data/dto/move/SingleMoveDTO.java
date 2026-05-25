@@ -1,11 +1,10 @@
 package nl.davefemi.webchess.data.dto.move;
 
 import lombok.Data;
+import nl.davefemi.webchess.data.MoveDTO;
 
 @Data
 public class SingleMoveDTO implements MoveDTO {
-    private Integer fromFile;
-    private Integer fromRank;
-    private Integer toFile;
-    private Integer toRank;
+    private String from;
+    private String to;
 }

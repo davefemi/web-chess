@@ -1,7 +1,10 @@
-package nl.davefemi.webchess.data.dto.move;
+package nl.davefemi.webchess.data;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import nl.davefemi.webchess.data.dto.move.CastlingMoveDTO;
+import nl.davefemi.webchess.data.dto.move.PromotionMoveDTO;
+import nl.davefemi.webchess.data.dto.move.SingleMoveDTO;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
