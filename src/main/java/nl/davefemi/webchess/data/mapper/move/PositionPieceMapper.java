@@ -3,10 +3,7 @@ package nl.davefemi.webchess.data.mapper.move;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.move.PositionPieceDTO;
 import nl.davefemi.webchess.data.entity.PositionPieceEntity;
-import nl.davefemi.webchess.game.board.PieceType;
-import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.board.Position;
-import nl.davefemi.webchess.game.board.Piece;
+import nl.davefemi.webchess.game.board.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class PositionPieceMapper {
     private final PositionMapper positionMapper;
 
-    public PositionPieceDTO mapDomainToDTO(Position position, Piece piece){
+    public PositionPieceDTO mapDomainToDTO(Square position, Piece piece){
         PositionPieceDTO dto = new PositionPieceDTO();
         dto.setSquare(positionMapper.mapDomainToDTO(position));
         dto.setPieceType(piece == null ? "vacant" : piece.getType().getLabel());
@@ -22,17 +19,15 @@ public class PositionPieceMapper {
         return dto;
     }
 
-    public PositionPieceEntity mapDomainToEntity(Position position){
+    public PositionPieceEntity mapDomainToEntity(Square position){
         PositionPieceEntity entity = new PositionPieceEntity();
-        entity.setFile(position.file());
-        entity.setRank(position.rank());
+        entity.setPositionValue(position.value());
         return entity;
     }
 
-    public PositionPieceEntity mapDomainToEntity(Position position, Piece piece){
+    public PositionPieceEntity mapDomainToEntity(Square position, Piece piece){
         PositionPieceEntity entity = mapDomainToEntity(piece);
-        entity.setFile(position.file());
-        entity.setRank(position.rank());
+        entity.setPositionValue(position.value());
         return entity;
     }
 
@@ -55,7 +50,7 @@ public class PositionPieceMapper {
         return null;
     }
 
-    public Position mapEntityToPosition(PositionPieceEntity entity){
-        return new Position(entity.getFile(), entity.getRank());
+    public Square mapEntityToPosition(PositionPieceEntity entity){
+        return new Square(entity.getPositionValue());
     }
 }

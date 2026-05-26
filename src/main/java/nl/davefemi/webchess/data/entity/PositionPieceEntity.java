@@ -4,8 +4,7 @@ import lombok.Data;
 
 @Data
 public class PositionPieceEntity {
-    private int file;
-    private int rank;
+    private int positionValue;
     private String pieceType;
     private int pieceId;
     private String color;

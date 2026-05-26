@@ -2,7 +2,6 @@ package nl.davefemi.webchess.game;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.move.SingleMoveDTO;
-import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

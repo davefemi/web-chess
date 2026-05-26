@@ -19,10 +19,4 @@ public record AlgebraicSquare(String value) {
         }
         return new AlgebraicSquare("" + (char) ('a' + file) + (rank+1));
     }
-
-    public Position toPosition(){
-        int file = value.charAt(0) -'a' + 1;
-        int rank = value.charAt(1) - '1' + 1;
-        return new Position(file, rank);
-    }
 }

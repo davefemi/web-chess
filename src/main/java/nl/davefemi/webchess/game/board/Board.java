@@ -1,83 +1,97 @@
 package nl.davefemi.webchess.game.board;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.actions.*;
 
 import java.util.*;
 
 @Slf4j
 public final class Board {
+    private final Piece[] squares = new Piece[128];
     private final IdGenerator pieceIdGenerator;
-    private TreeMap<Position, Piece> positions;
+    private static final int AND_HEX = 0x88;
 
     public Board(){
         pieceIdGenerator = new IdGenerator();
-        initBoard();
-        initPieces(pieceIdGenerator);
+        PieceFactory.populateBoardWithPieces(squares, pieceIdGenerator);
+        for (int i = 0; i<squares.length; i++) {
+            Piece p = squares[i];
+            if (p != null) {
+                Square square = new Square(i);
+                System.out.println("SQUARE " + AlgebraicSquare.fromFileAndRank(square.file(), square.rank()).value() +
+                        " contains a " + p.getColor().getColor() + " " + p.getType());
+            }
+        }
     }
 
-    public Board (Board other){
+    public Board(Board other){
         this.pieceIdGenerator = other.pieceIdGenerator;
-        this.positions = new TreeMap<>();
-        this.positions.putAll(other.positions);
-    }
-
-    public Board(TreeMap<Position, Piece> positions, int nextId) throws BoardException {
-        pieceIdGenerator = new IdGenerator(nextId);
-        initBoard();
-        if (validateSubmittedBoard(positions.keySet()) &&
-                validateSubmittedPieces(positions.values())) {
-            this.positions = new TreeMap<>(positions);
-        }
-    }
-
-    public Position getPositionById(int id){
-        for (Piece p: positions.values()){
-            if (p.getId() == id){
-                for (Position pos : positions.keySet()) {
-                    if (positions.get(pos) == p)
-                        return pos;
-                }
+        for (int i = 0 ; i<0x79; i++){
+            if (isLegalBoardPosition(i)){
+                squares[i] = other.squares[i];
             }
         }
-        return null;
     }
 
-    public List<Position> getPositionsByTypeAndColor(PieceType type, PieceColor color){
-        List<Position> foundPositions = new ArrayList<>();
-        for (Piece p: positions.values()){
-            if (p!=null && p.getType() == type && p.getColor() == color){
-                for (Position pos : positions.keySet()) {
-                    if (positions.get(pos) == p)
-                        foundPositions.add(pos);
-                }
-            }
-        }
-        return foundPositions;
+    public Board(Piece[] pieces, int nextId) throws BoardException {
+        this.pieceIdGenerator = new IdGenerator(nextId);
+        if(pieces.length != 128)
+            throw new IllegalArgumentException("Array length must be exactly 128");
+        addPiecesToBoard(pieces);
     }
 
     public int getNextPieceId(){
         return pieceIdGenerator.peek();
     }
 
-    public boolean isBoardPositionOccupied(Position position){
-        return positions.get(position) != null;
+
+    public Square getPositionById(int id) throws BoardException {
+        for (int i = 0; i < squares.length; i++){
+            if (squares[i] != null && squares[i].getId() == id){
+                return new Square(i);
+                }
+            }
+        throw new BoardException("Piece not found");
+    }
+
+    public List<Square> getPositionsByTypeAndColor(PieceType type, PieceColor color){
+        List<Square> foundPositions = new ArrayList<>();
+        for (int i = 0; i < squares.length; i++)
+            if (squares[i] !=null && squares[i].getType() == type && squares[i].getColor() == color){
+                foundPositions.add(new Square(i));
+            }
+        return foundPositions;
+    }
+
+    public boolean isBoardPositionOccupied(Square position) throws BoardException {
+        if (!isLegalBoardPosition(position.value())) {
+            throw new BoardException("Invalid position");
+        }
+        return squares[position.value()] != null;
     }
 
     public int piecesOnBoard(){
-        return (new HashSet<>(positions.values()).size()-1);
+        return (new HashSet<>(List.of(squares)).size()-1);
     }
 
-    public Piece getPieceAt(Position position){
-        return positions.get(position);
+    public Piece getPieceAt(Square position) throws BoardException {
+        if (!isLegalBoardPosition(position.value())) {
+            throw new BoardException("Invalid position");
+        }
+        return squares[position.value()];
     }
 
-    public List<Position> getBoardPositions(){
-        return new ArrayList<>(this.positions.keySet());
+    public List<Piece> getPieces(){
+        List<Piece> pieces = new ArrayList<>();
+        for (Piece p: squares){
+            if (p != null)
+                pieces.add(p);
+        }
+        return pieces;
     }
 
-    public synchronized Piece applyValidatedMove(Move move) throws BoardException {
+    synchronized Piece applyValidatedMove(Move move) throws BoardException {
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
             updatePiecePositions((moveKing));
             updatePiecePositions(moveRook);
@@ -91,122 +105,61 @@ public final class Board {
         return updatePiecePositions((SingleMove) move);
     }
 
-    private boolean validateSubmittedBoard(Collection<Position> newPositions) throws BoardException {
-        if(newPositions.size() != 64)
-            throw new BoardException("Board must contain exactly 64 positions");
-        if(this.positions.size() != new HashSet<>(newPositions).size())
-            throw new BoardException("Board contains duplicate positions");
-        return true;
-
+    private boolean isLegalBoardPosition(int position){
+        return ((position & AND_HEX) == 0);
     }
 
-    private boolean validateSubmittedPieces(Collection<Piece> newPieces)
+    private void addPiecesToBoard(Piece[] pieces)
             throws BoardException {
         Set<PieceColor> kingsByColor = new HashSet<>();
-        for (Piece p: newPieces){
-            if (p != null && p.getType() == PieceType.KING) {
-                if (!kingsByColor.add(p.getColor()))
+        HashSet<Integer> uniquePieces = new HashSet<>();
+        for (int i = 0; i < squares.length; i++){
+            Piece p = pieces[i];
+            if (p!= null){
+                if (!isLegalBoardPosition(i))
+                    throw new BoardException(p.getType() + " " + p.getId() + " on illegal position: " +i);
+                if (p.getType() == PieceType.KING && !kingsByColor.add(p.getColor()))
                     throw new BoardException("Board cannot have two kings of the same color");
+                if (!uniquePieces.add(p.getId()))
+                    throw new BoardException("Pieces are not unique");
+                squares[i] = p;
             }
         }
         if (kingsByColor.size() != 2)
             throw new BoardException("There can only be exactly one king of each color on the board");
-        HashSet<Integer> uniquePieces = new HashSet<>();
-        for (Piece p : newPieces){
-            if (p != null && !uniquePieces.add(p.getId()))
-                throw new BoardException("Pieces are not unique");
-        }
-        if (uniquePieces.isEmpty())
-            throw new BoardException("No pieces have been presented");
-        return true;
-    }
-
-    private void initBoard(){
-        positions = new TreeMap<>();
-        for (int rank = 1; rank<9; rank++){
-            for (int file = 1; file<9; file++){
-                positions.put(new Position (file, rank), null);
-            }
-        }
-    }
-
-    private void initPieces(IdGenerator pieceIdGenerator){
-        for (PieceColor c : PieceColor.values()){
-            createPawns(pieceIdGenerator, c);
-            createRooks(pieceIdGenerator, c);
-            createKnights(pieceIdGenerator, c);
-            createBishops(pieceIdGenerator, c);
-            createQueen(pieceIdGenerator, c);
-            createKing(pieceIdGenerator, c);
-        }
-    }
-
-    private void createPawns(IdGenerator pieceIdGenerator, PieceColor color){
-        int rank = color == PieceColor.WHITE? 2 : 7;
-        for (int file = 1; file<9; file++){
-            positions.put(new Position (file,rank), new Piece(pieceIdGenerator.getNextId(), PieceType.PAWN, color));
-        }
-    }
-
-    private void createRooks(IdGenerator pieceIdGenerator, PieceColor color){
-        int rank = color == PieceColor.WHITE? 1 : 8;
-        Piece queenSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
-        Piece kingSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
-        positions.put(new Position(1, rank), queenSideRook);
-        positions.put(new Position(8, rank), kingSideRook);
-    }
-
-    private void createKnights(IdGenerator pieceIdGenerator, PieceColor color){
-        int rank = color == PieceColor.WHITE? 1 : 8;
-        positions.put(new Position(2, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.KNIGHT, color));
-        positions.put(new Position(7, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.KNIGHT, color));
-    }
-
-    private void createBishops(IdGenerator pieceIdGenerator, PieceColor color){
-        int rank = color == PieceColor.WHITE? 1 : 8;
-        positions.put(new Position(3, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.BISHOP, color));
-        positions.put(new Position(6, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.BISHOP, color));
-    }
-
-    private void createQueen(IdGenerator pieceIdGenerator, PieceColor color){
-        int rank = color == PieceColor.WHITE? 1 : 8;
-        positions.put(new Position(4, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.QUEEN, color));
-    }
-
-    private void createKing(IdGenerator pieceIdGenerator, PieceColor color){
-        int rank = color == PieceColor.WHITE? 1 : 8;
-        positions.put(new Position(5, rank), new Piece(pieceIdGenerator.getNextId(), PieceType.KING, color));
     }
 
     private Piece updatePiecePositions(SingleMove move) throws BoardException{
         if (move == null)
             return null;
-        if (!positions.containsKey(move.from()))
-            throw new BoardException("Position " + move.from().toString() + " does not exist");
-        if (!positions.containsKey(move.to()))
-            throw new BoardException("Position " + move.to().toString() + " does not exist");
-        if (positions.get(move.from()) == null)
-            throw new BoardException("There is no piece at " + move.from().toString());
-        Piece p = positions.get(move.to());
-        positions.put(move.to(), getPieceAt(move.from()));
-        positions.put(move.from(), null);
+        if (!isLegalBoardPosition(move.from().value()))
+            throw new BoardException("Position " + move.from().value() + " does not exist");
+        if (!isLegalBoardPosition(move.to().value()))
+            throw new BoardException("Position " + move.to().value() + " does not exist");
+        if (squares[move.from().value()] == null)
+            throw new BoardException("There is no piece at " + move.from().value());
+        Piece p = squares[move.to().value()];
+        squares[move.to().value()] = squares[move.from().value()];
+        squares[move.from().value()] = null;
         return p;
     }
 
     private Piece promotePawnTo(int id, SingleMove pawnMove, PieceType pieceType) throws BoardException {
-        for (Piece t : positions.values()) {
+        for (Piece t : squares) {
             if (t != null && t.getId() == id)
                 throw new BoardException("New id cannot already exist");
         }
-        Piece p = positions.get(pawnMove.from());
+        Piece p = squares[pawnMove.from().value()];
         PieceColor color = p.getColor();
         updatePiecePositions(pawnMove);
-        positions.put(pawnMove.to(), new Piece(id, pieceType, color));
+        squares[pawnMove.to().value()] = new Piece(id, pieceType, color);
         return p;
     }
 
     private Piece applyEnPassantMove(EnPassantMove move) throws BoardException {
         updatePiecePositions(new SingleMove(move.from(), move.to()));
-        return positions.remove(new Position(move.to().file(), move.from().rank()));
+        Piece p = squares[move.to().value()-16];
+        squares[move.to().value()-16] = null;
+        return p;
     }
 }

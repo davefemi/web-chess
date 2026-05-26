@@ -21,7 +21,7 @@ public class GameStateMapper {
     private final BoardMapper boardMapper;
     private final MoveRecordMapper moveRecordMapper;
 
-    public GameStateEntity mapDomainToEntity(Game game){
+    public GameStateEntity mapDomainToEntity(Game game) throws BoardException {
         GameStateEntity entity = new GameStateEntity();
         entity.setCurrentBoardContext(boardMapper.mapDomainToEntity(game.getCurrentBoardContext()));
         entity.setActiveGame(game.isGameActive());

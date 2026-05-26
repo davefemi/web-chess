@@ -1,6 +1,6 @@
 package nl.davefemi.webchess.game.rule;
 
-import nl.davefemi.webchess.game.actions.SingleMove0x88;
+import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.board.PieceColor;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ public class MoveGenerator {
     private static final int[] QUEEN_OFFSET = {1,15,16,17};
     private static final int[] KING_OFFSET = {1,16};
 
-    static List<SingleMove0x88> generateMoves(Board board, PieceColor color) {
-        List<SingleMove0x88> moves = new ArrayList<>();
+    static List<SingleMove> generateMoves(Board board, PieceColor color) {
+        List<SingleMove> moves = new ArrayList<>();
 //        moves.addAll(getKingMoves(board, BoardScanner.getCurrentSinglePiecePosition(board, PieceType.KING, color)));
 //        moves.addAll(getQueenMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.QUEEN, color)));
 //        moves.addAll(getBishopMoves(board, BoardScanner.getCurrentPiecePositions(board, PieceType.BISHOP, color)));
@@ -26,7 +26,7 @@ public class MoveGenerator {
         return moves;
     }
 
-    private static List<SingleMove0x88> getKingMoves(Board board, int position){
+    private static List<SingleMove> getKingMoves(Board board, int position){
         return null;
     }
 }

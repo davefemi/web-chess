@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.record.CastlingMoveRecordDTO;
 import nl.davefemi.webchess.data.entity.record.CastlingMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
-import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.board.Position;
 import nl.davefemi.webchess.game.actions.CastlingMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.board.Square;
 import nl.davefemi.webchess.game.record.CastlingMoveRecord;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +20,11 @@ public class CastlingMoveRecordMapper {
         return new CastlingMoveRecord(
                 new CastlingMove(
                         new SingleMove(
-                                new Position(data.getKingOldPosFile(), data.getKingOldPosRank()),
-                                new Position(data.getKingNewPosFile(), data.getKingNewPosRank())),
+                                Square.fromFileAndRank(data.getKingOldPosFile(), data.getKingOldPosRank()),
+                                Square.fromFileAndRank(data.getKingNewPosFile(), data.getKingNewPosRank())),
                         new SingleMove(
-                                new Position(data.getRookOldPosFile(), data.getRookOldPosRank()),
-                                new Position(data.getRookNewPosFile(), data.getRookNewPosRank()
+                                Square.fromFileAndRank(data.getRookOldPosFile(), data.getRookOldPosRank()),
+                                Square.fromFileAndRank(data.getRookNewPosFile(), data.getRookNewPosRank()
                         ))), PieceColor.fromString(data.getPlayerColor()), data.getKingId(), data.getRookId());
     }
 

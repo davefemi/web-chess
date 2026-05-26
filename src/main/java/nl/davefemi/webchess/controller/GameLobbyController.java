@@ -30,7 +30,7 @@ public class GameLobbyController {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<SessionInvitationDTO> invitePlayer(@RequestParam("color")String color) throws SessionException {
+    public ResponseEntity<SessionInvitationDTO> invitePlayer(@RequestParam("color")String color) throws SessionException, BoardException {
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startGameSession(color));
     }
 

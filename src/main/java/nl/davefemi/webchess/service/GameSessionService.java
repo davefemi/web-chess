@@ -34,7 +34,7 @@ public class GameSessionService {
     private final String inviteUrl = "/games/join?code=%s";
     private final AccessCodeMapper accessCodeMapper;
 
-    public SessionInvitationDTO startGameSession(String color) throws SessionException {
+    public SessionInvitationDTO startGameSession(String color) throws SessionException, BoardException {
         GameSession session = new GameSession();
         Player player = session.createPlayer(PieceColor.fromString(color));
         int timeToLive = 60;
@@ -79,7 +79,7 @@ public class GameSessionService {
         }
     }
 
-    private void storeSession(GameSession session){
+    private void storeSession(GameSession session) throws BoardException {
         GameSessionEntity sessionEntity = gameSessionMapper.mapDomainToEntity(session);
         sessionStore.saveGameSession(sessionEntity);
     }
@@ -103,7 +103,7 @@ public class GameSessionService {
         return retrieveSession(sessionId);
     }
 
-    public void saveGameSession(GameSession gameSession) throws SessionException {
+    public void saveGameSession(GameSession gameSession) throws SessionException, BoardException {
         if (gameSession == null)
             throw new SessionException("No game session to store");
         storeSession(gameSession);

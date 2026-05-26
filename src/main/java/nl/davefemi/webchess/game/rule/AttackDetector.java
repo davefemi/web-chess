@@ -1,11 +1,8 @@
 package nl.davefemi.webchess.game.rule;
 
-import nl.davefemi.webchess.game.actions.EnPassantMove;
-import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.actions.SingleMove;
-import nl.davefemi.webchess.game.board.Board;
-import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.board.Position;
+import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.actions.*;
+import nl.davefemi.webchess.game.board.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +12,11 @@ public final class AttackDetector {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    static boolean isPositionExposed(Board board, Move lastMove, Position position, PieceColor playingColor) {
+    static boolean isPositionExposed(Board board, Move lastMove, Square position, PieceColor playingColor) throws BoardException {
         return !getEnemyMoves(board, lastMove, position, playingColor).isEmpty();
     }
 
-    static List<Move> getEnemyMoves(Board board, Move lastMove, Position position, PieceColor playingColor){
+    static List<Move> getEnemyMoves(Board board, Move lastMove, Square position, PieceColor playingColor) throws BoardException {
         List<Move> moves = new ArrayList<>();
         for (SingleMove s : PseudoSingleMoveGenerator.generateMoves(board, PieceColor.getOpponent(playingColor))){
             if (s.to().equals(position))

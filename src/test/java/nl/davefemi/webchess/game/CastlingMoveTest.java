@@ -3,8 +3,6 @@ package nl.davefemi.webchess.game;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

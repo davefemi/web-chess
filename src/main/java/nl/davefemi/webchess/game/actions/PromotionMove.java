@@ -3,7 +3,7 @@ package nl.davefemi.webchess.game.actions;
 import nl.davefemi.webchess.game.board.PieceType;
 
 public record PromotionMove(SingleMove move, PieceType newPieceType) implements Move {
-    public PromotionMove{
+    public PromotionMove {
         if (move == null){
             throw new IllegalArgumentException("SingleMove cannot be null");
         }

@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.record.SingleMoveRecordDTO;
 import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
+import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.board.Position;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.board.Square;
 import nl.davefemi.webchess.game.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +18,8 @@ public class SingleMoveRecordMapper {
 
     protected SingleMoveRecord mapDataToDomain(SingleMoveRecordEntity data){
         return new SingleMoveRecord(new SingleMove(
-                new Position(data.getOldPosFile(), data.getOldPosRank()),
-                new Position(data.getNewPosFile(), data.getNewPosRank())),
+                Square.fromFileAndRank(data.getOldPosFile(), data.getOldPosRank()),
+                Square.fromFileAndRank(data.getNewPosFile(), data.getNewPosRank())),
                 PieceColor.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getMovedPieceType()),
                 data.getMovedPieceId(),

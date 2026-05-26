@@ -12,35 +12,29 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 @Component
 @RequiredArgsConstructor
 public class BoardMapper {
     private final PositionPieceMapper positionPieceMapper;
 
-    public BoardDTO mapDomainToDTO(Board board){
+    public BoardDTO mapDomainToDTO(Board board) throws BoardException {
         BoardDTO dto = new BoardDTO();
-        for (Position p : board.getBoardPositions()){
-            dto.getBoard().add(positionPieceMapper.
-                    mapDomainToDTO(p, board.getPieceAt(p) != null? board.getPieceAt(p): null));
+        for (Piece p : board.getPieces()){
+            dto.getBoard().add(positionPieceMapper.mapDomainToDTO(board.getPositionById(p.getId()), p));
         }
         return dto;
     }
 
-    public BoardContextEntity mapDomainToEntity(BoardContext boardContext){
+    public BoardContextEntity mapDomainToEntity(BoardContext boardContext) throws BoardException {
         BoardContextEntity entity = new BoardContextEntity();
         Board board = boardContext.getCopyOfBoard();
-        for (Position p: board.getBoardPositions()){
-            Piece piece = board.getPieceAt(p);
+        for (Piece piece: board.getPieces()){
             PositionPieceEntity positionPiece = new PositionPieceEntity();
-            positionPiece.setFile(p.file());
-            positionPiece.setRank(p.rank());
-            if(piece != null) {
-                positionPiece.setPieceType(piece.getType().getLabel());
-                positionPiece.setColor(piece.getColor().getColor());
-                positionPiece.setPieceId(piece.getId());
-            }
+            positionPiece.setPositionValue(board.getPositionById(piece.getId()).value());
+            positionPiece.setPieceType(piece.getType().getLabel());
+            positionPiece.setColor(piece.getColor().getColor());
+            positionPiece.setPieceId(piece.getId());
             entity.getPositions().add(positionPiece);
         }
         for (Piece p: boardContext.getCapturedPieces()){
@@ -52,15 +46,16 @@ public class BoardMapper {
     }
 
     public BoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, PieceColor playerToMove) throws BoardException {
-        TreeMap<Position, Piece> positions = new TreeMap<>();
+        Piece[] pieces = new Piece[128];
         for (PositionPieceEntity p : entity.getPositions()) {
-            positions.put(positionPieceMapper.mapEntityToPosition(p), positionPieceMapper.mapEntityToPiece(p));
+            Piece piece = positionPieceMapper.mapEntityToPiece(p);
+            pieces[p.getPositionValue()] = piece;
         }
         List<Piece> capturedPieces = new ArrayList<>();
         for (PositionPieceEntity e : entity.getCapturedPieces())
             capturedPieces.add(positionPieceMapper.mapEntityToPiece(e));
         return new BoardContext(playerToMove,
-                new Board(positions, entity.getNextPieceId()),
+                new Board(pieces, entity.getNextPieceId()),
                 lastMove,
                 capturedPieces,
                 entity.getOriginalRooks());

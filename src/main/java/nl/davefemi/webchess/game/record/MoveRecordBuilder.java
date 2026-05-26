@@ -1,13 +1,11 @@
 package nl.davefemi.webchess.game.record;
 
+import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.actions.*;
-import nl.davefemi.webchess.game.board.Board;
-import nl.davefemi.webchess.game.board.Piece;
-import nl.davefemi.webchess.game.board.PieceType;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.board.*;
 
 public class MoveRecordBuilder {
-    public static MoveRecord getMoveRecord(Board board, Move move, PieceColor color, Piece capturedPiece){
+    public static MoveRecord getMoveRecord(Board board, Move move, PieceColor color, Piece capturedPiece) throws BoardException {
         if (move instanceof CastlingMove m){
             return getCastlingMoveRecord(board, m, color);
         }
@@ -20,7 +18,7 @@ public class MoveRecordBuilder {
     }
 
     private static SingleMoveRecord getSingleMoveRecord(Board board,
-                                                        SingleMove move, PieceColor color, Piece capturedPiece){
+                                                        SingleMove move, PieceColor color, Piece capturedPiece) throws BoardException {
         PieceType capPiece = null;
         int capPieceID =0;
         if (capturedPiece != null){
@@ -37,7 +35,7 @@ public class MoveRecordBuilder {
     }
 
     private static CastlingMoveRecord getCastlingMoveRecord (Board board,
-                                                             CastlingMove move, PieceColor color){
+                                                             CastlingMove move, PieceColor color) throws BoardException {
         return new CastlingMoveRecord(
                 move,
                 color,
@@ -46,7 +44,7 @@ public class MoveRecordBuilder {
     }
 
     private static PromotionMoveRecord getPromotionMoveRecord(Board board,
-                                                              PromotionMove move, PieceColor color){
+                                                              PromotionMove move, PieceColor color) throws BoardException {
         return new PromotionMoveRecord(
                 move,
                 color,

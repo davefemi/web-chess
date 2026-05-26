@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.record.PromotionMoveRecordDTO;
 import nl.davefemi.webchess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
+import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.board.Position;
-import nl.davefemi.webchess.game.actions.PromotionMove;
+import nl.davefemi.webchess.game.board.Square;
 import nl.davefemi.webchess.game.record.PromotionMoveRecord;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +19,8 @@ public class PromotionMoveRecordMapper {
 
     protected PromotionMoveRecord mapDataToDomain(PromotionMoveRecordEntity data){
         return new PromotionMoveRecord(
-                new PromotionMove(new SingleMove(new Position(data.getOldPosFile(), data.getOldPosRank()),
-                        new Position(data.getNewPosFile(), data.getNewPosRank())),
+                new PromotionMove(new SingleMove(Square.fromFileAndRank(data.getOldPosFile(), data.getOldPosRank()),
+                        Square.fromFileAndRank(data.getNewPosFile(), data.getNewPosRank())),
                         PieceType.fromString(data.getNewPieceType())),
                 PieceColor.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getNewPieceType()),

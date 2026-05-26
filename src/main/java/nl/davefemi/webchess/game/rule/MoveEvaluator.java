@@ -1,13 +1,14 @@
 package nl.davefemi.webchess.game.rule;
 
+import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.exception.TypeException;
 import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.record.CastlingMoveRecord;
 import nl.davefemi.webchess.game.record.MoveRecord;
 import nl.davefemi.webchess.game.record.SingleMoveRecord;
-import nl.davefemi.webchess.exception.BoardException;
-import nl.davefemi.webchess.exception.MoveException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,7 @@ public final class MoveEvaluator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    static boolean isCastlingMoveLegal(Board board, List<Integer> originalRooks, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException {
+    static boolean isCastlingMoveLegal(Board board, List<Integer> originalRooks, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException, BoardException {
         Piece king = board.getPieceAt(move.moveKing().from());
         Piece rook = board.getPieceAt(move.moveRook().from());
         if (king != null && king.getType() == PieceType.KING &&
@@ -43,9 +44,10 @@ public final class MoveEvaluator {
         throw new MoveException("Invalid positions");
     }
 
-    static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException {
+    // index changed
+    static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException, BoardException {
         PieceType newPieceType = move.newPieceType();
-        Position oldPawnPos = move.move().from();
+        Square oldPawnPos = move.move().from();
         Piece piece = board.getPieceAt(oldPawnPos);
         if (piece == null){
             throw new MoveException("There is no piece at the position to be moved");
@@ -55,8 +57,8 @@ public final class MoveEvaluator {
         PieceColor color = board.getPieceAt(oldPawnPos).getColor();
         if (board.getPieceAt(oldPawnPos).getType() != PieceType.PAWN)
             throw new TypeException("Piece to be replaced is not a pawn");
-        if (color == PieceColor.WHITE && oldPawnPos.rank() != 7 ||
-                color == PieceColor.BLACK && oldPawnPos.rank() != 2)
+        if (color == PieceColor.WHITE && oldPawnPos.rank() != 6 ||
+                color == PieceColor.BLACK && oldPawnPos.rank() != 1)
             throw new MoveException("This piece is not up for promotion");
         if (newPieceType == PieceType.PAWN || newPieceType == PieceType.KING)
             throw new TypeException("Replacement piece cannot be of type " + newPieceType.getLabel());
@@ -66,26 +68,26 @@ public final class MoveEvaluator {
     static List<Move> evaluateIfKingIsInCheckAfterMove(BoardContext boardContext, List<Move> pseudoMoves, PieceColor player) throws BoardException {
         List<Move> legalMoves = new ArrayList<>();
         for (Move move : pseudoMoves) {
-            Board boardAfterMove = PseudoSingleMoveGenerator.applyFictitiousMove(boardContext.getCopyOfBoard(), move);
-            Position kingOfPlayer = boardAfterMove.getPositionsByTypeAndColor(PieceType.KING, player).getFirst();
-            if (isKingInCheck(boardAfterMove, move, kingOfPlayer, player))
+            BoardContext boardAfterMove = boardContext.applyMove(move);
+            if (isKingInCheck(boardAfterMove, move, player))
                 continue;
             legalMoves.add(move);
         }
         return legalMoves;
     }
 
-    static boolean isKingInCheck(Board boardAfterMove, Move playerMove, Position kingPosition, PieceColor player) throws BoardException {
-        List<Move> pseudoMoves = getPseudoMoves(boardAfterMove,playerMove, PieceColor.getOpponent(player));
+    static boolean isKingInCheck(BoardContext boardAfterMove, Move playerMove, PieceColor player) throws BoardException {
+        List<Move> pseudoMoves = getPseudoMoves(boardAfterMove.getCopyOfBoard(),playerMove, PieceColor.getOpponent(player));
+        Square kingPosition = boardAfterMove.getCopyOfBoard().getPositionsByTypeAndColor(PieceType.KING, player).getFirst();
         for (Move opponentMove : pseudoMoves) {
-            Board boardAfterOpponentMove = PseudoSingleMoveGenerator.applyFictitiousMove(boardAfterMove, opponentMove);
-            List<Position> boardPositions = boardAfterOpponentMove.getPositionsByTypeAndColor(PieceType.KING, PieceColor.getOpponent(player));
+            Board boardAfterOpponentMove = boardAfterMove.applyMove(opponentMove).getCopyOfBoard();
+            List<Square> boardPositions = boardAfterOpponentMove.getPositionsByTypeAndColor(PieceType.KING, PieceColor.getOpponent(player));
             if (boardPositions.isEmpty())
                 continue;
-            Position positionOpponentKing = boardPositions.getFirst();
+            Square positionOpponentKing = boardPositions.getFirst();
             if (opponentMove instanceof SingleMove singleCounterMoveOpponent) {
                 if (moveAttacksKing(singleCounterMoveOpponent, kingPosition) &&
-                        kingNotInCheckAfterMakingMove(boardAfterMove, playerMove, opponentMove, positionOpponentKing, player)) {
+                        kingNotInCheckAfterMakingMove(boardAfterMove.getCopyOfBoard(), playerMove, opponentMove, positionOpponentKing, player)) {
                     return true;
                 }
                 continue;
@@ -107,7 +109,7 @@ public final class MoveEvaluator {
         return false;
     }
 
-    static boolean filterForBlockingCapturePositions(Board board, Position oldPos, Position newPos, List<SingleMove> moves) {
+    static boolean filterForBlockingCapturePositions(Board board, Square oldPos, Square newPos, List<SingleMove> moves) throws BoardException {
         if (board.isBoardPositionOccupied(newPos)) {
             if (board.getPieceAt(oldPos).getColor() == board.getPieceAt(newPos).getColor())
                 return true;
@@ -117,7 +119,7 @@ public final class MoveEvaluator {
         return false;
     }
 
-    static boolean isPawnMoveLegal(Board board, Position oldPos, Position newPos) {
+    static boolean isPawnMoveLegal(Board board, Square oldPos, Square newPos) throws BoardException {
         if (board.isBoardPositionOccupied(newPos) &&
                 board.getPieceAt(newPos).getColor() != board.getPieceAt(oldPos).getColor() &&
                 oldPos.file() != newPos.file())
@@ -125,13 +127,14 @@ public final class MoveEvaluator {
         return !board.isBoardPositionOccupied(newPos) && oldPos.file() == newPos.file();
     }
 
-    static boolean isEnpassantLegal(Board board, Move lastMove, Position oldPos, Position newPos, PieceColor color){
+    // Index changed
+    static boolean isEnpassantLegal(Board board, Move lastMove, Square oldPos, Square newPos, PieceColor color) throws BoardException {
         boolean newFileDifferenceOfOne = newPos.file() - oldPos.file() == Math.abs(1);
         boolean white = color == PieceColor.WHITE;
-        int startingRank = white ? 5 : 4;
-        int newRank = white ? 6 : 3;
-        int startingRankOpponent = white ? 7 : 2;
-        int newRankOpponent = white ? 5 : 4;
+        int startingRank = white ? 4 : 3;
+        int newRank = white ? 5 : 2;
+        int startingRankOpponent = white ? 6 : 1;
+        int newRankOpponent = white ? 4 : 3;
         if (newPos.rank() == newRank && oldPos.rank() == startingRank && newFileDifferenceOfOne &&
                 lastMove instanceof SingleMove singleMove &&
                 singleMove.to().rank() == newRankOpponent && singleMove.from().rank() == startingRankOpponent
@@ -142,12 +145,12 @@ public final class MoveEvaluator {
         return false;
     }
 
-    private static boolean kingNotInCheckAfterMakingMove(Board board, Move playerMove, Move lastMove, Position kingPosition, PieceColor opposingColor) {
+    private static boolean kingNotInCheckAfterMakingMove(Board board, Move playerMove, Move lastMove, Square kingPosition, PieceColor opposingColor) throws BoardException {
         for (SingleMove m : PseudoSingleMoveGenerator.generateMoves(board, opposingColor)) {
             if (moveAttacksKing(m, kingPosition)) {
-                List<Position> fromPositions = getPositions(playerMove, 0);
+                List<Square> fromPositions = getPositions(playerMove, 0);
                 if (fromPositions != null) {
-                    for (Position p : fromPositions) {
+                    for (Square p : fromPositions) {
                         if (p.equals(m.from()))
                             return true;
                     }
@@ -157,9 +160,9 @@ public final class MoveEvaluator {
         }
         for (EnPassantMove m : PseudoEnPassantMoveGenerator.generateMoves(board, lastMove, opposingColor)) {
             if (moveAttacksKing(m, kingPosition)) {
-                List<Position> fromPositions = getPositions(playerMove, 0);
+                List<Square> fromPositions = getPositions(playerMove, 0);
                 if (fromPositions != null) {
-                    for (Position p : fromPositions) {
+                    for (Square p : fromPositions) {
                         if (p.equals(m.from()))
                             return true;
                     }
@@ -169,9 +172,9 @@ public final class MoveEvaluator {
         }
         for (CastlingMove m : PseudoCastlingMoveGenerator.generateMoves(board, opposingColor))
             if (moveAttacksKing(m, kingPosition)) {
-                List<Position> fromPositions = getPositions(playerMove, 0);
+                List<Square> fromPositions = getPositions(playerMove, 0);
                 if (fromPositions != null) {
-                    for (Position p : fromPositions) {
+                    for (Square p : fromPositions) {
                         if (p.equals(m.moveKing().from()) || p.equals(m.moveRook().from()))
                             return true;
                     }
@@ -181,7 +184,7 @@ public final class MoveEvaluator {
         return true;
     }
 
-    private static List<Position> getPositions(Move move, int position) {
+    private static List<Square> getPositions(Move move, int position) {
         if (move != null) {
             if (move instanceof SingleMove singleMove) {
                 if (position == 0)
@@ -205,7 +208,7 @@ public final class MoveEvaluator {
         return null;
     }
 
-    private static boolean moveAttacksKing(Move movingPiece, Position king){
+    private static boolean moveAttacksKing(Move movingPiece, Square king){
         if (movingPiece instanceof EnPassantMove m)
             return m.to().equals(king);
         if (movingPiece instanceof CastlingMove m)
@@ -213,7 +216,7 @@ public final class MoveEvaluator {
         return ((SingleMove) movingPiece).to().equals(king);
     }
 
-    private static List<Move> getPseudoMoves(Board board, Move lastMove, PieceColor color) {
+    private static List<Move> getPseudoMoves(Board board, Move lastMove, PieceColor color) throws BoardException {
         List<Move> totalMoves = new ArrayList<>();
         totalMoves.addAll(PseudoSingleMoveGenerator.generateMoves(board, color));
         totalMoves.addAll(PseudoCastlingMoveGenerator.generateMoves(board, color));

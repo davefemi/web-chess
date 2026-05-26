@@ -7,7 +7,7 @@ import nl.davefemi.webchess.game.record.MoveRecord;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
-import nl.davefemi.webchess.game.rule.RuleEngine0x88;
+import nl.davefemi.webchess.game.rule.RuleEngine;
 import java.util.ArrayList;
 import java.util.List;
 import static nl.davefemi.webchess.game.GameStatus.*;
@@ -70,18 +70,18 @@ public class Game {
             return CHECK;
         if (isPlayerCheckMate(PieceColor.getOpponent(color)))
             return WINNER;
-        if (RuleEngine0x88.getAllLegalMovesByPieceColor(currentBoardContext, color).isEmpty() && !isPlayerInCheck(color))
+        if (RuleEngine.getAllLegalMovesByPieceColor(currentBoardContext, color).isEmpty() && !isPlayerInCheck(color))
             return STALEMATE;
         return ACTIVE;
     }
 
 
     public List<Move> getAvailableMoves(PieceColor color) throws BoardException {
-        return RuleEngine0x88.getAllLegalMovesByPieceColor(getCurrentBoardContext(), color);
+        return RuleEngine.getAllLegalMovesByPieceColor(getCurrentBoardContext(), color);
     }
 
     public synchronized boolean executeMove(PieceColor color, Move move) throws GameException, MoveException, BoardException {
-        BoardContext nextBoardContext = RuleEngine0x88.applyLegalMove(getCurrentBoardContext(), moveHistory, color, move);
+        BoardContext nextBoardContext = RuleEngine.applyLegalMove(getCurrentBoardContext(), moveHistory, color, move);
         this.currentBoardContext = nextBoardContext;
         updateMoveHistory();
         turnGenerator.nextTurn();
@@ -108,11 +108,11 @@ public class Game {
     }
 
     private boolean isPlayerInCheck(PieceColor color) throws BoardException {
-        return RuleEngine0x88.isKingInCheck(getCurrentBoardContext(), color);
+        return RuleEngine.isKingInCheck(getCurrentBoardContext(), color);
     }
 
     private boolean isPlayerCheckMate(PieceColor color) throws BoardException {
-        return RuleEngine0x88.isPlayerCheckMate(getCurrentBoardContext(), color);
+        return RuleEngine.isPlayerCheckMate(getCurrentBoardContext(), color);
     }
 
     private synchronized void updateMoveHistory(){

@@ -1,6 +1,5 @@
 package nl.davefemi.webchess.game.record;
 
-import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;

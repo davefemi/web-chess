@@ -4,6 +4,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.actions.Move;
 import nl.davefemi.webchess.game.record.MoveRecord;
 import nl.davefemi.webchess.game.record.MoveRecordBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +44,7 @@ public final class BoardContext {
 
     private List<Integer> fetchOriginalRooksFromBoard() {
         List<Integer> originalRooks = new ArrayList<>();
-        for (Position p: board.getBoardPositions()){
-            Piece piece = board.getPieceAt(p);
+        for (Piece piece : board.getPieces()){
             if (piece != null && piece.getType() == PieceType.ROOK)
                 originalRooks.add(piece.getId());
         }

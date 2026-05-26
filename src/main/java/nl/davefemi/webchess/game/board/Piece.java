@@ -1,6 +1,9 @@
 package nl.davefemi.webchess.game.board;
 
-public class Piece {
+import lombok.Getter;
+
+@Getter
+public final class Piece {
     private final int id;
     private final PieceType type;
     private final PieceColor color;
@@ -9,17 +12,5 @@ public class Piece {
         this.id = id;
         this.type = type;
         this.color = color;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public PieceType getType() {
-        return type;
-    }
-
-    public PieceColor getColor() {
-        return color;
     }
 }
