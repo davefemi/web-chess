@@ -5,6 +5,7 @@ import nl.davefemi.webchess.data.MoveDTO;
 
 @Data
 public class PromotionMoveDTO implements MoveDTO {
-    private SingleMoveDTO move;
-    private String pieceType;
+    private String from;
+    private String to;
+    private String newPieceType;
 }

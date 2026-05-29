@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.game.record;
+package nl.davefemi.webchess.game.actions.record;
 
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.board.PieceType;
@@ -6,6 +6,8 @@ import nl.davefemi.webchess.game.board.PieceColor;
 
 public record PromotionMoveRecord(PromotionMove move,
                                   PieceColor playerColor,
+                                  PieceType capturedPiece,
+                                  int capturedPieceId,
                                   PieceType newPiece,
                                   int pieceId)
         implements MoveRecord{

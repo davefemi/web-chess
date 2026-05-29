@@ -15,22 +15,25 @@ public final class PseudoCastlingMoveGenerator {
 
     static List<CastlingMove> generateMoves(Board board, PieceColor color) throws BoardException {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
-        Square king = board.getPositionsByTypeAndColor(PieceType.KING, color).getFirst();
-        List<Square> rooks = board.getPositionsByTypeAndColor(PieceType.ROOK, color);
-        for (CastlingMove c : getMoves(color)) {
-            if (c.moveKing().from().equals(king)) {
-                int lowerFile  = Math.min(c.moveKing().from().file(), c.moveRook().from().file());
-                int higherFile = Math.max(c.moveKing().from().file(), c.moveRook().from().file());
-                int rankKing = king.rank();
-                for (Square p : rooks) {
-                    if (c.moveRook().from().equals(p)) {
-                        boolean empty = true;
-                        for(int i = lowerFile+1; i<higherFile; i++){
-                            if (board.isBoardPositionOccupied(Square.fromFileAndRank(i, rankKing)))
-                                empty = false;
+        List<Square> positions = board.getPositionsByTypeAndColor(PieceType.KING, color);
+        if (!positions.isEmpty()) {
+            Square king = positions.getFirst();
+            List<Square> rooks = board.getPositionsByTypeAndColor(PieceType.ROOK, color);
+            for (CastlingMove c : getMoves(color)) {
+                if (c.moveKing().from().equals(king)) {
+                    int lowerFile = Math.min(c.moveKing().from().file(), c.moveRook().from().file());
+                    int higherFile = Math.max(c.moveKing().from().file(), c.moveRook().from().file());
+                    int rankKing = king.rank();
+                    for (Square p : rooks) {
+                        if (c.moveRook().from().equals(p)) {
+                            boolean empty = true;
+                            for (int i = lowerFile + 1; i < higherFile; i++) {
+                                if (board.isBoardPositionOccupied(Square.fromFileAndRank(i, rankKing)))
+                                    empty = false;
+                            }
+                            if (empty)
+                                pseudoMoves.add(c);
                         }
-                        if (empty)
-                            pseudoMoves.add(c);
                     }
                 }
             }
@@ -42,8 +45,6 @@ public final class PseudoCastlingMoveGenerator {
     private static List<CastlingMove> getMoves(PieceColor color){
         List<CastlingMove>  moves = new ArrayList<>();
         int rank = 0;
-        if (color == PieceColor.WHITE)
-            rank = 0;
         if (color == PieceColor.BLACK)
             rank = 7;
         Square kStart = Square.fromFileAndRank(4, rank);

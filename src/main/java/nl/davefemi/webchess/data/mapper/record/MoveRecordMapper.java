@@ -6,10 +6,10 @@ import nl.davefemi.webchess.data.MoveRecordDTO;
 import nl.davefemi.webchess.data.entity.record.MoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
-import nl.davefemi.webchess.game.record.CastlingMoveRecord;
-import nl.davefemi.webchess.game.record.MoveRecord;
-import nl.davefemi.webchess.game.record.PromotionMoveRecord;
-import nl.davefemi.webchess.game.record.SingleMoveRecord;
+import nl.davefemi.webchess.game.actions.record.CastlingMoveRecord;
+import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.record.PromotionMoveRecord;
+import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
 
 @Component

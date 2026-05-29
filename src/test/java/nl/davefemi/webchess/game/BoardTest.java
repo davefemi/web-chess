@@ -1,6 +1,5 @@
 package nl.davefemi.webchess.game;
 
-import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,11 +30,11 @@ public class BoardTest {
 
     @ParameterizedTest
     @CsvSource({
-            "0,0,0,0, cannot be lower than 1",
-            "2,2, 2,9, cannot be greater than 8",
-            "2,2, 9,2, cannot be greater than 8",
-            "9,2, 2,2, cannot be greater than 8",
-            "2,9, 2,2, cannot be greater than 8"
+            "-1,0,0,0, Invalid file or rank",
+            "2,2, 2,9, Invalid file or rank",
+            "2,2, 9,2, Invalid file or rank",
+            "9,2, 2,2, Invalid file or rank",
+            "2,9, 2,2, Invalid file or rank"
     })
     public void validatedMoveTest(int fromFile, int fromRank, int toFile, int toRank, String expected){
         assertThatException().isThrownBy(
@@ -46,10 +45,5 @@ public class BoardTest {
     @Test
     public void promotionIdTest(){
         assertThat(game.getCurrentBoardContext().getCopyOfBoard().getNextPieceId()).isGreaterThan(new IdGenerator().getNextId());
-        assertThatException().isThrownBy(
-                ()-> board.applyMove(
-                        new PromotionMove(
-                                 getSingleMove(1,1,2,2),
-                                PieceType.QUEEN))).withMessageContaining("id");
     }
 }

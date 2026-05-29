@@ -1,6 +1,5 @@
 package nl.davefemi.webchess.data.mapper.move;
 
-import nl.davefemi.webchess.data.dto.move.PositionDTO;
 import nl.davefemi.webchess.game.board.AlgebraicSquare;
 import nl.davefemi.webchess.game.board.Square;
 import org.springframework.stereotype.Component;
@@ -12,8 +11,8 @@ public class PositionMapper {
         return AlgebraicSquare.fromFileAndRank(position.file(), position.rank()).value();
     }
 
-    public Square mapDTOtoDomain(PositionDTO position){
-        return Square.fromFileAndRank(position.getFile(), position.getRank());
+    public Square mapDTOtoDomain(String position){
+        return new AlgebraicSquare(position).toSquare();
     }
 
 }

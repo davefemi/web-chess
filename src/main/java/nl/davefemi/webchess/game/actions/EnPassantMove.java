@@ -11,13 +11,12 @@ public record EnPassantMove(Square from, Square to) implements Move {
         if (to == null){
             throw new IllegalArgumentException("Position 'to'  cannot be null");
         }
-        if (from.rank() == 4 || from.rank() == 5){
-            int abs = Math.abs(from().value() - to.value());
-            if (!(abs == 15 && (abs == 17))) {
-                throw new IllegalArgumentException("Move to " + AlgebraicSquare.fromFileAndRank(to().file(), to().rank()) + " not allowed");
+        if (from.rank() == 4 || from.rank() == 3){
+            int abs = Math.abs(from.value() - to.value());
+            if (!(abs == 15 || (abs == 17))) {
+                throw new IllegalArgumentException("Move to " + AlgebraicSquare.fromFileAndRank(to.file(), to.rank()) + " not allowed");
             }
         }
-        throw new IllegalArgumentException("Invalid en passant move");
     }
 
 }

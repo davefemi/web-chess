@@ -24,8 +24,8 @@ public final class PseudoSingleMoveGenerator {
     //Index changed
     private static List<SingleMove> getKingMoves(Board board, List<Square> positions) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
-        Square king = positions.getFirst();
-        if (king != null) {
+        if (!positions.isEmpty()) {
+            Square king = positions.getFirst();
             for (int file = Math.max(king.file() - 1, 0); file <= Math.min(king.file() + 1, 7); file++) {
                 for (int rank = Math.max(king.rank() - 1, 0); rank <= Math.min(king.rank() + 1, 7); rank++) {
                     Square newPos = Square.fromFileAndRank(file, rank);

@@ -9,7 +9,7 @@ import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.board.Square;
-import nl.davefemi.webchess.game.record.PromotionMoveRecord;
+import nl.davefemi.webchess.game.actions.record.PromotionMoveRecord;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,7 +24,9 @@ public class PromotionMoveRecordMapper {
                         PieceType.fromString(data.getNewPieceType())),
                 PieceColor.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getNewPieceType()),
-                data.getOldPieceId());
+                data.getOldPieceId(),
+                PieceType.fromString(data.getCapturedPieceType()),
+                data.getCapturedPieceId());
     }
 
     protected PromotionMoveRecordEntity mapDomainToEntity(PromotionMoveRecord record){
@@ -35,6 +37,9 @@ public class PromotionMoveRecordMapper {
         data.setNewPosRank(record.move().move().to().rank());
         data.setPlayerColor(record.playerColor().getColor());
         data.setNewPieceType(record.newPiece().getLabel());
+        data.setNewPieceId(record.pieceId());
+        data.setCapturedPieceType(record.capturedPiece().getLabel());
+        data.setCapturedPieceId(record.capturedPieceId());
         return data;
     }
 
@@ -44,6 +49,9 @@ public class PromotionMoveRecordMapper {
         data.setNewPos(positionMapper.mapDomainToDTO(record.move().move().to()));
         data.setPlayerColor(record.playerColor().getColor());
         data.setNewPieceType(record.newPiece().getLabel());
+        data.setNewPieceId(record.pieceId());
+        data.setCapturedPieceType(record.capturedPiece().getLabel());
+        data.setCapturedPieceId(record.capturedPieceId());
         return data;
     }
 

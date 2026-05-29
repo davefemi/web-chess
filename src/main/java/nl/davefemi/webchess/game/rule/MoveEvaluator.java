@@ -5,9 +5,9 @@ import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.exception.TypeException;
 import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.game.board.*;
-import nl.davefemi.webchess.game.record.CastlingMoveRecord;
-import nl.davefemi.webchess.game.record.MoveRecord;
-import nl.davefemi.webchess.game.record.SingleMoveRecord;
+import nl.davefemi.webchess.game.actions.record.CastlingMoveRecord;
+import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 
 import java.util.ArrayList;
 import java.util.Collections;

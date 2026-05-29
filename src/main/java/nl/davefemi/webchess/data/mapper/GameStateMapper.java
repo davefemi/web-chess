@@ -9,7 +9,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.record.MoveRecord;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

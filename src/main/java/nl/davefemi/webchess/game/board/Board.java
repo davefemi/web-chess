@@ -15,14 +15,6 @@ public final class Board {
     public Board(){
         pieceIdGenerator = new IdGenerator();
         PieceFactory.populateBoardWithPieces(squares, pieceIdGenerator);
-        for (int i = 0; i<squares.length; i++) {
-            Piece p = squares[i];
-            if (p != null) {
-                Square square = new Square(i);
-                System.out.println("SQUARE " + AlgebraicSquare.fromFileAndRank(square.file(), square.rank()).value() +
-                        " contains a " + p.getColor().getColor() + " " + p.getType());
-            }
-        }
     }
 
     public Board(Board other){
@@ -72,7 +64,7 @@ public final class Board {
     }
 
     public int piecesOnBoard(){
-        return (new HashSet<>(List.of(squares)).size()-1);
+        return (new HashSet<>(Arrays.asList(squares)).size()-1);
     }
 
     public Piece getPieceAt(Square position) throws BoardException {

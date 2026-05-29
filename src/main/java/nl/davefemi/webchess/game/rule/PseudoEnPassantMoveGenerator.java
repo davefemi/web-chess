@@ -38,9 +38,8 @@ public class PseudoEnPassantMoveGenerator {
         List<Square> newPos = new ArrayList<>();
         if (position.rank() == startingRank){
             for (int file = Math.max(0, position.file()-1); file <= Math.min(7, position.file()+1); file++){
-                Square enPassant = Square.fromFileAndRank(file, destinationRank);
-                if (enPassant.file() != position.file())
-                    newPos.add(enPassant);
+                if (file != position.file())
+                    newPos.add(Square.fromFileAndRank(file, destinationRank));
             }
         }
         for (Square p : newPos) {

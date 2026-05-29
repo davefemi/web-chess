@@ -9,8 +9,10 @@ public class PromotionMoveRecordEntity implements MoveRecordEntity {
     private int newPosFile;
     private int newPosRank;
     private String playerColor;
+    private String oldPieceType;
     private int oldPieceId;
     private String newPieceType;
     private int newPieceId;
-
+    private String capturedPieceType;
+    private int capturedPieceId;
 }

@@ -8,7 +8,7 @@ import nl.davefemi.webchess.game.actions.Move;
 import nl.davefemi.webchess.game.actions.PromotionMove;
 import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
-import nl.davefemi.webchess.game.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.record.MoveRecord;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class RuleEngine {
     }
 
 
-    private static boolean isMoveAllowed(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, MoveException {
+    public static boolean isMoveAllowed(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, MoveException {
         if (!(pieceColor == boardContext.getColorToMove()))
             throw new MoveException("It is not " + pieceColor + "'s turn yet");
         if (move instanceof CastlingMove m)

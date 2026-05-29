@@ -2,8 +2,8 @@ package nl.davefemi.webchess.game.board;
 
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.record.MoveRecord;
-import nl.davefemi.webchess.game.record.MoveRecordBuilder;
+import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.record.MoveRecordBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

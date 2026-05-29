@@ -4,10 +4,8 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.actions.SingleMove;
-import nl.davefemi.webchess.game.board.Board;
+import nl.davefemi.webchess.game.board.AlgebraicSquare;
 import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.board.Square;
-import nl.davefemi.webchess.game.rule.RuleEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -26,34 +24,27 @@ public class BishopMoveTest {
         game = new Game();
     }
 
-    private SingleMove getSingleMove(int file_start, int rank_start, int file_end, int rank_end){
-        return new SingleMove(Square.fromFileAndRank(file_start, rank_start),Square.fromFileAndRank(file_end, rank_end));
+    private SingleMove getSingleMove(String from, String to){
+        return new SingleMove(new AlgebraicSquare(from).toSquare(),new AlgebraicSquare(to).toSquare());
     }
 
     @ParameterizedTest
     @CsvSource({
-            "3,1,3,2, false",
-            "3,1,1,3, true",
-            "3,1,2,3, false",
-            "3,1,4,2, true",
-            "3,1,5,3, true",
-            "3,1,6,4, true",
-            "3,1,7,5, true",
-            "3,1,8,6, true"
+            "c1,a3, true",
+            "c1,d2, true",
+            "c1,e3, true",
+            "c1,f4, true",
+            "c1,g5, true",
+            "c1,h6, true"
     })
-    public void startingMoveTest(int fromFile, int fromRank, int toFile, int toRank, boolean expected) throws MoveException, BoardException, GameException {
-        game.executeMove(white, getSingleMove(2,2,2,3));
-        game.executeMove(black, getSingleMove(2,7,2,5));
-        game.executeMove(white, getSingleMove(3,2,3,3));
-        game.executeMove(black, getSingleMove(3,7,3,6));
-        game.executeMove(white, getSingleMove(4,2,4,3));
-        game.executeMove(black, getSingleMove(4,7,4,6));
-        int square = 0x42;
-        Board testb = new Board();
-        System.out.println("FILE: " + (square & 7) + " RANK: " + (square >> 4));
-        square = 0x07;
-        System.out.println("Can you move from h1 to h2?: " + ((square + 16 & 0x88) == 0 ));
-//        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), white, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
+    public void startingMoveTest(String from, String to, boolean expected) throws MoveException, BoardException, GameException {
+        game.executeMove(white, getSingleMove("b2","b3"));
+        game.executeMove(black, getSingleMove("b7","b5"));
+        game.executeMove(white, getSingleMove("c2","c3"));
+        game.executeMove(black, getSingleMove("c7","c6"));
+        game.executeMove(white, getSingleMove("d2","d3"));
+        game.executeMove(black, getSingleMove("d7","d6"));
+        assertThat(game.executeMove(white, getSingleMove(from, to))).isEqualTo(expected);
     }
 
 }

@@ -3,6 +3,9 @@ package nl.davefemi.webchess.game;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
+import nl.davefemi.webchess.game.actions.EnPassantMove;
+import nl.davefemi.webchess.game.actions.PromotionMove;
+import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.rule.RuleEngine;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,38 +26,38 @@ public class PawnMoveTest {
         game = new Game();
     }
 
-    private SingleMove getSingleMove(int file_start, int rank_start, int file_end, int rank_end){
-        return new SingleMove(new Position(file_start, rank_start),new Position(file_end, rank_end));
+    private SingleMove getSingleMove(String from, String to){
+        return new SingleMove(new AlgebraicSquare(from).toSquare(),new AlgebraicSquare(to).toSquare());
     }
 
-    private EnPassantMove getEnPassantMove(int file_start, int rank_start, int file_end, int rank_end){
-        return new EnPassantMove(new Position(file_start, rank_start),new Position(file_end, rank_end));
+    private EnPassantMove getEnPassantMove(String from, String to){
+        return new EnPassantMove(new AlgebraicSquare(from).toSquare(),new AlgebraicSquare(to).toSquare());
     }
 
 
     @ParameterizedTest
     @CsvSource({
-            "2,2,2,4, true",
-            "2,2,2,3, true",
-            "2,2,2,1, false",
-            "2,2,3,2, false",
-            "2,2,2,5, false",
-            "2,2,2,5, false"
+            "b2,b4, true",
+            "b2,b3, true",
+            "b2,b1, false",
+            "b2,c2, false",
+            "b2,b5, false",
+            "b2,b5, false"
     })
-    public void startingMoveTest(int fromFile, int fromRank, int toFile, int toRank, boolean expected) throws MoveException, BoardException {
-        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), PieceColor.WHITE, getSingleMove(fromFile, fromRank, toFile, toRank))).isEqualTo(expected);
+    public void startingMoveTest(String from, String to, boolean expected) throws MoveException, BoardException {
+        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), PieceColor.WHITE, getSingleMove(from, to))).isEqualTo(expected);
     }
 
     @Test
     public void illegalPawnMoveTest() {
         Exception exception = assertThrows(MoveException.class, ()-> {
-                    game.executeMove(PieceColor.WHITE, getSingleMove(2, 2, 2, 4));
-                    game.executeMove(PieceColor.BLACK, getSingleMove(1, 7, 1, 5));
-                    game.executeMove(PieceColor.WHITE, getSingleMove(8, 2, 8, 3));
-                    game.executeMove(PieceColor.BLACK, getSingleMove(1, 5, 1, 4));
-                    game.executeMove(PieceColor.WHITE, getSingleMove(8, 3, 8, 4));
-                    game.executeMove(PieceColor.BLACK, getSingleMove(1, 4, 1, 3));
-                    game.executeMove(PieceColor.WHITE, getSingleMove(1, 2, 1, 4));
+                    game.executeMove(PieceColor.WHITE, getSingleMove("b2", "b4"));
+                    game.executeMove(PieceColor.BLACK, getSingleMove("a7", "a5"));
+                    game.executeMove(PieceColor.WHITE, getSingleMove("h2", "h3"));
+                    game.executeMove(PieceColor.BLACK, getSingleMove("a5", "a4"));
+                    game.executeMove(PieceColor.WHITE, getSingleMove("h3", "h4"));
+                    game.executeMove(PieceColor.BLACK, getSingleMove("a4", "a3"));
+                    game.executeMove(PieceColor.WHITE, getSingleMove("a2", "a4"));
                 }
         );
 
@@ -67,12 +70,12 @@ public class PawnMoveTest {
 
 
     private void setUpPromotionMoves(Game game) throws MoveException, BoardException, GameException {
-        game.executeMove(PieceColor.WHITE, getSingleMove(2,2,2,4));
-        game.executeMove(PieceColor.BLACK, getSingleMove(8,7,8,5));
-        game.executeMove(PieceColor.WHITE, getSingleMove(2,4,2,5));
-        game.executeMove(PieceColor.BLACK, getSingleMove(8,5,8,4));
-        game.executeMove(PieceColor.WHITE, getSingleMove(2,5,2,6));
-        game.executeMove(PieceColor.BLACK, getSingleMove(8,4,8,3));
+        game.executeMove(PieceColor.WHITE, getSingleMove("b2","b4"));
+        game.executeMove(PieceColor.BLACK, getSingleMove("g7","g5"));
+        game.executeMove(PieceColor.WHITE, getSingleMove("b4","b5"));
+        game.executeMove(PieceColor.BLACK, getSingleMove("g5","g4"));
+        game.executeMove(PieceColor.WHITE, getSingleMove("b5","b6"));
+        game.executeMove(PieceColor.BLACK, getSingleMove("g4","g3"));
     }
 
     @Test
@@ -80,7 +83,7 @@ public class PawnMoveTest {
         setUpPromotionMoves(game);
         Exception exception = assertThrows(MoveException.class, () ->
             game.executeMove(PieceColor.WHITE,
-                    new PromotionMove(getSingleMove(2,6,3, 7), PieceType.QUEEN)));
+                    new PromotionMove(getSingleMove("b6","c7"), PieceType.QUEEN)));
 
         String expectedMessage = "up for promotion";
         String actualMessage = exception.getMessage();
@@ -88,11 +91,11 @@ public class PawnMoveTest {
         //Assert
         assertTrue(actualMessage.contains(expectedMessage), "Pawn is not up for promotion");
 
-        game.executeMove(PieceColor.WHITE, getSingleMove(2,6,3,7));
+        game.executeMove(PieceColor.WHITE, getSingleMove("b6","c7"));
 
         exception = assertThrows(MoveException.class, () ->
             game.executeMove(PieceColor.BLACK,
-                    new PromotionMove(getSingleMove(8,3,7, 2), PieceType.QUEEN)));
+                    new PromotionMove(getSingleMove("g3","h2"), PieceType.QUEEN)));
 
         expectedMessage = "up for promotion";
         actualMessage = exception.getMessage();
@@ -101,10 +104,10 @@ public class PawnMoveTest {
         assertTrue(actualMessage.contains(expectedMessage), "Pawn is not up for promotion");
 
 
-        game.executeMove(PieceColor.BLACK, getSingleMove(8,3,7,2));
-        game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(3,7,4, 8), PieceType.QUEEN));
+        game.executeMove(PieceColor.BLACK, getSingleMove("g3","h2"));
+        game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove("c7","d8"), PieceType.QUEEN));
 
-        Piece newPiece = game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new Position(4,8));
+        Piece newPiece = game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare());
 
         assertTrue(newPiece.getType() == PieceType.QUEEN &&
                 newPiece.getColor() == PieceColor.WHITE, "White piece has been promoted to type queen");
@@ -119,9 +122,9 @@ public class PawnMoveTest {
 
         //Act
         Exception exception = assertThrows(MoveException.class, ()-> {
-            game.executeMove(PieceColor.WHITE, getSingleMove(2,6,3,7));
-            game.executeMove(PieceColor.BLACK, getSingleMove(1,7,1,6));
-            game.executeMove(PieceColor.WHITE, getSingleMove(3,7,4,8));
+            game.executeMove(PieceColor.WHITE, getSingleMove("b6","c7"));
+            game.executeMove(PieceColor.BLACK, getSingleMove("a7","a6"));
+            game.executeMove(PieceColor.WHITE, getSingleMove("c7","d8"));
         });
 
         String expectedMessage = "Single move not allowed here";
@@ -137,13 +140,13 @@ public class PawnMoveTest {
         setUpPromotionMoves(game);
 
         //Act
-        game.executeMove(PieceColor.WHITE, getSingleMove(2,6,3,7));
-        game.executeMove(PieceColor.BLACK, getSingleMove(1,7,1,6));
-        game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove(3,7,4, 8), PieceType.QUEEN));
+        game.executeMove(PieceColor.WHITE, getSingleMove("b6","c7"));
+        game.executeMove(PieceColor.BLACK, getSingleMove("a7","a6"));
+        game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove("c7","d8"), PieceType.QUEEN));
 
         //Assert
-        assertEquals(PieceType.QUEEN, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new Position(4,8)).getType(), "Queen is in 4,8");
-        assertEquals(PieceColor.WHITE, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new Position(4,8)).getColor(), "Queen is WHITE");
+        assertEquals(PieceType.QUEEN, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).getType(), "Queen is in 4,8");
+        assertEquals(PieceColor.WHITE, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).getColor(), "Queen is WHITE");
         assertTrue("King is check", game.getStatus(PieceColor.BLACK) == GameStatus.CHECK);
 
 
@@ -152,11 +155,11 @@ public class PawnMoveTest {
 
     @Test
     public void enPassantTest() throws MoveException, BoardException, GameException {
-        game.executeMove(PieceColor.WHITE, getSingleMove(1,2,1,3));
-        game.executeMove(PieceColor.BLACK, getSingleMove(6,7,6,5));
-        game.executeMove(PieceColor.WHITE, getSingleMove(1,3,1,4));
-        game.executeMove(PieceColor.BLACK, getSingleMove(6,5,6,4));
-        game.executeMove(PieceColor.WHITE, getSingleMove(7,2,7,4));
-        game.executeMove(PieceColor.BLACK, getEnPassantMove(6,4,7,3));
+        game.executeMove(PieceColor.WHITE, getSingleMove("a2","a3"));
+        game.executeMove(PieceColor.BLACK, getSingleMove("f7","f5"));
+        game.executeMove(PieceColor.WHITE, getSingleMove("a3","a4"));
+        game.executeMove(PieceColor.BLACK, getSingleMove("f5","f4"));
+        game.executeMove(PieceColor.WHITE, getSingleMove("g2","g4"));
+        game.executeMove(PieceColor.BLACK, getEnPassantMove("f4","g3"));
     }
 }

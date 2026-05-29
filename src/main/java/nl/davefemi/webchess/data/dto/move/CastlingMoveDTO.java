@@ -5,6 +5,8 @@ import nl.davefemi.webchess.data.MoveDTO;
 
 @Data
 public class CastlingMoveDTO implements MoveDTO {
-    private SingleMoveDTO kingMove;
-    private SingleMoveDTO rookMove;
+    private String kingFrom;
+    private String kingTo;
+    private String rookFrom;
+    private String rookTo;
 }

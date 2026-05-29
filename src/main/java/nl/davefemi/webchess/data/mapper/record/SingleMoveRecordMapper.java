@@ -8,7 +8,7 @@ import nl.davefemi.webchess.game.actions.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.board.Square;
-import nl.davefemi.webchess.game.record.SingleMoveRecord;
+import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
