@@ -11,7 +11,7 @@ import nl.davefemi.webchess.data.mapper.SessionResponseMapper;
 import nl.davefemi.webchess.data.mapper.move.MoveMapper;
 import nl.davefemi.webchess.exception.SessionException;
 import nl.davefemi.webchess.game.Game;
-import nl.davefemi.webchess.game.actions.Move;
+import nl.davefemi.webchess.game.actions.move.Move;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;

@@ -1,8 +1,8 @@
 package nl.davefemi.webchess.game.rule;
 
 import nl.davefemi.webchess.exception.BoardException;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.CastlingMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import java.util.ArrayList;
 import java.util.List;

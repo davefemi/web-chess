@@ -2,7 +2,7 @@ package nl.davefemi.webchess.game.board;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.exception.BoardException;
-import nl.davefemi.webchess.game.actions.*;
+import nl.davefemi.webchess.game.actions.move.*;
 
 import java.util.*;
 

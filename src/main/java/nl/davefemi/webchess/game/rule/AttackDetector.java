@@ -1,7 +1,9 @@
 package nl.davefemi.webchess.game.rule;
 
 import nl.davefemi.webchess.exception.BoardException;
-import nl.davefemi.webchess.game.actions.*;
+import nl.davefemi.webchess.game.actions.move.EnPassantMove;
+import nl.davefemi.webchess.game.actions.move.Move;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 
 import java.util.ArrayList;

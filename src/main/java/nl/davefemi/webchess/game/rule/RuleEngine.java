@@ -3,12 +3,12 @@ package nl.davefemi.webchess.game.rule;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.actions.PromotionMove;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.CastlingMove;
+import nl.davefemi.webchess.game.actions.move.Move;
+import nl.davefemi.webchess.game.actions.move.PromotionMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
-import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.MoveRecord;
 import java.util.ArrayList;
 import java.util.List;
 

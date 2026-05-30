@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.game.actions;
+package nl.davefemi.webchess.game.actions.move;
 
 public record CastlingMove(SingleMove moveKing, SingleMove moveRook) implements Move {
     public CastlingMove {

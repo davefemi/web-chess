@@ -2,8 +2,8 @@ package nl.davefemi.webchess.game;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.game.board.*;
-import nl.davefemi.webchess.game.actions.Move;
-import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.move.Move;
+import nl.davefemi.webchess.game.actions.MoveRecord;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;

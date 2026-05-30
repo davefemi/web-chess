@@ -1,7 +1,7 @@
 package nl.davefemi.webchess.data.entity;
 
 import lombok.Data;
-import nl.davefemi.webchess.data.entity.record.MoveRecordEntity;
+import nl.davefemi.webchess.data.MoveRecordEntity;
 
 import java.util.ArrayList;
 import java.util.List;

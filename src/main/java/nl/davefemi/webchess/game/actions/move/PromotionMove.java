@@ -1,17 +1,14 @@
-package nl.davefemi.webchess.game.actions;
+package nl.davefemi.webchess.game.actions.move;
 
 import nl.davefemi.webchess.game.board.PieceType;
 
-public record PromotionMove(SingleMove move, PieceType newPieceType) implements Move {
+public record PromotionMove(SingleMove move, PieceType newPieceType) implements SinglePieceMove {
     public PromotionMove {
-        if (move == null){
-            throw new IllegalArgumentException("SingleMove cannot be null");
-        }
         if (newPieceType == null){
             throw new IllegalArgumentException("New piece type  cannot be null");
         }
         if (!isPromotable(newPieceType)){
-            throw new IllegalArgumentException(newPieceType + " is invalid for a promotion move");
+            throw new IllegalArgumentException(newPieceType + " is an invalid type for a replacement");
         }
     }
 

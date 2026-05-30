@@ -1,6 +1,6 @@
 package nl.davefemi.webchess.game;
 
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

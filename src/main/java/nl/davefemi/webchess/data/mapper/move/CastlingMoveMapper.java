@@ -2,8 +2,8 @@ package nl.davefemi.webchess.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.move.CastlingMoveDTO;
-import nl.davefemi.webchess.game.actions.CastlingMove;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.CastlingMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import org.springframework.stereotype.Component;
 
 @Component

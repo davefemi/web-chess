@@ -1,6 +1,6 @@
 package nl.davefemi.webchess.game.rule;
 
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.Board;
 import nl.davefemi.webchess.game.board.PieceColor;
 import java.util.ArrayList;

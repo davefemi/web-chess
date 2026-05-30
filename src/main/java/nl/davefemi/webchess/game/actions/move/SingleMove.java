@@ -1,8 +1,8 @@
-package nl.davefemi.webchess.game.actions;
+package nl.davefemi.webchess.game.actions.move;
 
 import nl.davefemi.webchess.game.board.Square;
 
-public record SingleMove(Square from, Square to) implements Move {
+public record SingleMove(Square from, Square to) implements SinglePieceMove {
     public SingleMove {
         if (from == null){
             throw new IllegalArgumentException("Position 'from' cannot be null");
@@ -10,5 +10,10 @@ public record SingleMove(Square from, Square to) implements Move {
         if (to == null){
             throw new IllegalArgumentException("Position 'to'  cannot be null");
         }
+    }
+
+    @Override
+    public SingleMove move(){
+        return this;
     }
 }

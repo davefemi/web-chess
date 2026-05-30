@@ -7,7 +7,7 @@ import nl.davefemi.webchess.data.entity.PositionPieceEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionPieceMapper;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.exception.BoardException;
-import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.MoveRecord;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -2,6 +2,7 @@ package nl.davefemi.webchess.game.actions.record;
 
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.actions.*;
+import nl.davefemi.webchess.game.actions.move.*;
 import nl.davefemi.webchess.game.board.*;
 
 public class MoveRecordBuilder {

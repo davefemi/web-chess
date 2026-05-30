@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.record.SingleMoveRecordDTO;
 import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.board.Square;

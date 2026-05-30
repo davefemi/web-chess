@@ -1,7 +1,10 @@
-package nl.davefemi.webchess.data.entity.record;
+package nl.davefemi.webchess.data;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import nl.davefemi.webchess.data.entity.record.CastlingMoveRecordEntity;
+import nl.davefemi.webchess.data.entity.record.PromotionMoveRecordEntity;
+import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

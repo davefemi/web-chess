@@ -1,7 +1,7 @@
 package nl.davefemi.webchess.data.mapper.move;
 
 import nl.davefemi.webchess.data.dto.move.SingleMoveDTO;
-import nl.davefemi.webchess.game.actions.SingleMove;
+import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.AlgebraicSquare;
 import org.springframework.stereotype.Component;
 

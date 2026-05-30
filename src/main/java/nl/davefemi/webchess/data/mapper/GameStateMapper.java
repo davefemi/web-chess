@@ -3,13 +3,13 @@ package nl.davefemi.webchess.data.mapper;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.GameStateDTO;
 import nl.davefemi.webchess.data.entity.GameStateEntity;
-import nl.davefemi.webchess.data.entity.record.MoveRecordEntity;
+import nl.davefemi.webchess.data.MoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.record.MoveRecordMapper;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.game.board.PieceColor;
-import nl.davefemi.webchess.game.actions.record.MoveRecord;
+import nl.davefemi.webchess.game.actions.MoveRecord;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
