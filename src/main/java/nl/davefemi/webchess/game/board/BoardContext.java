@@ -51,15 +51,14 @@ public final class BoardContext {
         return originalRooks;
     }
 
-    public BoardContext applyMove(Move move) throws BoardException {
+    public synchronized BoardContext applyMove(Move move) throws BoardException {
         Board board = new Board(this.board);
-        synchronized (this) {
-            Piece p = board.applyValidatedMove(move);
-            if (p != null)
-                capturedPieces.add(p);
-            lastMove = MoveRecordBuilder.getMoveRecord(board, move, colorToMove, p);
-        }
-        return new BoardContext(this.colorToMove, board, lastMove, new ArrayList<>(capturedPieces), new ArrayList<>(originalRooks));
+        Piece p = board.applyValidatedMove(move);
+        MoveRecord lastMove = MoveRecordBuilder.getMoveRecord(board, move, colorToMove, p);
+        BoardContext boardContext = new BoardContext(this.colorToMove, board, lastMove, new ArrayList<>(capturedPieces), new ArrayList<>(originalRooks));
+        if (p != null)
+            boardContext.capturedPieces.add(p);
+        return boardContext;
     }
 
     public List<Integer> getOriginalRooks(){

@@ -5,10 +5,8 @@ import nl.davefemi.webchess.data.MoveRecordEntity;
 
 @Data
 public class PromotionMoveRecordEntity implements MoveRecordEntity {
-    private int oldPosFile;
-    private int oldPosRank;
-    private int newPosFile;
-    private int newPosRank;
+    private int oldPos;
+    private int newPos;
     private String playerColor;
     private String oldPieceType;
     private int oldPieceId;

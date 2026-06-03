@@ -41,7 +41,9 @@ public class KingMoveTest {
         game.executeMove(PieceColor.WHITE, getSingleMove("h5","f7"));
 
         //Assert
-        assertTrue("King is check-mate", game.getStatus(PieceColor.BLACK) == GameStatus.CHECKMATE);
-        assertTrue("White player is the winner", game.getStatus(PieceColor.WHITE) == GameStatus.WINNER);
+        assertTrue("King is check-mate", game.getStatus().reason().isPresent() &&
+                game.getStatus().reason().get() == GameStatus.GameEndReason.CHECKMATE);
+        assertTrue("White player is the winner", game.getStatus().winner().isPresent() &&
+                game.getStatus().winner().get() == PieceColor.WHITE);
     }
 }

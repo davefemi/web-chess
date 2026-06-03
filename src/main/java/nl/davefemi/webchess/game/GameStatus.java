@@ -1,27 +1,62 @@
 package nl.davefemi.webchess.game;
 
-public enum GameStatus {
-    ACTIVE("active"),
-    CHECK("check"),
-    CHECKMATE("check-mate"),
-    WINNER("winner"),
-    STALEMATE("stalemate");
+import lombok.Getter;
+import nl.davefemi.webchess.game.board.PieceColor;
 
+import java.util.Optional;
 
-    private final String status;
-    GameStatus(String status){
-        this.status=status;
-    }
+public record GameStatus(GamePhase phase, Optional<PieceColor> winner, Optional<GameEndReason> reason) {
+    public enum GamePhase {
+        WAITING_FOR_PLAYERS("waiting"),
+        ACTIVE("active"),
+        ENDED("ended");
 
-    public String getStatus() {
-        return status;
-    }
+        @Getter
+        private final String phase;
 
-    public static GameStatus fromString(String type){
-        for (GameStatus s : values()){
-            if (s.status.equalsIgnoreCase(type))
-                return s;
+        GamePhase(String phase){
+            this.phase = phase;
         }
-        throw new IllegalArgumentException("Status does not exist");
+    }
+
+    public enum GameEndReason{
+        CHECKMATE("checkmate"),
+        STALEMATE("stalemate"),
+        SURRENDER("surrender");
+
+        @Getter
+        private final String reason;
+
+        GameEndReason(String reason){
+            this.reason = reason;
+        }
+
+    }
+    public static GameStatus waiting(){
+        return new GameStatus(GamePhase.WAITING_FOR_PLAYERS, Optional.empty(), Optional.empty());
+    }
+
+    public static GameStatus active(){
+        return new GameStatus(GamePhase.ACTIVE, Optional.empty(), Optional.empty());
+    }
+
+    public static GameStatus checkmate(PieceColor winner){
+        return new GameStatus(GamePhase.ENDED, Optional.of(winner), Optional.of(GameEndReason.CHECKMATE));
+    }
+
+    public static GameStatus surrender(PieceColor color){
+        return new GameStatus(GamePhase.ENDED, Optional.of(PieceColor.getOpponent(color)), Optional.of(GameEndReason.SURRENDER));
+    }
+
+    public static GameStatus stalemate(){
+        return new GameStatus(GamePhase.ENDED, Optional.empty(), Optional.of(GameEndReason.STALEMATE));
+    }
+
+    public boolean isActive(){
+        return phase == GamePhase.ACTIVE;
+    }
+
+    public boolean isFinished(){
+        return phase == GamePhase.ENDED;
     }
 }

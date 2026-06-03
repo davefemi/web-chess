@@ -1,6 +1,7 @@
 package nl.davefemi.webchess.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.data.dto.session.SessionInvitationDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.data.entity.AccessCodeEntity;
@@ -24,6 +25,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameSessionService {
@@ -36,6 +38,7 @@ public class GameSessionService {
 
     public SessionInvitationDTO startGameSession(String color) throws SessionException, BoardException {
         GameSession session = new GameSession();
+        log.info("New session {} created", session.getSessionId());
         Player player = session.createPlayer(PieceColor.fromString(color));
         int timeToLive = 60;
         AccessCode accessCode = AccessCodeGenerator.getAccessCode(session.getSessionId().toString(), timeToLive);
@@ -44,18 +47,19 @@ public class GameSessionService {
         return sessionResponseMapper.mapInvitationToDTO(session, player, String.format(inviteUrl, accessCode.getToken()));
     }
 
-    public SessionResponseDTO joinGameSession(String accessCode) throws SessionException, FileNotFoundException, BoardException {
+    public SessionResponseDTO joinGameSession(String accessCode) throws SessionException, FileNotFoundException, BoardException, GameException {
         AccessCodeEntity code = retrieveAccessCode(accessCode);
         GameSession session =  retrieveSession(code.getSessionId());
         Player player = session.createPlayer();
         session.startSession();
+        log.info("Session {} joined and started", session.getSessionId());
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, player.getPlayingColor().getColor(),"Successfully joined session");
     }
 
-    public SessionResponseDTO endGame(String sessionId) throws FileNotFoundException, SessionException, BoardException {
+    public SessionResponseDTO endGame(String sessionId, Player player) throws FileNotFoundException, SessionException, BoardException {
         GameSession session = retrieveSession(sessionId);
-        session.endCurrentGame();
+        session.endCurrentGame(player);
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, null, "Session ended");
     }

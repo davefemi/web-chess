@@ -10,12 +10,11 @@ import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.rule.RuleEngine;
 import java.util.ArrayList;
 import java.util.List;
-import static nl.davefemi.webchess.game.GameStatus.*;
 
 @Slf4j
 public class Game {
     private BoardContext currentBoardContext;
-    private boolean gameActive = false;
+    private GameStatus status = GameStatus.waiting();
     private final TurnGenerator turnGenerator;
     private final List<MoveRecord> moveHistory;
 
@@ -25,34 +24,36 @@ public class Game {
         moveHistory = new ArrayList<>();
     }
 
-    public Game(BoardContext boardContext, boolean gameActive, PieceColor colorToMove,
+    public Game(BoardContext boardContext, GameStatus status, PieceColor colorToMove,
                 List<MoveRecord> moveHistory){
         this.currentBoardContext = boardContext;
-        this.gameActive = gameActive;
+        this.status = status;
         this.turnGenerator = new TurnGenerator(colorToMove);
         this.moveHistory = moveHistory;
     }
 
     public Game(Game other){
         this.currentBoardContext = other.currentBoardContext;
-        this.gameActive = other.gameActive;
+        this.status = other.status;
         this.turnGenerator = new TurnGenerator(other.turnGenerator.peek());
         this.moveHistory = new ArrayList<>(other.moveHistory);
 
     }
 
-    public void start(){
-        gameActive = true;
+    public void start() throws GameException {
+        if (status.isFinished())
+            throw new GameException("Can't restart game that has ended");
+        status = GameStatus.active();
     }
 
-    public boolean isGameActive() {
-        return gameActive;
+    public GameStatus getStatus() {
+        return status;
     }
 
     public PieceColor getColorToMove() throws GameException {
-//        if (!gameActive)
-//            throw new GameException("Game has ended");
-        return turnGenerator.peek();
+        if (status.isActive())
+            return turnGenerator.peek();
+        return null;
     }
 
     public BoardContext getCurrentBoardContext(){
@@ -63,37 +64,31 @@ public class Game {
                 currentBoardContext.getOriginalRooks());
     }
 
-    public GameStatus getStatus(PieceColor color) throws BoardException {
-        if (isPlayerCheckMate(color))
-            return CHECKMATE;
-        if (isPlayerInCheck(color))
-            return CHECK;
-        if (isPlayerCheckMate(PieceColor.getOpponent(color)))
-            return WINNER;
-        if (RuleEngine.getAllLegalMovesByPieceColor(currentBoardContext, color).isEmpty() && !isPlayerInCheck(color))
-            return STALEMATE;
-        return ACTIVE;
+    public boolean isPlayerInCheck(PieceColor color) throws BoardException {
+        return RuleEngine.isKingInCheck(getCurrentBoardContext(), color);
     }
 
 
-    public List<Move> getAvailableMoves(PieceColor color) throws BoardException {
+    public List<Move> getAvailableMoves(PieceColor color) throws BoardException, GameException {
+        if (!getStatus().isActive())
+            throw new GameException("Game is not active");
         return RuleEngine.getAllLegalMovesByPieceColor(getCurrentBoardContext(), color);
     }
 
     public synchronized boolean executeMove(PieceColor color, Move move) throws GameException, MoveException, BoardException {
+        if (!status.isActive())
+            throw new GameException("Game is not active");
         this.currentBoardContext = RuleEngine.applyLegalMove(getCurrentBoardContext(), moveHistory, color, move);
         updateMoveHistory();
         turnGenerator.nextTurn();
         log.info(getLastMove().toString());
         this.currentBoardContext.setColorToMove(turnGenerator.peek());
-        if (isPlayerCheckMate(getColorToMove())) {
-            gameActive = false;
-        }
+        status = RuleEngine.evaluateStatus(currentBoardContext);
         return true;
     }
 
-    public void setInactive(){
-        gameActive = false;
+    public void surrender(PieceColor color){
+        status = GameStatus.surrender(color);
     }
 
     public Move getLastMove(){
@@ -106,18 +101,8 @@ public class Game {
         return new ArrayList<>(moveHistory);
     }
 
-    private boolean isPlayerInCheck(PieceColor color) throws BoardException {
-        return RuleEngine.isKingInCheck(getCurrentBoardContext(), color);
-    }
-
-    private boolean isPlayerCheckMate(PieceColor color) throws BoardException {
-        return RuleEngine.isPlayerCheckMate(getCurrentBoardContext(), color);
-    }
-
     private synchronized void updateMoveHistory(){
         if (currentBoardContext.getLastMove() != null)
             moveHistory.add(currentBoardContext.getLastMove());
     }
-
-
 }

@@ -44,12 +44,12 @@ public class PinnedPieceTest {
 
         board = new Board(squares, 6);
 
-        Game game = new Game(new BoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), true, WHITE, new ArrayList<>());
+        Game game = new Game(new BoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), GameStatus.active(), WHITE, new ArrayList<>());
 
         game.executeMove(WHITE, getSingleMove("e2","d2"));
 
-        assertThat(game.getStatus(WHITE)).isEqualByComparingTo(GameStatus.ACTIVE).as("White King is NOT in check");
-        assertThat(game.getStatus(BLACK)).isEqualTo(GameStatus.CHECK).as("Black king is check");
+        assertThat(game.isPlayerInCheck(WHITE)).isFalse().as("White King is NOT in check");
+        assertThat(game.isPlayerInCheck(BLACK)).isTrue().as("Black king is check");
         assertThatThrownBy(
                 ()->
                         game.executeMove(black, getSingleMove("d8","d4")))

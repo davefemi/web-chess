@@ -10,6 +10,8 @@ import java.util.List;
 public class GameStateEntity {
     private String colorToMove;
     private BoardContextEntity currentBoardContext;
-    private boolean activeGame;
+    private String gamePhase;
+    private String winner;
+    private String gameEndReason;
     private List<MoveRecordEntity> moveHistory = new ArrayList<>();
 }

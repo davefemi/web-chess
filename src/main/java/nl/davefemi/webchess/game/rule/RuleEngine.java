@@ -3,6 +3,7 @@ package nl.davefemi.webchess.game.rule;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
+import nl.davefemi.webchess.game.GameStatus;
 import nl.davefemi.webchess.game.actions.move.CastlingMove;
 import nl.davefemi.webchess.game.actions.move.Move;
 import nl.davefemi.webchess.game.actions.move.PromotionMove;
@@ -66,5 +67,11 @@ public class RuleEngine {
             move = m.move();
         }
         return getAllLegalMovesByPieceColor(boardContext, pieceColor).contains(move);
+    }
+
+    public static GameStatus evaluateStatus(BoardContext boardContext) throws BoardException {
+        if (isPlayerCheckMate(boardContext, boardContext.getColorToMove()))
+            return GameStatus.checkmate(PieceColor.getOpponent(boardContext.getColorToMove()));
+        return GameStatus.active();
     }
 }

@@ -18,8 +18,8 @@ public class SingleMoveRecordMapper {
 
     protected SingleMoveRecord mapDataToDomain(SingleMoveRecordEntity data){
         return new SingleMoveRecord(new SingleMove(
-                Square.fromFileAndRank(data.getOldPosFile(), data.getOldPosRank()),
-                Square.fromFileAndRank(data.getNewPosFile(), data.getNewPosRank())),
+                new Square(data.getOldPos()),
+                new Square(data.getNewPos())),
                 PieceColor.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getMovedPieceType()),
                 data.getMovedPieceId(),
@@ -29,10 +29,8 @@ public class SingleMoveRecordMapper {
 
     protected SingleMoveRecordEntity mapDomainToEntity(SingleMoveRecord record){
         SingleMoveRecordEntity dto = new SingleMoveRecordEntity();
-        dto.setOldPosFile(record.move().from().file());
-        dto.setOldPosRank(record.move().from().rank());
-        dto.setNewPosFile(record.move().to().file());
-        dto.setNewPosRank(record.move().to().rank());
+        dto.setOldPos(record.move().from().value());
+        dto.setNewPos(record.move().to().value());
         dto.setPlayerColor(record.color().getColor());
         dto.setMovedPieceType(record.movedPiece().getLabel());
         dto.setMovedPieceId(record.movedPieceId());

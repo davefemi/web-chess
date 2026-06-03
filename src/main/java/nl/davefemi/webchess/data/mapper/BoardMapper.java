@@ -3,8 +3,8 @@ package nl.davefemi.webchess.data.mapper;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.BoardDTO;
 import nl.davefemi.webchess.data.entity.BoardContextEntity;
-import nl.davefemi.webchess.data.entity.PositionPieceEntity;
-import nl.davefemi.webchess.data.mapper.move.PositionPieceMapper;
+import nl.davefemi.webchess.data.entity.PieceEntity;
+import nl.davefemi.webchess.data.mapper.move.PieceMapper;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.actions.MoveRecord;
@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class BoardMapper {
-    private final PositionPieceMapper positionPieceMapper;
+    private final PieceMapper positionPieceMapper;
 
     public BoardDTO mapDomainToDTO(Board board) throws BoardException {
         BoardDTO dto = new BoardDTO();
@@ -30,8 +30,8 @@ public class BoardMapper {
         BoardContextEntity entity = new BoardContextEntity();
         Board board = boardContext.getCopyOfBoard();
         for (Piece piece: board.getPieces()){
-            PositionPieceEntity positionPiece = new PositionPieceEntity();
-            positionPiece.setPositionValue(board.getPositionById(piece.getId()).value());
+            PieceEntity positionPiece = new PieceEntity();
+            positionPiece.setPosition(board.getPositionById(piece.getId()).value());
             positionPiece.setPieceType(piece.getType().getLabel());
             positionPiece.setColor(piece.getColor().getColor());
             positionPiece.setPieceId(piece.getId());
@@ -47,12 +47,12 @@ public class BoardMapper {
 
     public BoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, PieceColor playerToMove) throws BoardException {
         Piece[] pieces = new Piece[128];
-        for (PositionPieceEntity p : entity.getPositions()) {
+        for (PieceEntity p : entity.getPositions()) {
             Piece piece = positionPieceMapper.mapEntityToPiece(p);
-            pieces[p.getPositionValue()] = piece;
+            pieces[p.getPosition()] = piece;
         }
         List<Piece> capturedPieces = new ArrayList<>();
-        for (PositionPieceEntity e : entity.getCapturedPieces())
+        for (PieceEntity e : entity.getCapturedPieces())
             capturedPieces.add(positionPieceMapper.mapEntityToPiece(e));
         return new BoardContext(playerToMove,
                 new Board(pieces, entity.getNextPieceId()),

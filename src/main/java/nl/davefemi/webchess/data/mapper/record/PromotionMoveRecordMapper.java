@@ -19,8 +19,8 @@ public class PromotionMoveRecordMapper {
 
     protected PromotionMoveRecord mapDataToDomain(PromotionMoveRecordEntity data){
         return new PromotionMoveRecord(
-                new PromotionMove(new SingleMove(Square.fromFileAndRank(data.getOldPosFile(), data.getOldPosRank()),
-                        Square.fromFileAndRank(data.getNewPosFile(), data.getNewPosRank())),
+                new PromotionMove(new SingleMove(new Square(data.getOldPos()),
+                        new Square(data.getNewPos())),
                         PieceType.fromString(data.getNewPieceType())),
                 PieceColor.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getNewPieceType()),
@@ -31,10 +31,8 @@ public class PromotionMoveRecordMapper {
 
     protected PromotionMoveRecordEntity mapDomainToEntity(PromotionMoveRecord record){
         PromotionMoveRecordEntity data = new PromotionMoveRecordEntity();
-        data.setOldPosFile(record.move().move().from().file());
-        data.setOldPosRank(record.move().move().from().rank());
-        data.setNewPosFile(record.move().move().to().file());
-        data.setNewPosRank(record.move().move().to().rank());
+        data.setOldPos(record.move().move().from().value());
+        data.setNewPos(record.move().move().to().value());
         data.setPlayerColor(record.playerColor().getColor());
         data.setNewPieceType(record.newPiece().getLabel());
         data.setNewPieceId(record.pieceId());

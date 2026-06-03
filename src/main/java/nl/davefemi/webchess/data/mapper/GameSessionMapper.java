@@ -26,7 +26,7 @@ public class GameSessionMapper {
             sessionEntity.getGames().add(gameStateMapper.mapDomainToEntity(g));
         }
         sessionEntity.setSessionId(session.getSessionId().toString());
-        sessionEntity.setActive(session.isActive());
+        sessionEntity.setActiveSession(session.isActive());
         sessionEntity.setPlayers(mapPlayersToEntities(session.getPlayers()));
         return sessionEntity;
     }
@@ -51,6 +51,6 @@ public class GameSessionMapper {
         for (GameStateEntity g: entity.getGames()){
             games.add(gameStateMapper.mapEntityToDomain(g));
         }
-        return new GameSession(UUID.fromString(entity.getSessionId()), entity.isActive(), games, players);
+        return new GameSession(UUID.fromString(entity.getSessionId()), entity.isActiveSession(), games, players);
     }
 }

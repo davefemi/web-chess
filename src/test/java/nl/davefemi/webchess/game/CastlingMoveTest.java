@@ -101,10 +101,10 @@ public class CastlingMoveTest {
 
         board = new Board(squares, 6);
 
-        Game game = new Game(new BoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), true, PieceColor.WHITE, new ArrayList<>());
+        Game game = new Game(new BoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), GameStatus.active(), PieceColor.WHITE, new ArrayList<>());
 
         game.executeMove(WHITE, getSingleMove("e2","d2"));
 
-        assertFalse("White King is NOT in check", game.getStatus(WHITE) == GameStatus.CHECK);
+        assertFalse("White King is NOT in check", game.isPlayerInCheck(WHITE));
     }
 }

@@ -18,7 +18,6 @@ public class BoardTest {
     public void setUp(){
         game = new Game();
         board = game.getCurrentBoardContext();
-
     }
 
     public void tearDown(){

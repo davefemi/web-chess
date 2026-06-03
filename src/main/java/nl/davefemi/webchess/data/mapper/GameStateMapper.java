@@ -8,6 +8,7 @@ import nl.davefemi.webchess.data.mapper.record.MoveRecordMapper;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.Game;
+import nl.davefemi.webchess.game.GameStatus;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.actions.MoveRecord;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,9 @@ public class GameStateMapper {
     public GameStateEntity mapDomainToEntity(Game game) throws BoardException {
         GameStateEntity entity = new GameStateEntity();
         entity.setCurrentBoardContext(boardMapper.mapDomainToEntity(game.getCurrentBoardContext()));
-        entity.setActiveGame(game.isGameActive());
+        entity.setGamePhase(game.getStatus().phase().getPhase());
+        entity.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().getColor(): null);
+        entity.setGameEndReason(game.getStatus().isFinished()? game.getStatus().reason().get().getReason() : null);
         String turn;
         try{
             turn = game.getColorToMove().getColor();
@@ -44,15 +47,32 @@ public class GameStateMapper {
         MoveRecord lastMove = moveHistory.isEmpty() ? null : moveHistory.getLast();
         return new Game(
                 boardMapper.mapEntityToDomain(entity.getCurrentBoardContext(), lastMove, PieceColor.fromString(entity.getColorToMove())),
-                entity.isActiveGame(),
+                mapEntityToGameStatus(entity),
                 PieceColor.fromString(entity.getColorToMove()),
                 moveHistory);
+    }
+
+    private GameStatus mapEntityToGameStatus(GameStateEntity entity){
+        return switch (entity.getGamePhase()) {
+            case "waiting" -> GameStatus.waiting();
+            case "active" -> GameStatus.active();
+            case "ended" -> switch (entity.getGameEndReason()) {
+                case ("checkmate") -> GameStatus.checkmate(PieceColor.fromString(entity.getWinner()));
+                case ("surrender") ->
+                        GameStatus.surrender(PieceColor.getOpponent(PieceColor.fromString(entity.getWinner())));
+                case ("stalemate") -> GameStatus.stalemate();
+                default -> throw new IllegalArgumentException("No reason given");
+            };
+            default -> throw new IllegalArgumentException("No phase given");
+        };
     }
 
     public GameStateDTO mapDomainToDTO(Game game, String turn){
         GameStateDTO dto = new GameStateDTO();
         dto.setColorToMove(turn);
-        dto.setActiveGame(game.isGameActive());
+        dto.setGamePhase(game.getStatus().phase().getPhase());
+        dto.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().getColor(): null);
+        dto.setGameEndReason(game.getStatus().isFinished()? game.getStatus().reason().get().getReason() : null);
         game.getMoveHistory().forEach(m -> dto.getMoveHistory().add(moveRecordMapper.mapDomainToDTO(m)));
         return dto;
     }

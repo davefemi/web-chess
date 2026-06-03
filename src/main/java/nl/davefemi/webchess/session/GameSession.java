@@ -1,5 +1,6 @@
 package nl.davefemi.webchess.session;
 
+import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.SessionException;
@@ -19,7 +20,7 @@ public class GameSession {
     }
 
     public Game startNewGame() throws SessionException {
-        if (games.getLast().isGameActive()){
+        if (games.getLast().getStatus().isActive()){
             throw new SessionException("End running game first");
         }
         Game game = new Game();
@@ -27,12 +28,12 @@ public class GameSession {
         return game;
     }
 
-    public void startSession(){
+    public void startSession() throws GameException {
         games.getLast().start();
     }
 
-    public boolean endCurrentGame(){
-        games.getLast().setInactive();
+    public boolean endCurrentGame(Player player){
+        games.getLast().surrender(player.getPlayingColor());
         return true;
     }
 

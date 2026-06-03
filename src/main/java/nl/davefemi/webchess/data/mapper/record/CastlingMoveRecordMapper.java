@@ -20,24 +20,21 @@ public class CastlingMoveRecordMapper {
         return new CastlingMoveRecord(
                 new CastlingMove(
                         new SingleMove(
-                                Square.fromFileAndRank(data.getKingOldPosFile(), data.getKingOldPosRank()),
-                                Square.fromFileAndRank(data.getKingNewPosFile(), data.getKingNewPosRank())),
+                                new Square(data.getKingOldPos()),
+                                new Square(data.getKingNewPos())),
                         new SingleMove(
-                                Square.fromFileAndRank(data.getRookOldPosFile(), data.getRookOldPosRank()),
-                                Square.fromFileAndRank(data.getRookNewPosFile(), data.getRookNewPosRank()
-                        ))), PieceColor.fromString(data.getPlayerColor()), data.getKingId(), data.getRookId());
+                                new Square(data.getRookOldPos()),
+                                new Square(data.getRookNewPos())
+                        )),
+                PieceColor.fromString(data.getPlayerColor()), data.getKingId(), data.getRookId());
     }
 
     protected CastlingMoveRecordEntity mapDomainToEntity(CastlingMoveRecord record){
         CastlingMoveRecordEntity dto = new CastlingMoveRecordEntity();
-        dto.setKingOldPosFile(record.move().moveKing().from().file());
-        dto.setKingOldPosRank(record.move().moveKing().from().rank());
-        dto.setKingNewPosFile(record.move().moveKing().to().file());
-        dto.setKingNewPosRank(record.move().moveKing().to().rank());
-        dto.setRookOldPosFile(record.move().moveRook().from().file());
-        dto.setRookOldPosRank(record.move().moveRook().from().rank());
-        dto.setRookNewPosFile(record.move().moveRook().to().file());
-        dto.setRookNewPosRank(record.move().moveRook().to().rank());
+        dto.setKingOldPos(record.move().moveKing().from().value());
+        dto.setKingNewPos(record.move().moveKing().to().value());
+        dto.setRookOldPos(record.move().moveRook().from().value());
+        dto.setRookNewPos(record.move().moveRook().to().value());
         dto.setPlayerColor(record.player_color().getColor());
         dto.setKingId(record.kingId());
         dto.setRookId(record.rookId());

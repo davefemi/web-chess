@@ -27,11 +27,11 @@ public class GameQueryController {
 
     @GetMapping("/status")
     public ResponseEntity<?> isCheck(@PathVariable("id") String sessionId, @RequestParam("color") String color) throws FileNotFoundException, BoardException, SessionException {
-        return ResponseEntity.ok(gameService.getStatus(sessionId, color));
+        return ResponseEntity.ok(gameService.isCheck(sessionId, color));
     }
 
     @GetMapping("/moves")
-    public ResponseEntity<?> getAvailableMoves(@PathVariable("id") String sessionId, @RequestParam("color") String color) throws FileNotFoundException, BoardException, SessionException {
+    public ResponseEntity<?> getAvailableMoves(@PathVariable("id") String sessionId, @RequestParam("color") String color) throws FileNotFoundException, BoardException, SessionException, GameException {
         return ResponseEntity.ok(gameService.getAvailableMoves(sessionId, color));
     }
 }

@@ -35,7 +35,7 @@ public class GameLobbyController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<SessionResponseDTO> joinGame(@RequestParam("code") String accessCode) throws FileNotFoundException, SessionException, BoardException {
+    public ResponseEntity<SessionResponseDTO> joinGame(@RequestParam("code") String accessCode) throws FileNotFoundException, SessionException, BoardException, GameException {
         return ResponseEntity.ok(gameSessionService.joinGameSession(accessCode));
     }
 

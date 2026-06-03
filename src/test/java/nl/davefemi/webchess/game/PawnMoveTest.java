@@ -147,7 +147,7 @@ public class PawnMoveTest {
         //Assert
         assertEquals(PieceType.QUEEN, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).getType(), "Queen is in 4,8");
         assertEquals(PieceColor.WHITE, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).getColor(), "Queen is WHITE");
-        assertTrue("King is check", game.getStatus(PieceColor.BLACK) == GameStatus.CHECK);
+        assertTrue("King is check", game.isPlayerInCheck(PieceColor.BLACK));
 
 
         assertEquals(30, game.getCurrentBoardContext().getCopyOfBoard().piecesOnBoard(), "Number of pieces");

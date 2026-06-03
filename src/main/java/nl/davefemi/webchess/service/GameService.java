@@ -42,12 +42,12 @@ public class GameService {
         return sessionResponseMapper.mapToDTO(sessionId, game.getColorToMove().getColor(),  null);
     }
 
-    public SessionResponseDTO getStatus(String sessionId, String color) throws FileNotFoundException, BoardException, SessionException {
+    public SessionResponseDTO isCheck(String sessionId, String color) throws FileNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(sessionId, color, game.getStatus(PieceColor.fromString(color)).getStatus());
+        return sessionResponseMapper.mapToDTO(sessionId, color, game.isPlayerInCheck(PieceColor.fromString(color)));
     }
 
-    public SessionResponseDTO getAvailableMoves(String sessionId, String color) throws BoardException, FileNotFoundException, SessionException {
+    public SessionResponseDTO getAvailableMoves(String sessionId, String color) throws BoardException, FileNotFoundException, SessionException, GameException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         List<Move> moves = game.getAvailableMoves(PieceColor.fromString(color));
         return sessionResponseMapper.mapToDTO(sessionId, color, moveMapper.mapDomainToDTO(moves));
@@ -57,7 +57,7 @@ public class GameService {
         Pair<PieceColor, GameSession> gamePair = gameSessionService.getSessionAndPlayerColor(playerId, sessionId);
         GameSession gameSession = gamePair.getSecond();
         Game game = gameSession.getCurrentGame();
-        if (game.isGameActive()) {
+        if (game.getStatus().isActive()) {
             game.executeMove(gamePair.getFirst(), moveMapper.mapDTOtoDomain(move));
             String playerColor = null;
             try {
