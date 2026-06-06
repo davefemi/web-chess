@@ -2,6 +2,7 @@ package nl.davefemi.webchess.controller;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.move.MoveRequestDTO;
+import nl.davefemi.webchess.data.dto.session.PlayerDTO;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
@@ -22,4 +23,10 @@ public class ProvisionaryGameController {
     public ResponseEntity<?> executeMove(@PathVariable("id") String sessionId, @RequestBody MoveRequestDTO request) throws FileNotFoundException, MoveException, BoardException, GameException, SessionException {
         return ResponseEntity.ok(gameService.executeMove(request.getPlayerId(), sessionId, request.getMove()));
     }
+
+    @PostMapping("/{id}/surrender")
+    public ResponseEntity<?> surrender(@PathVariable("id") String sessionId, @RequestBody PlayerDTO player) throws FileNotFoundException, BoardException, GameException, SessionException {
+        return ResponseEntity.ok(gameService.surrender(player.getPlayerId(), sessionId));
+    }
+
 }

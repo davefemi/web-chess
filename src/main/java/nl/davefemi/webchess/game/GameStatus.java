@@ -59,4 +59,8 @@ public record GameStatus(GamePhase phase, Optional<PieceColor> winner, Optional<
     public boolean isFinished(){
         return phase == GamePhase.ENDED;
     }
+
+    public boolean isWaiting(){
+        return phase == GamePhase.WAITING_FOR_PLAYERS;
+    }
 }

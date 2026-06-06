@@ -2,10 +2,8 @@ package nl.davefemi.webchess.data.dto.session;
 
 import lombok.Data;
 
-import java.util.Optional;
-
 @Data
-public class SessionRequestDTO {
+public class PlayerDTO {
     private String playerId;
-    private Optional<Object> request;
+    private String playingColor;
 }

@@ -20,7 +20,7 @@ public final class Board {
     public Board(Board other){
         this.pieceIdGenerator = other.pieceIdGenerator;
         for (int i = 0 ; i<0x79; i++){
-            if (isLegalBoardPosition(i)){
+            if (isLegalPosition(i)){
                 squares[i] = other.squares[i];
             }
         }
@@ -56,8 +56,8 @@ public final class Board {
         return foundPositions;
     }
 
-    public boolean isBoardPositionOccupied(Square position) throws BoardException {
-        if (!isLegalBoardPosition(position.value())) {
+    public boolean isPositionOccupied(Square position) throws BoardException {
+        if (!isLegalPosition(position.value())) {
             throw new BoardException("Invalid position");
         }
         return squares[position.value()] != null;
@@ -68,7 +68,7 @@ public final class Board {
     }
 
     public Piece getPieceAt(Square position) throws BoardException {
-        if (!isLegalBoardPosition(position.value())) {
+        if (!isLegalPosition(position.value())) {
             throw new BoardException("Invalid position");
         }
         return squares[position.value()];
@@ -97,7 +97,7 @@ public final class Board {
         return updatePiecePositions((SingleMove) move);
     }
 
-    private boolean isLegalBoardPosition(int position){
+    public static boolean isLegalPosition(int position){
         return ((position & AND_HEX) == 0);
     }
 
@@ -108,7 +108,7 @@ public final class Board {
         for (int i = 0; i < squares.length; i++){
             Piece p = pieces[i];
             if (p!= null){
-                if (!isLegalBoardPosition(i))
+                if (!isLegalPosition(i))
                     throw new BoardException(p.getType() + " " + p.getId() + " on illegal position: " +i);
                 if (p.getType() == PieceType.KING && !kingsByColor.add(p.getColor()))
                     throw new BoardException("Board cannot have two kings of the same color");
@@ -124,9 +124,9 @@ public final class Board {
     private Piece updatePiecePositions(SingleMove move) throws BoardException{
         if (move == null)
             return null;
-        if (!isLegalBoardPosition(move.from().value()))
+        if (!isLegalPosition(move.from().value()))
             throw new BoardException("Position " + move.from().value() + " does not exist");
-        if (!isLegalBoardPosition(move.to().value()))
+        if (!isLegalPosition(move.to().value()))
             throw new BoardException("Position " + move.to().value() + " does not exist");
         if (squares[move.from().value()] == null)
             throw new BoardException("There is no piece at " + move.from().value());

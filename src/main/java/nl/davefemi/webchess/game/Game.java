@@ -51,7 +51,7 @@ public class Game {
     }
 
     public PieceColor getColorToMove() throws GameException {
-        if (status.isActive())
+        if (!status.isFinished())
             return turnGenerator.peek();
         return null;
     }

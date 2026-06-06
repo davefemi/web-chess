@@ -20,8 +20,9 @@ public class BishopMoveTest {
 
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws GameException {
         game = new Game();
+        game.start();
     }
 
     private SingleMove getSingleMove(String from, String to){

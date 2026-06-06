@@ -22,8 +22,9 @@ public class PawnMoveTest {
 
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws GameException {
         game = new Game();
+        game.start();
     }
 
     private SingleMove getSingleMove(String from, String to){
@@ -116,7 +117,6 @@ public class PawnMoveTest {
 
     @Test
     public void promotionWithIllegalMoveTypeTest() throws MoveException, BoardException, GameException {
-        Game game = new Game();
         //Arrange
         setUpPromotionMoves(game);
 
@@ -135,7 +135,6 @@ public class PawnMoveTest {
 
     @Test
     public void successfulPromotionTest() throws BoardException, MoveException, GameException {
-        Game game = new Game();
         //Arrange
         setUpPromotionMoves(game);
 

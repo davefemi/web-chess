@@ -20,4 +20,12 @@ public class Player {
     public PieceColor getPlayingColor(){
         return playingColor;
     }
+
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof Player))
+            return false;
+        Player p = (Player) o;
+        return p.id.equals(id) && p.playingColor.equals(playingColor);
+    }
 }

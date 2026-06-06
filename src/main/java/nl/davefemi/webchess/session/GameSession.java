@@ -12,6 +12,7 @@ public class GameSession {
     private boolean isActive = true;
     private final List<Game> games = new ArrayList<>();
     private final List<Player> players = new ArrayList<>();
+    private Player playerToAccept;
 
     public GameSession() {
         this.sessionId = UUID.randomUUID();
@@ -19,30 +20,48 @@ public class GameSession {
         games.add(game);
     }
 
-    public Game startNewGame() throws SessionException {
+    public Game getRematch(Player player) throws SessionException {
+        if (games.getLast().getStatus().isWaiting())
+            throw new SessionException("A new game has already been initiated");
         if (games.getLast().getStatus().isActive()){
             throw new SessionException("End running game first");
         }
-        Game game = new Game();
-        games.add(game);
-        return game;
+        if (players.contains(player)) {
+            Game game = new Game();
+            games.add(game);
+            for (Player p : players) {
+                if (!p.equals(player))
+                    playerToAccept = p;
+            }
+            return game;
+        }
+        throw new SessionException("Player is not part of this session");
+    }
+
+    public void acceptRematch(Player player) throws GameException, SessionException {
+        if (!player.equals(playerToAccept))
+            throw new SessionException("Invalid player");
+        games.getLast().start();
+        playerToAccept = null;
     }
 
     public void startSession() throws GameException {
         games.getLast().start();
     }
 
-    public boolean endCurrentGame(Player player){
+    public boolean endSession(Player player){
         games.getLast().surrender(player.getPlayingColor());
         return true;
     }
 
-    public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players) throws SessionException {
+    public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept) throws SessionException {
         this.sessionId = sessionId;
         this.games.addAll(games);
         for (Player p : players){
             if (checkExistingPlayers(p))
                 this.players.add(p);
+            if (p.equals(playerToAccept))
+                this.playerToAccept = playerToAccept;
         }
     }
 
@@ -78,6 +97,10 @@ public class GameSession {
 
     public UUID getSessionId() {
         return sessionId;
+    }
+
+    public Player getPlayerToAccept() {
+        return playerToAccept;
     }
 
     public Game getCurrentGame() {

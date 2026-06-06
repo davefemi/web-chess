@@ -31,7 +31,7 @@ public class GameStateMapper {
         String turn;
         try{
             turn = game.getColorToMove().getColor();
-        } catch (GameException e) {
+        } catch (NullPointerException | GameException e) {
             turn = null;
         }
         entity.setColorToMove(turn);
@@ -45,10 +45,11 @@ public class GameStateMapper {
             moveHistory.add(moveRecordMapper.mapDataToDomain(d));
         }
         MoveRecord lastMove = moveHistory.isEmpty() ? null : moveHistory.getLast();
+        PieceColor colorToMove = entity.getColorToMove() == null ? null : PieceColor.fromString(entity.getColorToMove());
         return new Game(
-                boardMapper.mapEntityToDomain(entity.getCurrentBoardContext(), lastMove, PieceColor.fromString(entity.getColorToMove())),
+                boardMapper.mapEntityToDomain(entity.getCurrentBoardContext(), lastMove, colorToMove),
                 mapEntityToGameStatus(entity),
-                PieceColor.fromString(entity.getColorToMove()),
+                colorToMove,
                 moveHistory);
     }
 

@@ -28,7 +28,7 @@ public final class PseudoCastlingMoveGenerator {
                         if (c.moveRook().from().equals(p)) {
                             boolean empty = true;
                             for (int i = lowerFile + 1; i < higherFile; i++) {
-                                if (board.isBoardPositionOccupied(Square.fromFileAndRank(i, rankKing)))
+                                if (board.isPositionOccupied(Square.fromFileAndRank(i, rankKing)))
                                     empty = false;
                             }
                             if (empty)

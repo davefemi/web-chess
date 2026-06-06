@@ -37,15 +37,12 @@ public class RuleEngine {
     }
 
     public static boolean isKingInCheck(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
-        return MoveEvaluator.isKingInCheck(boardContext,
-                boardContext.getLastMove() != null ? boardContext.getLastMove().getMove() : null,
-                playerToMove);
+        return MoveEvaluator.isKingInCheck(boardContext, playerToMove);
     }
 
     public static boolean isPlayerCheckMate(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
         return isKingInCheck(boardContext, playerToMove) && getAllLegalMovesByPieceColor(boardContext, playerToMove).isEmpty();
     }
-
 
     public static boolean isMoveAllowed(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, MoveException {
         if (!(pieceColor == boardContext.getColorToMove()))

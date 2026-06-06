@@ -15,4 +15,5 @@ public class GameSessionEntity {
     private boolean isActiveSession;
     private List<PlayerEntity> players = new ArrayList<>();
     private List<GameStateEntity> games = new ArrayList<>();
+    private  PlayerEntity playerToAccept;
 }

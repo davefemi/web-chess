@@ -5,6 +5,7 @@ import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
+import nl.davefemi.webchess.game.rule.AttackDetector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -20,8 +21,9 @@ public class PinnedPieceTest {
     private final PieceColor black = BLACK;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws GameException {
         game = new Game();
+        game.start();
         board = game.getCurrentBoardContext().getCopyOfBoard();
     }
 
@@ -45,8 +47,10 @@ public class PinnedPieceTest {
         board = new Board(squares, 6);
 
         Game game = new Game(new BoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), GameStatus.active(), WHITE, new ArrayList<>());
-
         game.executeMove(WHITE, getSingleMove("e2","d2"));
+
+        System.out.println("Position e8 under attack is: " + AttackDetector.detectAttack(game.getCurrentBoardContext().getCopyOfBoard(), new AlgebraicSquare("e8").toSquare(), BLACK));
+        System.out.println("Position d2 under attack is: " + AttackDetector.detectAttack(game.getCurrentBoardContext().getCopyOfBoard(), new AlgebraicSquare("d2").toSquare(), WHITE));
 
         assertThat(game.isPlayerInCheck(WHITE)).isFalse().as("White King is NOT in check");
         assertThat(game.isPlayerInCheck(BLACK)).isTrue().as("Black king is check");

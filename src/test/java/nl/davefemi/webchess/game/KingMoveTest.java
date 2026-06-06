@@ -18,8 +18,9 @@ public class KingMoveTest {
 
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws GameException {
         game = new Game();
+        game.start();
         board = game.getCurrentBoardContext().getCopyOfBoard();
     }
 

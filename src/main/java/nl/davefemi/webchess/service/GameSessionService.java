@@ -2,14 +2,12 @@ package nl.davefemi.webchess.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.webchess.data.dto.session.PlayerDTO;
 import nl.davefemi.webchess.data.dto.session.SessionInvitationDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.data.entity.AccessCodeEntity;
 import nl.davefemi.webchess.data.entity.GameSessionEntity;
-import nl.davefemi.webchess.data.mapper.AccessCodeMapper;
-import nl.davefemi.webchess.data.mapper.GameSessionMapper;
-import nl.davefemi.webchess.data.mapper.GameStateMapper;
-import nl.davefemi.webchess.data.mapper.SessionResponseMapper;
+import nl.davefemi.webchess.data.mapper.*;
 import nl.davefemi.webchess.data.repository.GameSessionRepository;
 import nl.davefemi.webchess.exception.SessionException;
 import nl.davefemi.webchess.exception.UnauthorizedException;
@@ -35,6 +33,7 @@ public class GameSessionService {
     private final SessionResponseMapper sessionResponseMapper;
     private final String inviteUrl = "/games/join?code=%s";
     private final AccessCodeMapper accessCodeMapper;
+    private final PlayerMapper playerMapper;
 
     public SessionInvitationDTO startGameSession(String color) throws SessionException, BoardException {
         GameSession session = new GameSession();
@@ -59,14 +58,22 @@ public class GameSessionService {
 
     public SessionResponseDTO endGame(String sessionId, Player player) throws FileNotFoundException, SessionException, BoardException {
         GameSession session = retrieveSession(sessionId);
-        session.endCurrentGame(player);
+        session.endSession(player);
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, null, "Session ended");
     }
 
-    public SessionResponseDTO startNewGameInCurrentSession(String sessionId) throws FileNotFoundException, BoardException, GameException, SessionException {
+    public SessionResponseDTO startRematch(String sessionId, PlayerDTO player) throws FileNotFoundException, BoardException, GameException, SessionException {
         GameSession session =  retrieveSession(sessionId);
-        Game game = session.startNewGame();
+        Game game = session.getRematch(playerMapper.mapDTOtoDomain(player));
+        storeSession(session);
+        return sessionResponseMapper.mapToDTO(session, null, gameStateMapper.mapDomainToDTO(game, game.getColorToMove().getColor()));
+    }
+
+    public SessionResponseDTO acceptRematch(String sessionId, PlayerDTO player) throws FileNotFoundException, SessionException, BoardException, GameException {
+        GameSession session =  retrieveSession(sessionId);
+        session.acceptRematch(playerMapper.mapDTOtoDomain(player));
+        Game game = session.getCurrentGame();
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, null, gameStateMapper.mapDomainToDTO(game, game.getColorToMove().getColor()));
     }

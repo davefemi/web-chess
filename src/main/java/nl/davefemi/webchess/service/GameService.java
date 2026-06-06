@@ -62,7 +62,25 @@ public class GameService {
             String playerColor = null;
             try {
                 playerColor = game.getColorToMove().getColor();
-            } catch (GameException e) {
+            } catch (NullPointerException | GameException e) {
+            }
+            gameSessionService.saveGameSession(gameSession);
+            log.info("SessionId=" + gameSession.getSessionId().toString() + " {}", game.getLastMove().toString());
+            return gameStateMapper.mapDomainToDTO(game, playerColor);
+        }
+        throw new GameException("Game is not active");
+    }
+
+    public GameStateDTO surrender(String playerId, String sessionId) throws FileNotFoundException, SessionException, BoardException, GameException {
+        Pair<PieceColor, GameSession> gamePair = gameSessionService.getSessionAndPlayerColor(playerId, sessionId);
+        GameSession gameSession = gamePair.getSecond();
+        Game game = gameSession.getCurrentGame();
+        if (game.getStatus().isActive()) {
+            game.surrender(gamePair.getFirst());
+            String playerColor = null;
+            try {
+                playerColor = game.getColorToMove().getColor();
+            } catch (NullPointerException | GameException e) {
             }
             gameSessionService.saveGameSession(gameSession);
             log.info("SessionId=" + gameSession.getSessionId().toString() + " {}", game.getLastMove().toString());
