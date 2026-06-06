@@ -13,7 +13,12 @@ import nl.davefemi.webchess.game.actions.MoveRecord;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RuleEngine {
+public final class RuleEngine {
+
+    private RuleEngine(){
+        throw new AssertionError("This class cannot be instantiated");
+    }
+
 
     public static BoardContext applyLegalMove(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, GameException, MoveException {
         if (!isMoveAllowed(boardContext, moveHistory, pieceColor, move)){
@@ -30,14 +35,15 @@ public class RuleEngine {
         List<Move> moves = new ArrayList<>();
         Board board = boardContext.getCopyOfBoard();
         Move lastMove = boardContext.getLastMove() != null ? boardContext.getLastMove().getMove() : null;
-        moves.addAll(PseudoSingleMoveGenerator.generateMoves(board, playerToMove));
-        moves.addAll(PseudoCastlingMoveGenerator.generateMoves(board, playerToMove));
-        moves.addAll(PseudoEnPassantMoveGenerator.generateMoves(board, lastMove, playerToMove));
+        moves.addAll(SinglePseudoMoveGenerator.generateMoves(board, playerToMove));
+        moves.addAll(CastlingPseudoMoveGenerator.generateMoves(board, playerToMove));
+        moves.addAll(EnPassantPseudoMoveGenerator.generateMoves(board, lastMove, playerToMove));
         return MoveEvaluator.evaluateIfKingIsInCheckAfterMove(boardContext, moves, playerToMove);
     }
 
     public static boolean isKingInCheck(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
-        return MoveEvaluator.isKingInCheck(boardContext, playerToMove);
+        Square kingPosition = boardContext.getCopyOfBoard().getPositionsByTypeAndColor(PieceType.KING, playerToMove).getFirst();
+        return AttackDetector.detectAttack(boardContext.getCopyOfBoard(), kingPosition, playerToMove);
     }
 
     public static boolean isPlayerCheckMate(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
@@ -52,9 +58,9 @@ public class RuleEngine {
                 throw new MoveException("Castling is not allowed");
         if (move instanceof SingleMove m) {
             Piece p = boardContext.getCopyOfBoard().getPieceAt(m.from());
-            if (p != null && p.getType() == PieceType.PAWN)
-                if ((p.getColor() == PieceColor.WHITE && m.from().rank() == 6 ||
-                        p.getColor() == PieceColor.BLACK && m.from().rank() == 1)) {
+            if (p != null && p.type() == PieceType.PAWN)
+                if ((p.color() == PieceColor.WHITE && m.from().rank() == 6 ||
+                        p.color() == PieceColor.BLACK && m.from().rank() == 1)) {
                     throw new MoveException("Single move not allowed here, use promotion move");
                 }
         }

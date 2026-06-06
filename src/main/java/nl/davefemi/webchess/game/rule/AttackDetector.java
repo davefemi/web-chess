@@ -5,7 +5,7 @@ import nl.davefemi.webchess.game.board.*;
 import java.util.*;
 import static nl.davefemi.webchess.game.board.PieceType.*;
 
-public class AttackDetector {
+public final class AttackDetector {
     private static final int[] HORIZONTAL_OFFSET = {-1,1};
     private static final int[] VERTICAL_OFFSET = {-16,16};
     private static final int[] DIAGONAL_OFFSET = {-17,-15,15,17};
@@ -15,18 +15,25 @@ public class AttackDetector {
                     PieceColor.BLACK, new int[]{-17,-15}
             );
 
-    public static boolean detectAttack(Board board, Square defendingPosition, PieceColor defendingColor) throws BoardException {
+    private AttackDetector(){
+        throw new AssertionError("This class cannot be instantiated");
+    }
+
+    static boolean detectAttack(Board board, Square defendingPosition, PieceColor defendingColor)
+            throws BoardException {
         return !findAttacks(board, defendingPosition, defendingColor).isEmpty();
     }
 
-    public static List<Square> findAttacks(Board board, Square defendingPosition, PieceColor defendingColor) throws BoardException {
+    static List<Square> findAttacks(Board board, Square defendingPosition, PieceColor defendingColor)
+            throws BoardException {
         List<Square> attacks = new ArrayList<>();
         attacks.addAll(detectSlidingAttack(board, defendingPosition, defendingColor));
         attacks.addAll(detectSteppingAttack(board, defendingPosition, defendingColor));
         return attacks;
     }
 
-    public static boolean containsPinnedPiece(Board board, Square attackingPosition, PieceColor enemyColor) throws BoardException {
+    static boolean containsPinnedPiece(Board board, Square attackingPosition, PieceColor enemyColor)
+            throws BoardException {
         for (int[] offset : Arrays.asList(HORIZONTAL_OFFSET, VERTICAL_OFFSET)) {
             if (pinnedPieceDetection(board, attackingPosition, enemyColor, offset, List.of(QUEEN,ROOK)))
                 return true;
@@ -34,12 +41,14 @@ public class AttackDetector {
         return pinnedPieceDetection(board, attackingPosition, enemyColor, DIAGONAL_OFFSET, List.of(QUEEN, BISHOP));
     }
 
-    private static List<Square> detectSlidingAttack(Board board, Square defendingPosition, PieceColor defendingColor) throws BoardException {
+    private static List<Square> detectSlidingAttack(Board board, Square defendingPosition,
+                                                    PieceColor defendingColor) throws BoardException {
         List<Square> enemyPositions = new ArrayList<>();
         for (int[] offset : Arrays.asList(HORIZONTAL_OFFSET, VERTICAL_OFFSET)) {
             enemyPositions.addAll(slideByOffsetAndType(board, defendingPosition, defendingColor, offset, List.of(QUEEN, ROOK)));
         }
-        enemyPositions.addAll(slideByOffsetAndType(board, defendingPosition, defendingColor, DIAGONAL_OFFSET, List.of(QUEEN, BISHOP)));
+        enemyPositions.addAll(slideByOffsetAndType(board, defendingPosition, defendingColor, DIAGONAL_OFFSET,
+                List.of(QUEEN, BISHOP)));
         return enemyPositions;
     }
 
@@ -52,8 +61,8 @@ public class AttackDetector {
                 if (piece.isPresent()) {
                     Piece p = piece.get();
                     for (PieceType t: types) {
-                        if (p.getType() == t && !(p.getColor() == defendingColor))
-                            enemyPositions.add(board.getPositionById(p.getId()));
+                        if (p.type() == t && !(p.color() == defendingColor))
+                            enemyPositions.add(board.getPositionById(p.id()));
                     }
                 }
             }
@@ -71,12 +80,13 @@ public class AttackDetector {
         return Optional.empty();
     }
 
-    private static boolean pinnedPieceDetection(Board board, Square attackingPosition, PieceColor enemyColor, int[] offset, List<PieceType> types) throws BoardException {
+    private static boolean pinnedPieceDetection(Board board, Square attackingPosition, PieceColor enemyColor,
+                                                int[] offset, List<PieceType> types) throws BoardException {
         if (!types.isEmpty()) {
             for (int o : offset) {
                 Square currentPosition = new Square(attackingPosition.value());
                 Optional<Piece> piece = slider(board, currentPosition, o);
-                if (piece.isEmpty() || piece.get().getType() != KING || piece.get().getColor() != enemyColor) {
+                if (piece.isEmpty() || piece.get().type() != KING || piece.get().color() != enemyColor) {
                     continue;
                 }
                 Optional<Piece> attackingPiece = slider(board, attackingPosition, o * -1);
@@ -85,7 +95,7 @@ public class AttackDetector {
                 }
                 Piece p = attackingPiece.get();
                 for (PieceType t : types) {
-                    if (p.getColor() != enemyColor && p.getType() == t)
+                    if (p.color() != enemyColor && p.type() == t)
                         return true;
                 }
             }
@@ -93,7 +103,8 @@ public class AttackDetector {
         return false;
     }
 
-    private static List<Square> detectSteppingAttack(Board board, Square defendingPosition, PieceColor defendingColor) throws BoardException {
+    private static List<Square> detectSteppingAttack(Board board, Square defendingPosition, PieceColor defendingColor)
+            throws BoardException {
         List<Square> attacks = new ArrayList<>();
         attacks.addAll(detectSteppingOpponent(board, defendingPosition, defendingColor, PAWN_OFFSET.get(defendingColor), PAWN));
         attacks.addAll(detectSteppingOpponent(board, defendingPosition, defendingColor, HORIZONTAL_OFFSET, KING));
@@ -111,7 +122,7 @@ public class AttackDetector {
                 Square newPosition = new Square(defendingPosition.value() + o);
                 if (board.isPositionOccupied(newPosition)) {
                     Piece p = board.getPieceAt(newPosition);
-                    if (p.getType() == pieceType && !(p.getColor() == defendingColor))
+                    if (p.type() == pieceType && !(p.color() == defendingColor))
                         enemyPositions.add(newPosition);
                 }
             }

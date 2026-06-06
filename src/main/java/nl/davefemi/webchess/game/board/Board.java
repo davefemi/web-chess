@@ -40,7 +40,7 @@ public final class Board {
 
     public Square getPositionById(int id) throws BoardException {
         for (int i = 0; i < squares.length; i++){
-            if (squares[i] != null && squares[i].getId() == id){
+            if (squares[i] != null && squares[i].id() == id){
                 return new Square(i);
                 }
             }
@@ -50,7 +50,7 @@ public final class Board {
     public List<Square> getPositionsByTypeAndColor(PieceType type, PieceColor color){
         List<Square> foundPositions = new ArrayList<>();
         for (int i = 0; i < squares.length; i++)
-            if (squares[i] !=null && squares[i].getType() == type && squares[i].getColor() == color){
+            if (squares[i] !=null && squares[i].type() == type && squares[i].color() == color){
                 foundPositions.add(new Square(i));
             }
         return foundPositions;
@@ -109,16 +109,16 @@ public final class Board {
             Piece p = pieces[i];
             if (p!= null){
                 if (!isLegalPosition(i))
-                    throw new BoardException(p.getType() + " " + p.getId() + " on illegal position: " +i);
-                if (p.getType() == PieceType.KING && !kingsByColor.add(p.getColor()))
+                    throw new BoardException(p.type() + " " + p.id() + " on illegal position: " +i);
+                if (p.type() == PieceType.KING && !kingsByColor.add(p.color()))
                     throw new BoardException("Board cannot have two kings of the same color");
-                if (!uniquePieces.add(p.getId()))
+                if (!uniquePieces.add(p.id()))
                     throw new BoardException("Pieces are not unique");
                 squares[i] = p;
             }
         }
         if (kingsByColor.size() != 2)
-            throw new BoardException("There can only be exactly one king of each color on the board");
+            throw new BoardException("There must be exactly one king of each color on the board");
     }
 
     private Piece updatePiecePositions(SingleMove move) throws BoardException{
@@ -138,11 +138,11 @@ public final class Board {
 
     private Piece promotePawnTo(int id, SingleMove pawnMove, PieceType pieceType) throws BoardException {
         for (Piece t : squares) {
-            if (t != null && t.getId() == id)
+            if (t != null && t.id() == id)
                 throw new BoardException("New id cannot already exist");
         }
         Piece p = squares[pawnMove.from().value()];
-        PieceColor color = p.getColor();
+        PieceColor color = p.color();
         updatePiecePositions(pawnMove);
         squares[pawnMove.to().value()] = new Piece(id, pieceType, color);
         return p;

@@ -7,8 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatException;
+import static nl.davefemi.webchess.game.board.PieceColor.BLACK;
+import static nl.davefemi.webchess.game.board.PieceColor.WHITE;
+import static org.assertj.core.api.Assertions.*;
 
 public class BoardTest {
     private Game game;
@@ -29,6 +30,11 @@ public class BoardTest {
         return new SingleMove(Square.fromFileAndRank(file_start, rank_start), Square.fromFileAndRank(file_end, rank_end));
     }
 
+    private Square toSquare(String position){
+        return new AlgebraicSquare(position).toSquare();
+    }
+
+
     @ParameterizedTest
     @CsvSource({
             "-1,0,0,0, Invalid file or rank",
@@ -46,5 +52,47 @@ public class BoardTest {
     @Test
     public void promotionIdTest(){
         assertThat(game.getCurrentBoardContext().getCopyOfBoard().getNextPieceId()).isGreaterThan(new IdGenerator().getNextId());
+    }
+
+    @Test
+    public void notEnoughKingsTest() {
+        Piece [] squares = new Piece[128];
+        squares[toSquare("a8").value()] = new Piece(1, PieceType.ROOK, WHITE);
+        squares[toSquare("d8").value()] = new Piece(2, PieceType.QUEEN, BLACK);
+        squares[toSquare("e8").value()] = new Piece(3, PieceType.KING, BLACK);
+        squares[toSquare("e1").value()] = new Piece(5, PieceType.QUEEN, WHITE);
+        assertThatThrownBy(
+                ()->
+                         new Board(squares, 6))
+                .hasMessageContaining("There must be exactly one king of each color on the board");
+    }
+
+    @Test
+    public void twoKingsOneColour() {
+        Piece [] squares = new Piece[128];
+        squares[toSquare("a8").value()] = new Piece(1, PieceType.ROOK, WHITE);
+        squares[toSquare("d8").value()] = new Piece(2, PieceType.QUEEN, BLACK);
+        squares[toSquare("e8").value()] = new Piece(3, PieceType.KING, BLACK);
+        squares[toSquare("e1").value()] = new Piece(5, PieceType.QUEEN, WHITE);
+        squares[toSquare("e7").value()] = new Piece(6, PieceType.KING, BLACK);
+        assertThatThrownBy(
+                ()->
+                        new Board(squares, 6))
+                .hasMessageContaining("Board cannot have two kings of the same color");
+    }
+
+    @Test
+    public void tooManyKings() {
+        Piece [] squares = new Piece[128];
+        squares[toSquare("a8").value()] = new Piece(1, PieceType.ROOK, WHITE);
+        squares[toSquare("d8").value()] = new Piece(2, PieceType.QUEEN, BLACK);
+        squares[toSquare("e8").value()] = new Piece(3, PieceType.KING, BLACK);
+        squares[toSquare("f2").value()] = new Piece(3, PieceType.KING, WHITE);
+        squares[toSquare("e1").value()] = new Piece(5, PieceType.QUEEN, WHITE);
+        squares[toSquare("e7").value()] = new Piece(6, PieceType.KING, BLACK);
+        assertThatThrownBy(
+                ()->
+                        new Board(squares, 6))
+                .hasMessageContaining("Board cannot have two kings of the same color");
     }
 }

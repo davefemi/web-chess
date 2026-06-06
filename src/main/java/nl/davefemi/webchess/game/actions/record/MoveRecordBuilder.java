@@ -23,14 +23,14 @@ public class MoveRecordBuilder {
         PieceType capPiece = null;
         int capPieceID = 0;
         if (capturedPiece != null){
-            capPiece = capturedPiece.getType();
-            capPieceID = capturedPiece.getId();
+            capPiece = capturedPiece.type();
+            capPieceID = capturedPiece.id();
         }
         return new SingleMoveRecord(
                 move,
                 color,
-                board.getPieceAt(move.to()).getType(),
-                board.getPieceAt(move.to()).getId(),
+                board.getPieceAt(move.to()).type(),
+                board.getPieceAt(move.to()).id(),
                 capPiece,
                 capPieceID);
     }
@@ -40,8 +40,8 @@ public class MoveRecordBuilder {
         return new CastlingMoveRecord(
                 move,
                 color,
-                board.getPieceAt(move.moveKing().to()).getId(),
-                board.getPieceAt(move.moveRook().to()).getId());
+                board.getPieceAt(move.moveKing().to()).id(),
+                board.getPieceAt(move.moveRook().to()).id());
     }
 
     private static PromotionMoveRecord getPromotionMoveRecord(Board board,
@@ -49,16 +49,16 @@ public class MoveRecordBuilder {
         PieceType capPiece = null;
         int capPieceID = 0;
         if (capturedPiece != null){
-            capPiece = capturedPiece.getType();
-            capPieceID = capturedPiece.getId();
+            capPiece = capturedPiece.type();
+            capPieceID = capturedPiece.id();
         }
         return new PromotionMoveRecord(
                 move,
                 color,
                 capPiece,
                 capPieceID,
-                board.getPieceAt(move.move().to()).getType(),
-                board.getPieceAt(move.move().to()).getId());
+                board.getPieceAt(move.move().to()).type(),
+                board.getPieceAt(move.move().to()).id());
     }
 
 }

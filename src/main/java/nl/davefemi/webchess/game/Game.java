@@ -70,14 +70,18 @@ public class Game {
 
 
     public List<Move> getAvailableMoves(PieceColor color) throws BoardException, GameException {
-        if (!getStatus().isActive())
-            throw new GameException("Game is not active");
+        if (status.isWaiting())
+            throw new GameException("Game is not active yet");
+        if (status.isFinished())
+            throw new GameException("Game has ended");
         return RuleEngine.getAllLegalMovesByPieceColor(getCurrentBoardContext(), color);
     }
 
     public synchronized boolean executeMove(PieceColor color, Move move) throws GameException, MoveException, BoardException {
-        if (!status.isActive())
-            throw new GameException("Game is not active");
+        if (status.isWaiting())
+            throw new GameException("Game is not active yet");
+        if (status.isFinished())
+            throw new GameException("Game has ended");
         this.currentBoardContext = RuleEngine.applyLegalMove(getCurrentBoardContext(), moveHistory, color, move);
         updateMoveHistory();
         turnGenerator.nextTurn();

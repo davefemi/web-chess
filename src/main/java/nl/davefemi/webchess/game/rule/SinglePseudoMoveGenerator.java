@@ -8,7 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class PseudoSingleMoveGenerator {
+public final class SinglePseudoMoveGenerator {
+
+    private SinglePseudoMoveGenerator(){
+        throw new AssertionError("This class cannot be instantiated");
+    }
+
 
     static List<SingleMove> generateMoves(Board board, PieceColor color) throws BoardException {
         List<SingleMove> moves = new ArrayList<>();
@@ -21,7 +26,6 @@ public final class PseudoSingleMoveGenerator {
         return moves;
     }
 
-    //Index changed
     private static List<SingleMove> getKingMoves(Board board, List<Square> positions) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
@@ -48,8 +52,6 @@ public final class PseudoSingleMoveGenerator {
         return legalMoves;
     }
 
-    //Index changed
-    //TODO evaluate effect of changing bounds to 6 and 1
     private static List<SingleMove> getBishopMoves(Board board, List<Square> positions) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
@@ -91,7 +93,6 @@ public final class PseudoSingleMoveGenerator {
         return pseudoMoves;
     }
 
-    //Index changed
     private static List<SingleMove> getKnightMoves(Board board, List<Square> positions) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
@@ -113,7 +114,6 @@ public final class PseudoSingleMoveGenerator {
         return pseudoMoves;
     }
 
-    //Index changed
     private static List<SingleMove> getRookMoves(Board board, List<Square> positions) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
@@ -143,7 +143,6 @@ public final class PseudoSingleMoveGenerator {
         return true;
     }
 
-    //Index changed
     private static List<SingleMove> getPawnMoves(Board board, List<Square> positions, PieceColor color) throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
@@ -161,7 +160,6 @@ public final class PseudoSingleMoveGenerator {
         return pseudoMoves;
     }
 
-    //Index changed
     private static List<Square> generatePawnMoves(Board board, Square position, int movement, int promotionRank, int startingRank) throws BoardException {
         List<Square> newPos = new ArrayList<>();
         int bounds = position.rank() + movement;

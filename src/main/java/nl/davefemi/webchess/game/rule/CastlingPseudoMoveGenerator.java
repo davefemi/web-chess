@@ -7,9 +7,9 @@ import nl.davefemi.webchess.game.board.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class PseudoCastlingMoveGenerator {
+public final class CastlingPseudoMoveGenerator {
 
-    private PseudoCastlingMoveGenerator(){
+    private CastlingPseudoMoveGenerator(){
         throw new AssertionError("This class cannot be instantiated");
     }
 
@@ -41,7 +41,6 @@ public final class PseudoCastlingMoveGenerator {
         return pseudoMoves;
     }
 
-    //Index changed
     private static List<CastlingMove> getMoves(PieceColor color){
         List<CastlingMove>  moves = new ArrayList<>();
         int rank = 0;

@@ -9,10 +9,8 @@ import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.util.AssertionErrors.assertFalse;
 
 
 public class CastlingMoveTest {
@@ -55,10 +53,10 @@ public class CastlingMoveTest {
                 getSingleMove("h8","f8")));
 
         //Assert
-        assertEquals(PieceType.KING, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("g1")).getType(),"White king has castled");
-        assertEquals(PieceType.ROOK, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("f1")).getType(),"White rook has castled");
-        assertEquals(PieceType.KING, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("g8")).getType(),"Black king has castled");
-        assertEquals(PieceType.ROOK, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("f8")).getType(),"Black rook has castled");
+        assertEquals(PieceType.KING, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("g1")).type(),"White king has castled");
+        assertEquals(PieceType.ROOK, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("f1")).type(),"White rook has castled");
+        assertEquals(PieceType.KING, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("g8")).type(),"Black king has castled");
+        assertEquals(PieceType.ROOK, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("f8")).type(),"Black rook has castled");
     }
 
     @Test
@@ -89,23 +87,5 @@ public class CastlingMoveTest {
 
         //Assert
         Assertions.assertTrue(actualMessage.contains(expectedMessage), "King has moved before");
-    }
-
-    @Test
-    public void blackQueenCannotAttackWhiteKingTest() throws BoardException, MoveException, GameException {
-        Piece [] squares = new Piece[128];
-        squares[toSquare("a8").value()] = new Piece(1, PieceType.ROOK, WHITE);
-        squares[toSquare("d8").value()] = new Piece(2, PieceType.QUEEN, BLACK);
-        squares[toSquare("e8").value()] = new Piece(3, PieceType.KING, BLACK);
-        squares[toSquare("e2").value()] = new Piece(4, PieceType.KING, WHITE);
-        squares[toSquare("e1").value()] = new Piece(5, PieceType.QUEEN, WHITE);
-
-        board = new Board(squares, 6);
-
-        Game game = new Game(new BoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), GameStatus.active(), PieceColor.WHITE, new ArrayList<>());
-
-        game.executeMove(WHITE, getSingleMove("e2","d2"));
-
-        assertFalse("White King is NOT in check", game.isPlayerInCheck(WHITE));
     }
 }

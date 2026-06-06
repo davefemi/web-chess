@@ -45,8 +45,8 @@ public final class BoardContext {
     private List<Integer> fetchOriginalRooksFromBoard() {
         List<Integer> originalRooks = new ArrayList<>();
         for (Piece piece : board.getPieces()){
-            if (piece != null && piece.getType() == PieceType.ROOK)
-                originalRooks.add(piece.getId());
+            if (piece != null && piece.type() == PieceType.ROOK)
+                originalRooks.add(piece.id());
         }
         return originalRooks;
     }

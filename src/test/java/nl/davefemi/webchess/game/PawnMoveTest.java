@@ -110,8 +110,8 @@ public class PawnMoveTest {
 
         Piece newPiece = game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare());
 
-        assertTrue(newPiece.getType() == PieceType.QUEEN &&
-                newPiece.getColor() == PieceColor.WHITE, "White piece has been promoted to type queen");
+        assertTrue(newPiece.type() == PieceType.QUEEN &&
+                newPiece.color() == PieceColor.WHITE, "White piece has been promoted to type queen");
 
     }
 
@@ -144,8 +144,8 @@ public class PawnMoveTest {
         game.executeMove(PieceColor.WHITE, new PromotionMove(getSingleMove("c7","d8"), PieceType.QUEEN));
 
         //Assert
-        assertEquals(PieceType.QUEEN, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).getType(), "Queen is in 4,8");
-        assertEquals(PieceColor.WHITE, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).getColor(), "Queen is WHITE");
+        assertEquals(PieceType.QUEEN, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).type(), "Queen is in 4,8");
+        assertEquals(PieceColor.WHITE, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(new AlgebraicSquare("d8").toSquare()).color(), "Queen is WHITE");
         assertTrue("King is check", game.isPlayerInCheck(PieceColor.BLACK));
 
 

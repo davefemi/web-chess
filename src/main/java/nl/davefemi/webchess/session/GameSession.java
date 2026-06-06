@@ -1,5 +1,6 @@
 package nl.davefemi.webchess.session;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.board.PieceColor;
 import nl.davefemi.webchess.game.Game;
@@ -7,6 +8,7 @@ import nl.davefemi.webchess.exception.SessionException;
 
 import java.util.*;
 
+@Slf4j
 public class GameSession {
     private final UUID sessionId;
     private boolean isActive = true;

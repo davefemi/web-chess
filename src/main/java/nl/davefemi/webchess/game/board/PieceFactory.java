@@ -1,6 +1,11 @@
 package nl.davefemi.webchess.game.board;
 
-class PieceFactory {
+final class PieceFactory {
+
+    private PieceFactory(){
+        throw new AssertionError("This class cannot be instantiated");
+    }
+
 
     static boolean populateBoardWithPieces(Piece[] squares, IdGenerator pieceIdGenerator){
         if(squares.length != 128)

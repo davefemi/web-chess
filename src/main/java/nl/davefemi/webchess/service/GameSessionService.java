@@ -51,7 +51,7 @@ public class GameSessionService {
         GameSession session =  retrieveSession(code.getSessionId());
         Player player = session.createPlayer();
         session.startSession();
-        log.info("Session {} joined and started", session.getSessionId());
+        log.info("Session {} joined and game started", session.getSessionId());
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, player.getPlayingColor().getColor(),"Successfully joined session");
     }

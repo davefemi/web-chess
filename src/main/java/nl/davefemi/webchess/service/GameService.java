@@ -83,7 +83,6 @@ public class GameService {
             } catch (NullPointerException | GameException e) {
             }
             gameSessionService.saveGameSession(gameSession);
-            log.info("SessionId=" + gameSession.getSessionId().toString() + " {}", game.getLastMove().toString());
             return gameStateMapper.mapDomainToDTO(game, playerColor);
         }
         throw new GameException("Game is not active");

@@ -21,36 +21,31 @@ public final class MoveEvaluator {
         List<Move> legalMoves = new ArrayList<>();
         for (Move move : pseudoMoves) {
             BoardContext boardAfterMove = boardContext.applyMove(move);
-            if (isKingInCheck(boardAfterMove, player))
+            if (RuleEngine.isKingInCheck(boardAfterMove, player))
                 continue;
             legalMoves.add(move);
         }
         return legalMoves;
     }
 
-    static boolean isKingInCheck(BoardContext boardAfterMove, PieceColor player) throws BoardException {
-        Square kingPosition = boardAfterMove.getCopyOfBoard().getPositionsByTypeAndColor(PieceType.KING, player).getFirst();
-        return AttackDetector.detectAttack(boardAfterMove.getCopyOfBoard(), kingPosition, player);
-    }
-
     static boolean isCastlingMoveLegal(Board board, List<Integer> originalRooks, List<MoveRecord> moveHistory, CastlingMove move) throws MoveException, BoardException {
         Piece king = board.getPieceAt(move.moveKing().from());
         Piece rook = board.getPieceAt(move.moveRook().from());
-        if (king != null && king.getType() == PieceType.KING &&
-                rook != null && rook.getType() == PieceType.ROOK){
-            if (!originalRooks.contains(rook.getId()))
-                throw new MoveException("Not allowed: this is not an original " + rook.getType());
+        if (king != null && king.type() == PieceType.KING &&
+                rook != null && rook.type() == PieceType.ROOK){
+            if (!originalRooks.contains(rook.id()))
+                throw new MoveException("Not allowed: this is not an original " + rook.type());
             for (MoveRecord m : moveHistory){
                 if (m instanceof CastlingMoveRecord cm){
-                    if (cm.kingId() == king.getId()){
-                        throw new MoveException("Not allowed: " + king.getType() + " already has castled");
+                    if (cm.kingId() == king.id()){
+                        throw new MoveException("Not allowed: " + king.type() + " already has castled");
                     }
                 }
                 if (m instanceof SingleMoveRecord sm){
-                    if (rook.getId() == sm.movedPieceId())
-                        throw new MoveException("Not allowed: " + rook.getType() + " has moved before");
-                    if (king.getId() == sm.movedPieceId())
-                        throw new MoveException("Not allowed: " + king.getType() + " has moved before");
+                    if (rook.id() == sm.movedPieceId())
+                        throw new MoveException("Not allowed: " + rook.type() + " has moved before");
+                    if (king.id() == sm.movedPieceId())
+                        throw new MoveException("Not allowed: " + king.type() + " has moved before");
                 }
             }
             return true;
@@ -58,7 +53,6 @@ public final class MoveEvaluator {
         throw new MoveException("Invalid positions");
     }
 
-    // index changed
     static boolean isPromotionMoveLegal(Board board, PromotionMove move) throws MoveException, BoardException {
         PieceType newPieceType = move.newPieceType();
         Square oldPawnPos = move.move().from();
@@ -68,8 +62,8 @@ public final class MoveEvaluator {
         }
         if (newPieceType == null)
             throw new TypeException("For promotion you have to specify a valid replacement type");
-        PieceColor color = board.getPieceAt(oldPawnPos).getColor();
-        if (board.getPieceAt(oldPawnPos).getType() != PieceType.PAWN)
+        PieceColor color = board.getPieceAt(oldPawnPos).color();
+        if (board.getPieceAt(oldPawnPos).type() != PieceType.PAWN)
             throw new TypeException("Piece to be replaced is not a pawn");
         if (color == PieceColor.WHITE && oldPawnPos.rank() != 6 ||
                 color == PieceColor.BLACK && oldPawnPos.rank() != 1)
@@ -79,25 +73,14 @@ public final class MoveEvaluator {
         return true;
     }
 
-    static boolean filterForBlockingCapturePositions(Board board, Square oldPos, Square newPos, List<SingleMove> moves) throws BoardException {
-        if (board.isPositionOccupied(newPos)) {
-            if (board.getPieceAt(oldPos).getColor() == board.getPieceAt(newPos).getColor())
-                return true;
-            moves.add(new SingleMove(oldPos, newPos));
-            return true;
-        }
-        return false;
-    }
-
     static boolean isPawnMoveLegal(Board board, Square oldPos, Square newPos) throws BoardException {
         if (board.isPositionOccupied(newPos) &&
-                board.getPieceAt(newPos).getColor() != board.getPieceAt(oldPos).getColor() &&
+                board.getPieceAt(newPos).color() != board.getPieceAt(oldPos).color() &&
                 oldPos.file() != newPos.file())
             return true;
         return !board.isPositionOccupied(newPos) && oldPos.file() == newPos.file();
     }
 
-    // Index changed
     static boolean isEnpassantLegal(Board board, Move lastMove, Square oldPos, Square newPos, PieceColor color) throws BoardException {
         boolean newFileDifferenceOfOne = newPos.file() - oldPos.file() == Math.abs(1);
         boolean white = color == PieceColor.WHITE;
@@ -110,8 +93,18 @@ public final class MoveEvaluator {
                 v.rank() == newRankOpponent && from.rank() == startingRankOpponent
                 && v.file() == newPos.file()){
                     Piece piece = board.getPieceAt(v);
-                    return piece.getType() == PieceType.PAWN && piece.getColor() != color;
+                    return piece.type() == PieceType.PAWN && piece.color() != color;
                 }
+        return false;
+    }
+
+    static boolean filterForBlockingCapturePositions(Board board, Square oldPos, Square newPos, List<SingleMove> moves) throws BoardException {
+        if (board.isPositionOccupied(newPos)) {
+            if (board.getPieceAt(oldPos).color() == board.getPieceAt(newPos).color())
+                return true;
+            moves.add(new SingleMove(oldPos, newPos));
+            return true;
+        }
         return false;
     }
 }

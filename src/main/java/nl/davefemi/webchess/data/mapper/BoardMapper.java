@@ -21,7 +21,7 @@ public class BoardMapper {
     public BoardDTO mapDomainToDTO(Board board) throws BoardException {
         BoardDTO dto = new BoardDTO();
         for (Piece p : board.getPieces()){
-            dto.getBoard().add(positionPieceMapper.mapDomainToDTO(board.getPositionById(p.getId()), p));
+            dto.getBoard().add(positionPieceMapper.mapDomainToDTO(board.getPositionById(p.id()), p));
         }
         return dto;
     }
@@ -31,10 +31,10 @@ public class BoardMapper {
         Board board = boardContext.getCopyOfBoard();
         for (Piece piece: board.getPieces()){
             PieceEntity positionPiece = new PieceEntity();
-            positionPiece.setPosition(board.getPositionById(piece.getId()).value());
-            positionPiece.setPieceType(piece.getType().getLabel());
-            positionPiece.setColor(piece.getColor().getColor());
-            positionPiece.setPieceId(piece.getId());
+            positionPiece.setPosition(board.getPositionById(piece.id()).value());
+            positionPiece.setPieceType(piece.type().getLabel());
+            positionPiece.setColor(piece.color().getColor());
+            positionPiece.setPieceId(piece.id());
             entity.getPositions().add(positionPiece);
         }
         for (Piece p: boardContext.getCapturedPieces()){

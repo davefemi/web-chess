@@ -7,7 +7,12 @@ import nl.davefemi.webchess.game.board.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PseudoEnPassantMoveGenerator {
+public class EnPassantPseudoMoveGenerator {
+
+    private EnPassantPseudoMoveGenerator(){
+        throw new AssertionError("This class cannot be instantiated");
+    }
+
 
     static List<EnPassantMove> generateMoves(Board board, Move lastMove, PieceColor color) throws BoardException {
         return getMoves(board, lastMove, board.getPositionsByTypeAndColor(PieceType.PAWN, color), color);

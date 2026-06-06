@@ -14,8 +14,8 @@ public class PieceMapper {
     public PositionPieceDTO mapDomainToDTO(Square position, Piece piece){
         PositionPieceDTO dto = new PositionPieceDTO();
         dto.setSquare(positionMapper.mapDomainToDTO(position));
-        dto.setPieceType(piece == null ? "vacant" : piece.getType().getLabel());
-        dto.setColor(piece == null ? "vacant": piece.getColor().getColor());
+        dto.setPieceType(piece == null ? "vacant" : piece.type().getLabel());
+        dto.setColor(piece == null ? "vacant": piece.color().getColor());
         return dto;
     }
 
@@ -23,9 +23,9 @@ public class PieceMapper {
     public PieceEntity mapDomainToEntity(Piece piece){
         if (piece != null){
             PieceEntity entity = new PieceEntity();
-            entity.setPieceId(piece.getId());
-            entity.setPieceType(piece.getType().getLabel());
-            entity.setColor(piece.getColor().getColor());
+            entity.setPieceId(piece.id());
+            entity.setPieceType(piece.type().getLabel());
+            entity.setColor(piece.color().getColor());
             return entity;
         }
         return null;
