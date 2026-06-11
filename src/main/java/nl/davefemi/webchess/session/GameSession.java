@@ -56,7 +56,8 @@ public class GameSession {
         return true;
     }
 
-    public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept) throws SessionException {
+    public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept)
+            throws SessionException {
         this.sessionId = sessionId;
         this.games.addAll(games);
         for (Player p : players){

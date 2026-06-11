@@ -114,7 +114,8 @@ public final class SinglePseudoMoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<SingleMove> getRookMoves(Board board, List<Square> positions) throws BoardException {
+    private static List<SingleMove> getRookMoves(Board board, List<Square> positions)
+            throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Square position : positions) {
@@ -136,14 +137,16 @@ public final class SinglePseudoMoveGenerator {
     }
 
     //TODO Test case to see if the last addition to pseudoMoves is redundant
-    private static boolean rookMoveHasBeenGenerated(Board board, int file, int rank, Square position, List<SingleMove> pseudoMoves) throws BoardException {
+    private static boolean rookMoveHasBeenGenerated(Board board, int file, int rank, Square position, List<SingleMove> pseudoMoves)
+            throws BoardException {
         Square newPos = Square.fromFileAndRank(file, rank);
         if (MoveEvaluator.filterForBlockingCapturePositions(board, position, newPos, pseudoMoves)) return false;
         pseudoMoves.add(new SingleMove(position, newPos));
         return true;
     }
 
-    private static List<SingleMove> getPawnMoves(Board board, List<Square> positions, PieceColor color) throws BoardException {
+    private static List<SingleMove> getPawnMoves(Board board, List<Square> positions, PieceColor color)
+            throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Square position : positions) {
@@ -160,7 +163,8 @@ public final class SinglePseudoMoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<Square> generatePawnMoves(Board board, Square position, int movement, int promotionRank, int startingRank) throws BoardException {
+    private static List<Square> generatePawnMoves(Board board, Square position, int movement,
+                                                  int promotionRank, int startingRank) throws BoardException {
         List<Square> newPos = new ArrayList<>();
         int bounds = position.rank() + movement;
         if (bounds < 8 && bounds > 0) {

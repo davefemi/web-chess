@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.entity.record.CastlingMoveRecordEntity;
 import nl.davefemi.webchess.data.MoveRecordDTO;
 import nl.davefemi.webchess.data.MoveRecordEntity;
+import nl.davefemi.webchess.data.entity.record.EnPassantMoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
 import nl.davefemi.webchess.game.actions.record.CastlingMoveRecord;
 import nl.davefemi.webchess.game.actions.MoveRecord;
+import nl.davefemi.webchess.game.actions.record.EnPassantMoveRecord;
 import nl.davefemi.webchess.game.actions.record.PromotionMoveRecord;
 import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ public class MoveRecordMapper {
     private final SingleMoveRecordMapper singleMoveRecordMapper;
     private final CastlingMoveRecordMapper castlingMoveRecordMapper;
     private final PromotionMoveRecordMapper promotionMoveRecordMapper;
+    private final EnPassantMoveRecordMapper enPassantMoveRecordMapper;
 
     public MoveRecordEntity mapDomainToEntity(MoveRecord record){
         if (record instanceof CastlingMoveRecord r){
@@ -25,6 +28,9 @@ public class MoveRecordMapper {
         }
         if (record instanceof PromotionMoveRecord r){
             return promotionMoveRecordMapper.mapDomainToEntity(r);
+        }
+        if (record instanceof EnPassantMoveRecord r){
+            return enPassantMoveRecordMapper.mapDomainToEntity(r);
         }
         SingleMoveRecord r = (SingleMoveRecord) record;
         return singleMoveRecordMapper.mapDomainToEntity(r);
@@ -37,6 +43,9 @@ public class MoveRecordMapper {
         if (record instanceof PromotionMoveRecord r){
             return promotionMoveRecordMapper.mapDomainToDTO(r);
         }
+        if (record instanceof EnPassantMoveRecord r){
+            return enPassantMoveRecordMapper.mapDomainToDTO(r);
+        }
         SingleMoveRecord r = (SingleMoveRecord) record;
         return singleMoveRecordMapper.mapDomainToDTO(r);
     }
@@ -47,6 +56,9 @@ public class MoveRecordMapper {
         }
         if (data instanceof PromotionMoveRecordEntity e){
             return promotionMoveRecordMapper.mapDataToDomain(e);
+        }
+        if (data instanceof EnPassantMoveRecordEntity r){
+            return enPassantMoveRecordMapper.mapDataToDomain(r);
         }
         SingleMoveRecordEntity r = (SingleMoveRecordEntity) data;
         return singleMoveRecordMapper.mapDataToDomain(r);

@@ -26,7 +26,7 @@ public class BoardMapper {
         return dto;
     }
 
-    public BoardContextEntity mapDomainToEntity(BoardContext boardContext) throws BoardException {
+    public BoardContextEntity mapDomainToEntity(GameBoardContext boardContext) throws BoardException {
         BoardContextEntity entity = new BoardContextEntity();
         Board board = boardContext.getCopyOfBoard();
         for (Piece piece: board.getPieces()){
@@ -45,7 +45,7 @@ public class BoardMapper {
         return entity;
     }
 
-    public BoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, PieceColor playerToMove) throws BoardException {
+    public GameBoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, PieceColor playerToMove) throws BoardException {
         Piece[] pieces = new Piece[128];
         for (PieceEntity p : entity.getPositions()) {
             Piece piece = positionPieceMapper.mapEntityToPiece(p);
@@ -54,7 +54,7 @@ public class BoardMapper {
         List<Piece> capturedPieces = new ArrayList<>();
         for (PieceEntity e : entity.getCapturedPieces())
             capturedPieces.add(positionPieceMapper.mapEntityToPiece(e));
-        return new BoardContext(playerToMove,
+        return new GameBoardContext(playerToMove,
                 new Board(pieces, entity.getNextPieceId()),
                 lastMove,
                 capturedPieces,

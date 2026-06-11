@@ -1,23 +1,23 @@
 package nl.davefemi.webchess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.webchess.data.dto.record.SingleMoveRecordDTO;
-import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
+import nl.davefemi.webchess.data.dto.record.EnPassantMoveRecordDTO;
+import nl.davefemi.webchess.data.entity.record.EnPassantMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
-import nl.davefemi.webchess.game.actions.move.SingleMove;
-import nl.davefemi.webchess.game.board.PieceType;
+import nl.davefemi.webchess.game.actions.move.EnPassantMove;
+import nl.davefemi.webchess.game.actions.record.EnPassantMoveRecord;
 import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.Square;
-import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class SingleMoveRecordMapper {
+public class EnPassantMoveRecordMapper {
     private final PositionMapper positionMapper;
 
-    protected SingleMoveRecord mapDataToDomain(SingleMoveRecordEntity data){
-        return new SingleMoveRecord(new SingleMove(
+    protected EnPassantMoveRecord mapDataToDomain(EnPassantMoveRecordEntity data){
+        return new EnPassantMoveRecord(new EnPassantMove(
                 new Square(data.getOldPos()),
                 new Square(data.getNewPos())),
                 PieceColor.fromString(data.getPlayerColor()),
@@ -27,8 +27,8 @@ public class SingleMoveRecordMapper {
                 data.getCapturedPieceId());
     }
 
-    protected SingleMoveRecordEntity mapDomainToEntity(SingleMoveRecord record){
-        SingleMoveRecordEntity dto = new SingleMoveRecordEntity();
+    protected EnPassantMoveRecordEntity mapDomainToEntity(EnPassantMoveRecord record){
+        EnPassantMoveRecordEntity dto = new EnPassantMoveRecordEntity();
         dto.setOldPos(record.move().from().value());
         dto.setNewPos(record.move().to().value());
         dto.setPlayerColor(record.playerColor().getColor());
@@ -41,8 +41,8 @@ public class SingleMoveRecordMapper {
         return dto;
     }
 
-    protected SingleMoveRecordDTO mapDomainToDTO(SingleMoveRecord record){
-        SingleMoveRecordDTO dto = new SingleMoveRecordDTO();
+    protected EnPassantMoveRecordDTO mapDomainToDTO(EnPassantMoveRecord record){
+        EnPassantMoveRecordDTO dto = new EnPassantMoveRecordDTO();
         dto.setOldPos(positionMapper.mapDomainToDTO(record.move().from()));
         dto.setNewPos(positionMapper.mapDomainToDTO(record.move().to()));
         dto.setPlayerColor(record.playerColor().getColor());

@@ -41,7 +41,7 @@ public class KnightMoveTest {
         game.executeMove(black, getSingleMove("a7","a6"));
         game.executeMove(white, getSingleMove("e2","e4"));
         game.executeMove(black, getSingleMove("a6","a5"));
-        assertThat(RuleEngine.isMoveAllowed(game.getCurrentBoardContext(), game.getMoveHistory(), white, getSingleMove(from, to))).isEqualTo(expected);
+        assertThat(RuleEngine.isMoveAllowed(game.getGameBoardContext(), game.getMoveHistory(), white, getSingleMove(from, to))).isEqualTo(expected);
     }
 
 }

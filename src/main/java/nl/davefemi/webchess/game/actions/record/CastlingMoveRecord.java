@@ -5,7 +5,7 @@ import nl.davefemi.webchess.game.actions.MoveRecord;
 import nl.davefemi.webchess.game.board.PieceColor;
 
 public record CastlingMoveRecord(CastlingMove move,
-                                 PieceColor player_color,
+                                 PieceColor playerColor,
                                  int kingId,
                                  int rookId) implements MoveRecord {
 

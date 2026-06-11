@@ -52,8 +52,9 @@ public final class AttackDetector {
         return enemyPositions;
     }
 
-    private static List<Square> slideByOffsetAndType(Board board, Square defendingPosition, PieceColor defendingColor,
-                                                     int[] offset, List<PieceType> types) throws BoardException {
+    private static List<Square> slideByOffsetAndType
+            (Board board, Square defendingPosition, PieceColor defendingColor, int[] offset, List<PieceType> types)
+            throws BoardException {
         List<Square> enemyPositions = new ArrayList<>();
         if (!types.isEmpty()) {
             for (int o : offset) {
@@ -80,8 +81,9 @@ public final class AttackDetector {
         return Optional.empty();
     }
 
-    private static boolean pinnedPieceDetection(Board board, Square attackingPosition, PieceColor enemyColor,
-                                                int[] offset, List<PieceType> types) throws BoardException {
+    private static boolean pinnedPieceDetection
+            (Board board, Square attackingPosition, PieceColor enemyColor, int[] offset, List<PieceType> types)
+            throws BoardException {
         if (!types.isEmpty()) {
             for (int o : offset) {
                 Square currentPosition = new Square(attackingPosition.value());
@@ -103,7 +105,8 @@ public final class AttackDetector {
         return false;
     }
 
-    private static List<Square> detectSteppingAttack(Board board, Square defendingPosition, PieceColor defendingColor)
+    private static List<Square> detectSteppingAttack
+            (Board board, Square defendingPosition, PieceColor defendingColor)
             throws BoardException {
         List<Square> attacks = new ArrayList<>();
         attacks.addAll(detectSteppingOpponent(board, defendingPosition, defendingColor, PAWN_OFFSET.get(defendingColor), PAWN));
@@ -114,8 +117,9 @@ public final class AttackDetector {
         return attacks;
     }
 
-    private static List<Square> detectSteppingOpponent(Board board, Square defendingPosition, PieceColor defendingColor,
-                                                  int[] offset, PieceType pieceType) throws BoardException {
+    private static List<Square> detectSteppingOpponent
+            (Board board, Square defendingPosition, PieceColor defendingColor, int[] offset, PieceType pieceType)
+            throws BoardException {
         List<Square> enemyPositions = new ArrayList<>();
         for (int o : offset) {
             if (Board.isLegalPosition(defendingPosition.value() + o)) {

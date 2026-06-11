@@ -24,7 +24,7 @@ public class GameStateMapper {
 
     public GameStateEntity mapDomainToEntity(Game game) throws BoardException {
         GameStateEntity entity = new GameStateEntity();
-        entity.setCurrentBoardContext(boardMapper.mapDomainToEntity(game.getCurrentBoardContext()));
+        entity.setCurrentBoardContext(boardMapper.mapDomainToEntity(game.getGameBoardContext()));
         entity.setGamePhase(game.getStatus().phase().getPhase());
         entity.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().getColor(): null);
         entity.setGameEndReason(game.getStatus().isFinished()? game.getStatus().reason().get().getReason() : null);

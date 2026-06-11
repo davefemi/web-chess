@@ -13,4 +13,5 @@ public sealed interface SinglePieceMove extends Move permits SingleMove, EnPassa
     default Square to(){
         return move().to();
     }
+
 }

@@ -16,22 +16,26 @@ public class GameQueryController {
     private final GameService gameService;
 
     @GetMapping("/positions")
-    public ResponseEntity<?> getChessPositions(@PathVariable("id") String sessionId) throws FileNotFoundException, BoardException, GameException, SessionException {
+    public ResponseEntity<?> getChessPositions(@PathVariable("id") String sessionId)
+            throws FileNotFoundException, BoardException, GameException, SessionException {
         return ResponseEntity.ok(gameService.getChessPositions(sessionId));
     }
 
     @GetMapping("/get-player-turn")
-    public ResponseEntity<?> getPlayerTurn(@PathVariable("id") String sessionId) throws FileNotFoundException, GameException, BoardException, SessionException {
+    public ResponseEntity<?> getPlayerTurn(@PathVariable("id") String sessionId)
+            throws FileNotFoundException, GameException, BoardException, SessionException {
         return ResponseEntity.ok(gameService.getPlayerTurn(sessionId));
     }
 
     @GetMapping("/status")
-    public ResponseEntity<?> isCheck(@PathVariable("id") String sessionId, @RequestParam("color") String color) throws FileNotFoundException, BoardException, SessionException {
+    public ResponseEntity<?> isCheck(@PathVariable("id") String sessionId, @RequestParam("color") String color)
+            throws FileNotFoundException, BoardException, SessionException {
         return ResponseEntity.ok(gameService.isCheck(sessionId, color));
     }
 
     @GetMapping("/moves")
-    public ResponseEntity<?> getAvailableMoves(@PathVariable("id") String sessionId, @RequestParam("color") String color) throws FileNotFoundException, BoardException, SessionException, GameException {
+    public ResponseEntity<?> getAvailableMoves(@PathVariable("id") String sessionId, @RequestParam("color") String color)
+            throws FileNotFoundException, BoardException, SessionException, GameException {
         return ResponseEntity.ok(gameService.getAvailableMoves(sessionId, color));
     }
 }

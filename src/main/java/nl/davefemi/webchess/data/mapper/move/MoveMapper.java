@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import nl.davefemi.webchess.data.dto.move.CastlingMoveDTO;
 import nl.davefemi.webchess.data.MoveDTO;
+import nl.davefemi.webchess.data.dto.move.EnPassantMoveDTO;
 import nl.davefemi.webchess.data.dto.move.PromotionMoveDTO;
 import nl.davefemi.webchess.data.dto.move.SingleMoveDTO;
 import nl.davefemi.webchess.game.actions.move.CastlingMove;
@@ -34,6 +35,8 @@ public class MoveMapper {
             return castlingMoveMapper.mapDTOtoDomain(m);
         if (move instanceof PromotionMoveDTO m)
             return promotionMoveMapper.mapDTOtoDomain(m);
+        if (move instanceof EnPassantMoveDTO m)
+            return singleMoveMapper.mapDTOtoDomain(m);
         return singleMoveMapper.mapDTOtoDomain((SingleMoveDTO) move);
     }
 

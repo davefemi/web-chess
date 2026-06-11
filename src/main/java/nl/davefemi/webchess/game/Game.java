@@ -13,27 +13,28 @@ import java.util.List;
 
 @Slf4j
 public class Game {
-    private BoardContext currentBoardContext;
+    private GameBoardContext currentGameBoardContext;
     private GameStatus status = GameStatus.waiting();
     private final TurnGenerator turnGenerator;
     private final List<MoveRecord> moveHistory;
 
     public Game() {
         turnGenerator = new TurnGenerator();
-        currentBoardContext = new BoardContext(turnGenerator.peek());
+        currentGameBoardContext = new GameBoardContext(turnGenerator.peek());
         moveHistory = new ArrayList<>();
     }
 
-    public Game(BoardContext boardContext, GameStatus status, PieceColor colorToMove,
+    public Game(GameBoardContext boardContext, GameStatus status, PieceColor colorToMove,
                 List<MoveRecord> moveHistory){
-        this.currentBoardContext = boardContext;
+        this.currentGameBoardContext = boardContext;
         this.status = status;
         this.turnGenerator = new TurnGenerator(colorToMove);
+        currentGameBoardContext.setColorToMove(turnGenerator.peek());
         this.moveHistory = moveHistory;
     }
 
     public Game(Game other){
-        this.currentBoardContext = other.currentBoardContext;
+        this.currentGameBoardContext = other.currentGameBoardContext;
         this.status = other.status;
         this.turnGenerator = new TurnGenerator(other.turnGenerator.peek());
         this.moveHistory = new ArrayList<>(other.moveHistory);
@@ -56,16 +57,16 @@ public class Game {
         return null;
     }
 
-    public BoardContext getCurrentBoardContext(){
-        return new BoardContext(currentBoardContext.getColorToMove(),
-                currentBoardContext.getCopyOfBoard(),
-                currentBoardContext.getLastMove(),
-                currentBoardContext.getCapturedPieces(),
-                currentBoardContext.getOriginalRooks());
+    public GameBoardContext getGameBoardContext(){
+        return new GameBoardContext(currentGameBoardContext.getColorToMove(),
+                currentGameBoardContext.getCopyOfBoard(),
+                currentGameBoardContext.getLastMove(),
+                currentGameBoardContext.getCapturedPieces(),
+                currentGameBoardContext.getOriginalRooks());
     }
 
     public boolean isPlayerInCheck(PieceColor color) throws BoardException {
-        return RuleEngine.isKingInCheck(getCurrentBoardContext(), color);
+        return RuleEngine.isKingInCheck(getGameBoardContext(), color);
     }
 
 
@@ -74,7 +75,7 @@ public class Game {
             throw new GameException("Game is not active yet");
         if (status.isFinished())
             throw new GameException("Game has ended");
-        return RuleEngine.getAllLegalMovesByPieceColor(getCurrentBoardContext(), color);
+        return RuleEngine.getAllLegalMovesByPieceColor(getGameBoardContext(), color);
     }
 
     public synchronized boolean executeMove(PieceColor color, Move move) throws GameException, MoveException, BoardException {
@@ -82,12 +83,11 @@ public class Game {
             throw new GameException("Game is not active yet");
         if (status.isFinished())
             throw new GameException("Game has ended");
-        this.currentBoardContext = RuleEngine.applyLegalMove(getCurrentBoardContext(), moveHistory, color, move);
+        this.currentGameBoardContext = RuleEngine.applyMove(getGameBoardContext(), moveHistory, color, move);
         updateMoveHistory();
         turnGenerator.nextTurn();
-        log.info(getLastMove().toString());
-        this.currentBoardContext.setColorToMove(turnGenerator.peek());
-        status = RuleEngine.evaluateStatus(currentBoardContext);
+        this.currentGameBoardContext.setColorToMove(turnGenerator.peek());
+        status = RuleEngine.evaluateStatus(currentGameBoardContext);
         return true;
     }
 
@@ -106,7 +106,7 @@ public class Game {
     }
 
     private synchronized void updateMoveHistory(){
-        if (currentBoardContext.getLastMove() != null)
-            moveHistory.add(currentBoardContext.getLastMove());
+        if (currentGameBoardContext.getLastMove() != null)
+            moveHistory.add(currentGameBoardContext.getLastMove());
     }
 }

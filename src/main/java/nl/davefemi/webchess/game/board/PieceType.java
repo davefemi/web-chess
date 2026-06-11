@@ -20,7 +20,7 @@ public enum PieceType {
 
     public static PieceType fromString(String type){
         for (PieceType t : values()){
-            if (t.label.equalsIgnoreCase(type))
+            if (type.toLowerCase().contains(t.label))
                 return t;
         }
         throw new IllegalArgumentException("Type does not exist");

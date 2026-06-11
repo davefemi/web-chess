@@ -4,10 +4,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.game.GameStatus;
-import nl.davefemi.webchess.game.actions.move.CastlingMove;
-import nl.davefemi.webchess.game.actions.move.Move;
-import nl.davefemi.webchess.game.actions.move.PromotionMove;
-import nl.davefemi.webchess.game.actions.move.SingleMove;
+import nl.davefemi.webchess.game.actions.move.*;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.actions.MoveRecord;
 import java.util.ArrayList;
@@ -20,41 +17,46 @@ public final class RuleEngine {
     }
 
 
-    public static BoardContext applyLegalMove(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, GameException, MoveException {
+    public static GameBoardContext applyMove(GameBoardContext boardContext, List<MoveRecord> moveHistory,
+                                             PieceColor pieceColor, Move move) throws BoardException, GameException, MoveException {
         if (!isMoveAllowed(boardContext, moveHistory, pieceColor, move)){
             if (isPlayerCheckMate(boardContext, pieceColor))
                 throw new GameException(boardContext.getColorToMove() + " is check mate");
             if (isKingInCheck(boardContext, pieceColor))
                 throw new MoveException(boardContext.getColorToMove() + " is in check");
-            throw new MoveException("Illegal move");
+            throw new MoveException("Illegal move: " + move.toString());
         }
-        return boardContext.applyMove(move);
+        return boardContext.applyValidatedMove(move);
     }
 
-    public static List<Move> getAllLegalMovesByPieceColor(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
+    public static List<Move> getAllLegalMovesByPieceColor(GameBoardContext boardContext,
+                                                          PieceColor playerToMove) throws BoardException {
         List<Move> moves = new ArrayList<>();
         Board board = boardContext.getCopyOfBoard();
         Move lastMove = boardContext.getLastMove() != null ? boardContext.getLastMove().getMove() : null;
         moves.addAll(SinglePseudoMoveGenerator.generateMoves(board, playerToMove));
         moves.addAll(CastlingPseudoMoveGenerator.generateMoves(board, playerToMove));
         moves.addAll(EnPassantPseudoMoveGenerator.generateMoves(board, lastMove, playerToMove));
-        return MoveEvaluator.evaluateIfKingIsInCheckAfterMove(boardContext, moves, playerToMove);
+        return MoveEvaluator.isCheckAfterMove(boardContext, moves, playerToMove);
     }
 
-    public static boolean isKingInCheck(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
-        Square kingPosition = boardContext.getCopyOfBoard().getPositionsByTypeAndColor(PieceType.KING, playerToMove).getFirst();
-        return AttackDetector.detectAttack(boardContext.getCopyOfBoard(), kingPosition, playerToMove);
+    public static boolean isKingInCheck(GameBoardContext boardContext, PieceColor playerToMove) throws BoardException {
+        return MoveEvaluator.isCheck(boardContext, playerToMove);
     }
 
-    public static boolean isPlayerCheckMate(BoardContext boardContext, PieceColor playerToMove) throws BoardException {
-        return isKingInCheck(boardContext, playerToMove) && getAllLegalMovesByPieceColor(boardContext, playerToMove).isEmpty();
+    public static boolean isPlayerCheckMate(GameBoardContext boardContext, PieceColor playerToMove) throws BoardException {
+        return MoveEvaluator.isCheck(boardContext, playerToMove)
+                && getAllLegalMovesByPieceColor(boardContext, playerToMove).isEmpty();
     }
 
-    public static boolean isMoveAllowed(BoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move) throws BoardException, MoveException {
+    public static boolean isMoveAllowed
+            (GameBoardContext boardContext, List<MoveRecord> moveHistory, PieceColor pieceColor, Move move)
+            throws BoardException, MoveException {
         if (!(pieceColor == boardContext.getColorToMove()))
             throw new MoveException("It is not " + pieceColor + "'s turn yet");
         if (move instanceof CastlingMove m)
-            if (!(MoveEvaluator.isCastlingMoveLegal(boardContext.getCopyOfBoard(), boardContext.getOriginalRooks(), moveHistory, m)))
+            if (!(MoveEvaluator.isCastlingMoveLegal(boardContext.getCopyOfBoard(),
+                    boardContext.getOriginalRooks(), moveHistory, m)))
                 throw new MoveException("Castling is not allowed");
         if (move instanceof SingleMove m) {
             Piece p = boardContext.getCopyOfBoard().getPieceAt(m.from());
@@ -72,9 +74,12 @@ public final class RuleEngine {
         return getAllLegalMovesByPieceColor(boardContext, pieceColor).contains(move);
     }
 
-    public static GameStatus evaluateStatus(BoardContext boardContext) throws BoardException {
-        if (isPlayerCheckMate(boardContext, boardContext.getColorToMove()))
-            return GameStatus.checkmate(PieceColor.getOpponent(boardContext.getColorToMove()));
+    public static GameStatus evaluateStatus(GameBoardContext boardContext) throws BoardException {
+        if (getAllLegalMovesByPieceColor(boardContext, boardContext.getColorToMove()).isEmpty()) {
+            if (MoveEvaluator.isCheck(boardContext, boardContext.getColorToMove()))
+                return GameStatus.checkmate(PieceColor.getOpponent(boardContext.getColorToMove()));
+            return GameStatus.stalemate();
+        }
         return GameStatus.active();
     }
 }

@@ -1,6 +1,8 @@
 package nl.davefemi.webchess.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.data.dto.session.PlayerDTO;
 import nl.davefemi.webchess.data.dto.session.SessionInvitationDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/games")
@@ -26,22 +29,34 @@ public class GameSessionController {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<SessionInvitationDTO> invitePlayer(@RequestParam("color")String color) throws SessionException, BoardException {
+    public ResponseEntity<SessionInvitationDTO> invitePlayer
+            (@RequestParam("color")String color, HttpServletRequest request)
+            throws SessionException, BoardException {
+        log.info("Received from{}: session initiation request", request.getSession().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startGameSession(color));
     }
 
     @PostMapping("invite/{id}")
-    public ResponseEntity<SessionResponseDTO> invitePlayer(@PathVariable("id")String sessionId, @RequestBody PlayerDTO player) throws FileNotFoundException, SessionException, BoardException, GameException {
+    public ResponseEntity<SessionResponseDTO> invitePlayer
+            (@PathVariable("id")String sessionId, @RequestBody PlayerDTO player)
+            throws FileNotFoundException, SessionException, BoardException, GameException {
+        log.info("Received sessionId={}: invite request", sessionId);
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startRematch(sessionId, player));
     }
 
     @PostMapping("/join")
-    public ResponseEntity<SessionResponseDTO> joinGame(@RequestParam("code") String accessCode) throws FileNotFoundException, SessionException, BoardException, GameException {
+    public ResponseEntity<SessionResponseDTO> joinGame
+            (@RequestParam("code") String accessCode, HttpServletRequest request)
+            throws FileNotFoundException, SessionException, BoardException, GameException {
+        log.info("Received from{}: join request", request.getSession().getId());
         return ResponseEntity.ok(gameSessionService.joinGameSession(accessCode));
     }
 
     @PostMapping("/join/{id}")
-    public ResponseEntity<SessionResponseDTO> joinGame(@PathVariable("id") String sessionId, @RequestBody PlayerDTO player) throws FileNotFoundException, SessionException, BoardException, GameException {
+    public ResponseEntity<SessionResponseDTO> joinGame
+            (@PathVariable("id") String sessionId, @RequestBody PlayerDTO player)
+            throws FileNotFoundException, SessionException, BoardException, GameException {
+        log.info("Received sessionId={}: join request", sessionId);
         return ResponseEntity.ok(gameSessionService.acceptRematch(sessionId, player));
     }
 

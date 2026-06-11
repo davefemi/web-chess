@@ -22,14 +22,20 @@ final class PieceFactory {
     }
 
     private static void createPawns(Piece[] squares, IdGenerator pieceIdGenerator, PieceColor color){
-        int square = color == PieceColor.WHITE? 0x10 : 0x60;
+        int square =
+                color == PieceColor.WHITE
+                        ? 0x10
+                        : 0x60;
         for (int i = 0; i<8; i++){
             squares[square+i] = new Piece(pieceIdGenerator.getNextId(), PieceType.PAWN, color);
         }
     }
 
     private static void createRooks(Piece[] squares, IdGenerator pieceIdGenerator, PieceColor color){
-        int square = color == PieceColor.WHITE? 0x00 : 0x70;
+        int square =
+                color == PieceColor.WHITE
+                        ? 0x00
+                        : 0x70;
         Piece queenSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
         Piece kingSideRook = new Piece(pieceIdGenerator.getNextId(), PieceType.ROOK, color);
         squares[square] = queenSideRook;
@@ -37,22 +43,34 @@ final class PieceFactory {
     }
 
     private static void createKnights(Piece[] squares, IdGenerator pieceIdGenerator, PieceColor color){
-        int square = color == PieceColor.WHITE? 0x01 : 0x71;
+        int square =
+                color == PieceColor.WHITE
+                        ? 0x01
+                        : 0x71;
         squares[square] = new Piece(pieceIdGenerator.getNextId(), PieceType.KNIGHT, color);
         squares[square+5] = new Piece(pieceIdGenerator.getNextId(), PieceType.KNIGHT, color);
     }
 
     private static void createBishops(Piece[] squares, IdGenerator pieceIdGenerator, PieceColor color){
-        int square = color == PieceColor.WHITE? 0x02 : 0x72;
+        int square =
+                color == PieceColor.WHITE
+                        ? 0x02
+                        : 0x72;
         squares[square] =  new Piece(pieceIdGenerator.getNextId(), PieceType.BISHOP, color);
         squares[square + 3] = new Piece(pieceIdGenerator.getNextId(), PieceType.BISHOP, color);
     }
 
     private static void createQueen(Piece[] squares, IdGenerator pieceIdGenerator, PieceColor color){
-        squares[color == PieceColor.WHITE? 0x03 : 0x73] = new Piece(pieceIdGenerator.getNextId(), PieceType.QUEEN, color);
+        squares[color == PieceColor.WHITE
+                ? 0x03
+                : 0x73]
+                = new Piece(pieceIdGenerator.getNextId(), PieceType.QUEEN, color);
     }
 
     private static void createKing(Piece[] squares, IdGenerator pieceIdGenerator, PieceColor color){
-        squares[color == PieceColor.WHITE? 0x04 : 0x74] = new Piece(pieceIdGenerator.getNextId(), PieceType.KING, color);
+        squares[color == PieceColor.WHITE
+                ? 0x04
+                : 0x74]
+                = new Piece(pieceIdGenerator.getNextId(), PieceType.KING, color);
     }
 }

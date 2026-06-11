@@ -83,6 +83,8 @@ public final class Board {
         return pieces;
     }
 
+
+
     synchronized Piece applyValidatedMove(Move move) throws BoardException {
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
             updatePiecePositions((moveKing));
@@ -111,14 +113,14 @@ public final class Board {
                 if (!isLegalPosition(i))
                     throw new BoardException(p.type() + " " + p.id() + " on illegal position: " +i);
                 if (p.type() == PieceType.KING && !kingsByColor.add(p.color()))
-                    throw new BoardException("Board cannot have two kings of the same color");
+                    throw new BoardException("Board cannot have two kings of the same playerColor");
                 if (!uniquePieces.add(p.id()))
                     throw new BoardException("Pieces are not unique");
                 squares[i] = p;
             }
         }
         if (kingsByColor.size() != 2)
-            throw new BoardException("There must be exactly one king of each color on the board");
+            throw new BoardException("There must be exactly one king of each playerColor on the board");
     }
 
     private Piece updatePiecePositions(SingleMove move) throws BoardException{
@@ -131,6 +133,8 @@ public final class Board {
         if (squares[move.from().value()] == null)
             throw new BoardException("There is no piece at " + move.from().value());
         Piece p = squares[move.to().value()];
+        if (p != null && p.type() == PieceType.KING)
+            throw new BoardException("Board must have exactly one king of each colour");
         squares[move.to().value()] = squares[move.from().value()];
         squares[move.from().value()] = null;
         return p;
@@ -150,8 +154,14 @@ public final class Board {
 
     private Piece applyEnPassantMove(EnPassantMove move) throws BoardException {
         updatePiecePositions(new SingleMove(move.from(), move.to()));
-        Piece p = squares[move.to().value()-16];
-        squares[move.to().value()-16] = null;
+        int diff =
+                move.from().value()-move.to().value() < 0
+                ? 16
+                : -16 ;
+        Piece p = squares[move.to().value() - diff ];
+        if (p != null && p.type() == PieceType.KING)
+            throw new BoardException("Board must have exactly one king of each colour");
+        squares[move.to().value() - diff ] = null;
         return p;
     }
 }

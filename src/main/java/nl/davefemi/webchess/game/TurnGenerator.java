@@ -2,7 +2,7 @@ package nl.davefemi.webchess.game;
 
 import nl.davefemi.webchess.game.board.PieceColor;
 
-class TurnGenerator{
+final class TurnGenerator{
     private PieceColor nextTurn;
 
     TurnGenerator(){

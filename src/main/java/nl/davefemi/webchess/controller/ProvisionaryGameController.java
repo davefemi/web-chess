@@ -1,6 +1,7 @@
 package nl.davefemi.webchess.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.data.dto.move.MoveRequestDTO;
 import nl.davefemi.webchess.data.dto.session.PlayerDTO;
 import nl.davefemi.webchess.exception.BoardException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("app/games")
@@ -20,12 +22,19 @@ public class ProvisionaryGameController {
     private final GameService gameService;
 
     @PostMapping("/{id}/moves")
-    public ResponseEntity<?> executeMove(@PathVariable("id") String sessionId, @RequestBody MoveRequestDTO request) throws FileNotFoundException, MoveException, BoardException, GameException, SessionException {
+    public ResponseEntity<?> executeMove
+            (@PathVariable("id") String sessionId, @RequestBody MoveRequestDTO request)
+            throws FileNotFoundException, MoveException, BoardException, GameException, SessionException {
+        log.info("Received from sessionId={}, playerId={}: move request {}",
+                sessionId, request.getPlayerId(), request.getMove());
         return ResponseEntity.ok(gameService.executeMove(request.getPlayerId(), sessionId, request.getMove()));
     }
 
     @PostMapping("/{id}/surrender")
-    public ResponseEntity<?> surrender(@PathVariable("id") String sessionId, @RequestBody PlayerDTO player) throws FileNotFoundException, BoardException, GameException, SessionException {
+    public ResponseEntity<?> surrender
+            (@PathVariable("id") String sessionId, @RequestBody PlayerDTO player)
+            throws FileNotFoundException, BoardException, GameException, SessionException {
+        log.info("Received from sessionId={}, playerId={}:  surrender request", sessionId, player);
         return ResponseEntity.ok(gameService.surrender(player.getPlayerId(), sessionId));
     }
 

@@ -24,7 +24,7 @@ public class CastlingMoveTest {
     public void setUp() throws GameException {
         game = new Game();
         game.start();
-        board = game.getCurrentBoardContext().getCopyOfBoard();
+        board = game.getGameBoardContext().getCopyOfBoard();
     }
 
     private SingleMove getSingleMove(String from, String to){
@@ -53,10 +53,10 @@ public class CastlingMoveTest {
                 getSingleMove("h8","f8")));
 
         //Assert
-        assertEquals(PieceType.KING, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("g1")).type(),"White king has castled");
-        assertEquals(PieceType.ROOK, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("f1")).type(),"White rook has castled");
-        assertEquals(PieceType.KING, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("g8")).type(),"Black king has castled");
-        assertEquals(PieceType.ROOK, game.getCurrentBoardContext().getCopyOfBoard().getPieceAt(toSquare("f8")).type(),"Black rook has castled");
+        assertEquals(PieceType.KING, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("g1")).type(),"White king has castled");
+        assertEquals(PieceType.ROOK, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("f1")).type(),"White rook has castled");
+        assertEquals(PieceType.KING, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("g8")).type(),"Black king has castled");
+        assertEquals(PieceType.ROOK, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("f8")).type(),"Black rook has castled");
     }
 
     @Test

@@ -7,7 +7,7 @@ import nl.davefemi.webchess.game.board.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnPassantPseudoMoveGenerator {
+public final class EnPassantPseudoMoveGenerator {
 
     private EnPassantPseudoMoveGenerator(){
         throw new AssertionError("This class cannot be instantiated");
@@ -19,18 +19,19 @@ public class EnPassantPseudoMoveGenerator {
     }
 
     //Index changed
-    private static List<EnPassantMove> getMoves(Board board, Move lastMove, List<Square> positions, PieceColor color) throws BoardException {
+    private static List<EnPassantMove> getMoves(Board board, Move lastMove, List<Square> positions, PieceColor color)
+            throws BoardException {
         List<EnPassantMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Square position : positions) {
                 if (color == PieceColor.WHITE) {
                     int startingRank = 4;
-                    int destinationRank = position.rank()+1;
+                    int destinationRank = 5;
                     pseudoMoves.addAll(getEnpassantMoves(board, lastMove, position, startingRank, destinationRank, color));
                 }
                 if (color == PieceColor.BLACK) {
                     int startingRank = 3;
-                    int destinationRank = position.rank()-1;
+                    int destinationRank = 2;
                     pseudoMoves.addAll(getEnpassantMoves(board, lastMove, position, startingRank, destinationRank, color));                  }
                 }
             }
@@ -38,7 +39,9 @@ public class EnPassantPseudoMoveGenerator {
     }
 
     //Index changed
-    private static List<EnPassantMove> getEnpassantMoves(Board board, Move lastMove, Square position, int startingRank, int destinationRank, PieceColor color) throws BoardException {
+    private static List<EnPassantMove> getEnpassantMoves
+    (Board board, Move lastMove, Square position, int startingRank, int destinationRank, PieceColor color)
+            throws BoardException {
         List<EnPassantMove> pseudoMoves = new ArrayList<>();
         List<Square> newPos = new ArrayList<>();
         if (position.rank() == startingRank){

@@ -1,5 +1,6 @@
 package nl.davefemi.webchess.game.actions.move;
 
+import nl.davefemi.webchess.game.board.AlgebraicSquare;
 import nl.davefemi.webchess.game.board.Square;
 
 public record SingleMove(Square from, Square to) implements SinglePieceMove {
@@ -15,5 +16,19 @@ public record SingleMove(Square from, Square to) implements SinglePieceMove {
     @Override
     public SingleMove move(){
         return this;
+    }
+
+    @Override
+    public String toString(){
+        return "SingleMove(from=" + AlgebraicSquare.fromFileAndRank(from().file(), from().rank()).value() + ", to=" +
+                AlgebraicSquare.fromFileAndRank(to().file(), to().rank()).value() + ")";
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof SingleMove(Square from1, Square v)){
+            return from.value() == from1.value() && to.value() == v.value();
+        }
+        return false;
     }
 }

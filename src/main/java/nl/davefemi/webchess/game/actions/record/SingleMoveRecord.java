@@ -6,7 +6,7 @@ import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.PieceColor;
 
 public record SingleMoveRecord(SingleMove move,
-                               PieceColor color,
+                               PieceColor playerColor,
                                PieceType movedPiece,
                                int movedPieceId,
                                PieceType capturedPiece,

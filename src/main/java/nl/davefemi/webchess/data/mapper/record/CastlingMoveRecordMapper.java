@@ -35,7 +35,7 @@ public class CastlingMoveRecordMapper {
         dto.setKingNewPos(record.move().moveKing().to().value());
         dto.setRookOldPos(record.move().moveRook().from().value());
         dto.setRookNewPos(record.move().moveRook().to().value());
-        dto.setPlayerColor(record.player_color().getColor());
+        dto.setPlayerColor(record.playerColor().getColor());
         dto.setKingId(record.kingId());
         dto.setRookId(record.rookId());
         return dto;
@@ -49,7 +49,7 @@ public class CastlingMoveRecordMapper {
         dto.setKingNewPos(positionMapper.mapDomainToDTO(kingMove.to()));
         dto.setRookOldPos(positionMapper.mapDomainToDTO(rookMove.from()));
         dto.setRookNewPos(positionMapper.mapDomainToDTO(rookMove.to()));
-        dto.setPlayerColor(record.player_color().getColor());
+        dto.setPlayerColor(record.playerColor().getColor());
         dto.setKingId(record.kingId());
         dto.setRookId(record.rookId());
         return dto;

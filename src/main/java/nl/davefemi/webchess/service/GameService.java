@@ -32,28 +32,37 @@ public class GameService {
     private final GameStateMapper gameStateMapper;
     private final GameSessionService gameSessionService;
 
-    public SessionResponseDTO getChessPositions(String sessionId) throws FileNotFoundException, BoardException, GameException, SessionException {
+    public SessionResponseDTO getChessPositions(String sessionId)
+            throws FileNotFoundException, BoardException, GameException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(sessionId, game.getColorToMove().getColor(), boardMapper.mapDomainToDTO(game.getCurrentBoardContext().getCopyOfBoard()));
+        return sessionResponseMapper.mapToDTO(sessionId,
+                game.getColorToMove() == null
+                ? null
+                : game.getColorToMove().getColor(),
+                boardMapper.mapDomainToDTO(game.getGameBoardContext().getCopyOfBoard()));
     }
 
-    public SessionResponseDTO getPlayerTurn(String sessionId) throws GameException, FileNotFoundException, BoardException, SessionException {
+    public SessionResponseDTO getPlayerTurn(String sessionId)
+            throws GameException, FileNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return sessionResponseMapper.mapToDTO(sessionId, game.getColorToMove().getColor(),  null);
     }
 
-    public SessionResponseDTO isCheck(String sessionId, String color) throws FileNotFoundException, BoardException, SessionException {
+    public SessionResponseDTO isCheck(String sessionId, String color)
+            throws FileNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return sessionResponseMapper.mapToDTO(sessionId, color, game.isPlayerInCheck(PieceColor.fromString(color)));
     }
 
-    public SessionResponseDTO getAvailableMoves(String sessionId, String color) throws BoardException, FileNotFoundException, SessionException, GameException {
+    public SessionResponseDTO getAvailableMoves(String sessionId, String color)
+            throws BoardException, FileNotFoundException, SessionException, GameException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         List<Move> moves = game.getAvailableMoves(PieceColor.fromString(color));
         return sessionResponseMapper.mapToDTO(sessionId, color, moveMapper.mapDomainToDTO(moves));
     }
 
-    public GameStateDTO executeMove(String playerId, String sessionId, MoveDTO move) throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
+    public GameStateDTO executeMove(String playerId, String sessionId, MoveDTO move)
+            throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
         Pair<PieceColor, GameSession> gamePair = gameSessionService.getSessionAndPlayerColor(playerId, sessionId);
         GameSession gameSession = gamePair.getSecond();
         Game game = gameSession.getCurrentGame();
@@ -65,13 +74,15 @@ public class GameService {
             } catch (NullPointerException | GameException e) {
             }
             gameSessionService.saveGameSession(gameSession);
-            log.info("SessionId=" + gameSession.getSessionId().toString() + " {}", game.getLastMove().toString());
+            log.info("Executed sessionId={}, playerId={}, move {}", gameSession.getSessionId().toString(),
+                    playerId, game.getLastMove().toString());
             return gameStateMapper.mapDomainToDTO(game, playerColor);
         }
         throw new GameException("Game is not active");
     }
 
-    public GameStateDTO surrender(String playerId, String sessionId) throws FileNotFoundException, SessionException, BoardException, GameException {
+    public GameStateDTO surrender(String playerId, String sessionId)
+            throws FileNotFoundException, SessionException, BoardException, GameException {
         Pair<PieceColor, GameSession> gamePair = gameSessionService.getSessionAndPlayerColor(playerId, sessionId);
         GameSession gameSession = gamePair.getSecond();
         Game game = gameSession.getCurrentGame();
@@ -82,6 +93,7 @@ public class GameService {
                 playerColor = game.getColorToMove().getColor();
             } catch (NullPointerException | GameException e) {
             }
+            log.info("Executed sessionId={}, playerId={}: surrender request", sessionId, playerId);
             gameSessionService.saveGameSession(gameSession);
             return gameStateMapper.mapDomainToDTO(game, playerColor);
         }

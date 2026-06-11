@@ -16,7 +16,7 @@ public enum PieceColor {
         if (color == null)
             throw new IllegalArgumentException("Color cannot be null");
         for (PieceColor c : values()){
-            if (c.getColor().equalsIgnoreCase(color))
+            if (color.toLowerCase().contains(c.color))
                     return c;
         }
         throw new IllegalArgumentException("Color does not exist");

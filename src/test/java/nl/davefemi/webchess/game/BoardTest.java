@@ -13,14 +13,14 @@ import static org.assertj.core.api.Assertions.*;
 
 public class BoardTest {
     private Game game;
-    private BoardContext board;
+    private GameBoardContext board;
 
 
     @BeforeEach
     public void setUp() throws GameException {
         game = new Game();
         game.start();
-        board = game.getCurrentBoardContext();
+        board = game.getGameBoardContext();
     }
 
     public void tearDown(){
@@ -45,13 +45,13 @@ public class BoardTest {
     })
     public void validatedMoveTest(int fromFile, int fromRank, int toFile, int toRank, String expected){
         assertThatException().isThrownBy(
-                ()-> board.applyMove(getSingleMove(fromFile, fromRank, toFile, toRank)))
+                ()-> board.applyValidatedMove(getSingleMove(fromFile, fromRank, toFile, toRank)))
                 .withMessageContaining(expected);
     }
 
     @Test
     public void promotionIdTest(){
-        assertThat(game.getCurrentBoardContext().getCopyOfBoard().getNextPieceId()).isGreaterThan(new IdGenerator().getNextId());
+        assertThat(game.getGameBoardContext().getCopyOfBoard().getNextPieceId()).isGreaterThan(new IdGenerator().getNextId());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class BoardTest {
         assertThatThrownBy(
                 ()->
                          new Board(squares, 6))
-                .hasMessageContaining("There must be exactly one king of each color on the board");
+                .hasMessageContaining("There must be exactly one king of each playerColor on the board");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class BoardTest {
         assertThatThrownBy(
                 ()->
                         new Board(squares, 6))
-                .hasMessageContaining("Board cannot have two kings of the same color");
+                .hasMessageContaining("Board cannot have two kings of the same playerColor");
     }
 
     @Test
@@ -93,6 +93,6 @@ public class BoardTest {
         assertThatThrownBy(
                 ()->
                         new Board(squares, 6))
-                .hasMessageContaining("Board cannot have two kings of the same color");
+                .hasMessageContaining("Board cannot have two kings of the same playerColor");
     }
 }
