@@ -9,6 +9,11 @@ import nl.davefemi.webchess.game.board.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static nl.davefemi.webchess.game.Color.BLACK;
+import static nl.davefemi.webchess.game.Color.WHITE;
+import static nl.davefemi.webchess.game.board.PieceType.KING;
+import static nl.davefemi.webchess.game.board.PieceType.ROOK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -16,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CastlingMoveTest {
     private Game game;
     private Board board ;
-    private static final PieceColor WHITE = PieceColor.WHITE;
-    private static final PieceColor BLACK = PieceColor.BLACK;
+
 
 
     @BeforeEach
@@ -53,10 +57,10 @@ public class CastlingMoveTest {
                 getSingleMove("h8","f8")));
 
         //Assert
-        assertEquals(PieceType.KING, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("g1")).type(),"White king has castled");
-        assertEquals(PieceType.ROOK, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("f1")).type(),"White rook has castled");
-        assertEquals(PieceType.KING, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("g8")).type(),"Black king has castled");
-        assertEquals(PieceType.ROOK, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("f8")).type(),"Black rook has castled");
+        assertEquals(KING, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("g1")).type(),"White king has castled");
+        assertEquals(ROOK, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("f1")).type(),"White rook has castled");
+        assertEquals(KING, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("g8")).type(),"Black king has castled");
+        assertEquals(ROOK, game.getGameBoardContext().getCopyOfBoard().getPieceAt(toSquare("f8")).type(),"Black rook has castled");
     }
 
     @Test
@@ -77,7 +81,7 @@ public class CastlingMoveTest {
             //Act
             game.executeMove(WHITE, new CastlingMove(getSingleMove("e1","g1"),
                     getSingleMove("h1","f1")));
-            game.executeMove(PieceColor.BLACK, new CastlingMove(getSingleMove("e8","g8"),
+            game.executeMove(BLACK, new CastlingMove(getSingleMove("e8","g8"),
                     getSingleMove("h8","f8")));
 
         });

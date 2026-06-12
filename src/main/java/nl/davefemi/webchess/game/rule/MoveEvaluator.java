@@ -3,6 +3,7 @@ package nl.davefemi.webchess.game.rule;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.exception.TypeException;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.move.*;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.actions.record.CastlingMoveRecord;
@@ -10,6 +11,8 @@ import nl.davefemi.webchess.game.actions.MoveRecord;
 import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import java.util.ArrayList;
 import java.util.List;
+import static nl.davefemi.webchess.game.Color.*;
+import static nl.davefemi.webchess.game.board.PieceType.*;
 
 public final class MoveEvaluator {
 
@@ -17,17 +20,17 @@ public final class MoveEvaluator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    static boolean isCheck(GameBoardContext boardContext, PieceColor playerToMove) throws BoardException {
-        Square kingPosition = boardContext.getCopyOfBoard().getPositionsByTypeAndColor(PieceType.KING, playerToMove).getFirst();
-        return AttackDetector.detectAttack(boardContext.getCopyOfBoard(), kingPosition, playerToMove);
+    static boolean detectAttackOnKing(GameBoardContext boardContext, Color color) throws BoardException {
+        Square kingPosition = boardContext.getCopyOfBoard().getPositionsByTypeAndColor(KING, color).getFirst();
+        return AttackDetector.detectAttack(boardContext.getCopyOfBoard(), kingPosition, color);
     }
 
-    static List<Move> isCheckAfterMove(GameBoardContext boardContext, List<Move> pseudoMoves,
-                                       PieceColor player) throws BoardException {
+    static List<Move> filterCheckAfterMove(GameBoardContext boardContext, List<Move> pseudoMoves,
+                                           Color player) throws BoardException {
         List<Move> legalMoves = new ArrayList<>();
         for (Move move : pseudoMoves) {
             GameBoardContext boardAfterMove = boardContext.applyValidatedMove(move);
-            if (isCheck(boardAfterMove, player))
+            if (detectAttackOnKing(boardAfterMove, player))
                 continue;
             legalMoves.add(move);
         }
@@ -38,8 +41,8 @@ public final class MoveEvaluator {
                                        CastlingMove move) throws MoveException, BoardException {
         Piece king = board.getPieceAt(move.moveKing().from());
         Piece rook = board.getPieceAt(move.moveRook().from());
-        if (king != null && king.type() == PieceType.KING &&
-                rook != null && rook.type() == PieceType.ROOK){
+        if (king != null && king.type() == KING &&
+                rook != null && rook.type() == ROOK){
             if (!originalRooks.contains(rook.id()))
                 throw new MoveException("Not allowed: this is not an original " + rook.type());
             for (MoveRecord m : moveHistory){
@@ -70,13 +73,13 @@ public final class MoveEvaluator {
         }
         if (newPieceType == null)
             throw new TypeException("For promotion you have to specify a valid replacement type");
-        PieceColor color = board.getPieceAt(oldPawnPos).color();
-        if (board.getPieceAt(oldPawnPos).type() != PieceType.PAWN)
+        Color color = board.getPieceAt(oldPawnPos).color();
+        if (board.getPieceAt(oldPawnPos).type() != PAWN)
             throw new TypeException("Piece to be replaced is not a pawn");
-        if (color == PieceColor.WHITE && oldPawnPos.rank() != 6 ||
-                color == PieceColor.BLACK && oldPawnPos.rank() != 1)
+        if (color == WHITE && oldPawnPos.rank() != 6 ||
+                color == BLACK && oldPawnPos.rank() != 1)
             throw new MoveException("This piece is not up for promotion");
-        if (newPieceType == PieceType.PAWN || newPieceType == PieceType.KING)
+        if (newPieceType == PAWN || newPieceType == KING)
             throw new TypeException("Replacement piece cannot be of type " + newPieceType.getLabel());
         return true;
     }
@@ -90,9 +93,9 @@ public final class MoveEvaluator {
     }
 
     static boolean isEnpassantLegal(Board board, Move lastMoveInGame, Square oldPosition,
-                                    Square newPosition, PieceColor playingColor) throws BoardException {
+                                    Square newPosition, Color playingColor) throws BoardException {
         boolean newFileDifferenceOfOne = Math.abs(newPosition.file() - oldPosition.file()) == 1;
-        boolean isPlayingColorWhite = playingColor == PieceColor.WHITE;
+        boolean isPlayingColorWhite = playingColor == WHITE;
         int startingRankPlayingColor = isPlayingColorWhite? 4 : 3;
         int newRankPlayingColor = isPlayingColorWhite? 5 : 2;
         int startingRankOpponent = isPlayingColorWhite? 6 : 1;
@@ -102,7 +105,7 @@ public final class MoveEvaluator {
                 && v.rank() == newRankOpponent && from.rank() == startingRankOpponent
                 && v.file() == newPosition.file()){
             Piece piece = board.getPieceAt(v);
-            return piece.type() == PieceType.PAWN && piece.color() != playingColor;
+            return piece.type() == PAWN && piece.color() != playingColor;
         }
         return false;
     }

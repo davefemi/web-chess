@@ -1,29 +1,27 @@
 package nl.davefemi.webchess.game;
 
-import nl.davefemi.webchess.game.board.PieceColor;
-
 final class TurnGenerator{
-    private PieceColor nextTurn;
+    private Color nextTurn;
 
     TurnGenerator(){
-        nextTurn = PieceColor.WHITE;
+        nextTurn = Color.WHITE;
     }
-    TurnGenerator(PieceColor firstTurn){
+    TurnGenerator(Color firstTurn){
         this.nextTurn = firstTurn;
     }
 
-    protected PieceColor nextTurn(){
-        PieceColor turn = nextTurn;
-        if (nextTurn == PieceColor.BLACK) {
-            nextTurn = PieceColor.WHITE;
+    protected Color nextTurn(){
+        Color turn = nextTurn;
+        if (nextTurn == Color.BLACK) {
+            nextTurn = Color.WHITE;
         }
         else {
-            nextTurn = PieceColor.BLACK;
+            nextTurn = Color.BLACK;
         }
         return turn;
     }
 
-    protected PieceColor peek(){
+    protected Color peek(){
         return nextTurn;
     }
 }

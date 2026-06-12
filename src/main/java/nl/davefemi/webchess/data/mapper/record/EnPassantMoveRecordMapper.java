@@ -6,7 +6,7 @@ import nl.davefemi.webchess.data.entity.record.EnPassantMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
 import nl.davefemi.webchess.game.actions.move.EnPassantMove;
 import nl.davefemi.webchess.game.actions.record.EnPassantMoveRecord;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.board.PieceType;
 import nl.davefemi.webchess.game.board.Square;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class EnPassantMoveRecordMapper {
         return new EnPassantMoveRecord(new EnPassantMove(
                 new Square(data.getOldPos()),
                 new Square(data.getNewPos())),
-                PieceColor.fromString(data.getPlayerColor()),
+                Color.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getMovedPieceType()),
                 data.getMovedPieceId(),
                 data.getCapturedPieceType() == null? null : PieceType.fromString(data.getCapturedPieceType()),

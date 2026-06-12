@@ -1,11 +1,16 @@
 package nl.davefemi.webchess.game.rule;
 
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.move.CastlingMove;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static nl.davefemi.webchess.game.Color.BLACK;
+import static nl.davefemi.webchess.game.board.PieceType.KING;
+import static nl.davefemi.webchess.game.board.PieceType.ROOK;
 
 public final class CastlingPseudoMoveGenerator {
 
@@ -13,12 +18,12 @@ public final class CastlingPseudoMoveGenerator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-    static List<CastlingMove> generateMoves(Board board, PieceColor color) throws BoardException {
+    static List<CastlingMove> generateMoves(Board board, Color color) throws BoardException {
         List<CastlingMove> pseudoMoves = new ArrayList<>();
-        List<Square> positions = board.getPositionsByTypeAndColor(PieceType.KING, color);
+        List<Square> positions = board.getPositionsByTypeAndColor(KING, color);
         if (!positions.isEmpty()) {
             Square king = positions.getFirst();
-            List<Square> rooks = board.getPositionsByTypeAndColor(PieceType.ROOK, color);
+            List<Square> rooks = board.getPositionsByTypeAndColor(ROOK, color);
             for (CastlingMove c : getMoves(color)) {
                 if (c.moveKing().from().equals(king)) {
                     int lowerFile = Math.min(c.moveKing().from().file(), c.moveRook().from().file());
@@ -41,10 +46,10 @@ public final class CastlingPseudoMoveGenerator {
         return pseudoMoves;
     }
 
-    private static List<CastlingMove> getMoves(PieceColor color){
+    private static List<CastlingMove> getMoves(Color color){
         List<CastlingMove>  moves = new ArrayList<>();
         int rank = 0;
-        if (color == PieceColor.BLACK)
+        if (color == BLACK)
             rank = 7;
         Square kStart = Square.fromFileAndRank(4, rank);
         Square kEnd1 = Square.fromFileAndRank(2, rank);

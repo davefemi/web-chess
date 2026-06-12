@@ -1,12 +1,16 @@
 package nl.davefemi.webchess.game.rule;
 
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static nl.davefemi.webchess.game.Color.WHITE;
+import static nl.davefemi.webchess.game.board.PieceType.*;
 
 public final class SinglePseudoMoveGenerator {
 
@@ -15,14 +19,14 @@ public final class SinglePseudoMoveGenerator {
     }
 
 
-    static List<SingleMove> generateMoves(Board board, PieceColor color) throws BoardException {
+    static List<SingleMove> generateMoves(Board board, Color color) throws BoardException {
         List<SingleMove> moves = new ArrayList<>();
-        moves.addAll(getKingMoves(board, board.getPositionsByTypeAndColor(PieceType.KING, color)));
-        moves.addAll(getQueenMoves(board, board.getPositionsByTypeAndColor(PieceType.QUEEN, color)));
-        moves.addAll(getBishopMoves(board, board.getPositionsByTypeAndColor(PieceType.BISHOP, color)));
-        moves.addAll(getRookMoves(board, board.getPositionsByTypeAndColor(PieceType.ROOK, color)));
-        moves.addAll(getKnightMoves(board, board.getPositionsByTypeAndColor(PieceType.KNIGHT, color)));
-        moves.addAll(getPawnMoves(board, board.getPositionsByTypeAndColor(PieceType.PAWN, color), color));
+        moves.addAll(getKingMoves(board, board.getPositionsByTypeAndColor(KING, color)));
+        moves.addAll(getQueenMoves(board, board.getPositionsByTypeAndColor(QUEEN, color)));
+        moves.addAll(getBishopMoves(board, board.getPositionsByTypeAndColor(BISHOP, color)));
+        moves.addAll(getRookMoves(board, board.getPositionsByTypeAndColor(ROOK, color)));
+        moves.addAll(getKnightMoves(board, board.getPositionsByTypeAndColor(KNIGHT, color)));
+        moves.addAll(getPawnMoves(board, board.getPositionsByTypeAndColor(PAWN, color), color));
         return moves;
     }
 
@@ -145,12 +149,12 @@ public final class SinglePseudoMoveGenerator {
         return true;
     }
 
-    private static List<SingleMove> getPawnMoves(Board board, List<Square> positions, PieceColor color)
+    private static List<SingleMove> getPawnMoves(Board board, List<Square> positions, Color color)
             throws BoardException {
         List<SingleMove> pseudoMoves = new ArrayList<>();
         if (!positions.isEmpty()) {
             for (Square position : positions) {
-                boolean isWhite = color == PieceColor.WHITE;
+                boolean isWhite = color == WHITE;
                 int movement = isWhite ? 1 : -1;
                 int promotionRank = isWhite ? 7 : 0;
                 int startingRank = isWhite ? 1: 6;

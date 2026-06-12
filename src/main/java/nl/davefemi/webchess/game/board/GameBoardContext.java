@@ -1,6 +1,9 @@
 package nl.davefemi.webchess.game.board;
 
+import lombok.Getter;
+import lombok.Setter;
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.move.Move;
 import nl.davefemi.webchess.game.actions.MoveRecord;
 import nl.davefemi.webchess.game.actions.record.MoveRecordBuilder;
@@ -10,32 +13,26 @@ import java.util.List;
 
 public final class GameBoardContext {
     private final Board board;
-    private PieceColor colorToMove;
+    @Getter @Setter
+    private Color sideToMove;
+    @Getter
     private MoveRecord lastMove;
     private final List<Piece> capturedPieces;
     private final List<Integer> originalRooks;
 
-    public GameBoardContext(PieceColor colorToMove) {
+    public GameBoardContext(Color sideToMove) {
         this.board = new Board();
-        this.colorToMove = colorToMove;
+        this.sideToMove = sideToMove;
         this.capturedPieces = new ArrayList<>();
         this.originalRooks = new ArrayList<>(fetchOriginalRooksFromBoard());
     }
 
-    public GameBoardContext(PieceColor colorToMove, Board board, MoveRecord lastMove, List<Piece> capturedPieces, List<Integer> originalRooks){
-        this.colorToMove = colorToMove;
+    public GameBoardContext(Color sideToMove, Board board, MoveRecord lastMove, List<Piece> capturedPieces, List<Integer> originalRooks){
+        this.sideToMove = sideToMove;
         this.lastMove = lastMove;
         this.board = board;
         this.capturedPieces = capturedPieces;
         this.originalRooks = originalRooks;
-    }
-
-    public PieceColor getColorToMove(){
-        return colorToMove;
-    }
-
-    public void setColorToMove(PieceColor colorToMove) {
-        this.colorToMove = colorToMove;
     }
 
     public Board getCopyOfBoard() {
@@ -54,8 +51,8 @@ public final class GameBoardContext {
     public synchronized GameBoardContext applyValidatedMove(Move move) throws BoardException {
         Board board = new Board(this.board);
         Piece p = board.applyValidatedMove(move);
-        MoveRecord lastMove = MoveRecordBuilder.getMoveRecord(board, move, colorToMove, p);
-        GameBoardContext boardContext = new GameBoardContext(this.colorToMove, board, lastMove, new ArrayList<>(capturedPieces),
+        MoveRecord lastMove = MoveRecordBuilder.getMoveRecord(board, move, sideToMove, p);
+        GameBoardContext boardContext = new GameBoardContext(this.sideToMove, board, lastMove, new ArrayList<>(capturedPieces),
                 new ArrayList<>(originalRooks));
         if (p != null)
             boardContext.capturedPieces.add(p);
@@ -70,7 +67,4 @@ public final class GameBoardContext {
         return new ArrayList<>(capturedPieces);
     }
 
-    public MoveRecord getLastMove(){
-        return lastMove;
-    }
 }

@@ -24,7 +24,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SessionException.class)
     public ProblemDetail handleSessionExceptions(SessionException ex, HttpServletRequest request) {
         log.warn(ex.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, getMessage(ex, request));
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, getMessage(ex, request));
+    }
+
+    @ExceptionHandler(MoveException.class)
+    public ProblemDetail handleMoveException(Exception ex, HttpServletRequest request) {
+        log.warn(ex.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, getMessage(ex, request));
     }
 
     @ExceptionHandler(Exception.class)
@@ -32,5 +38,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, getMessage(ex, request));
     }
+
+
 }
 

@@ -1,6 +1,8 @@
 package nl.davefemi.webchess.game.board;
 
-public record Piece(int id, PieceType type, PieceColor color) {
+import nl.davefemi.webchess.game.Color;
+
+public record Piece(int id, PieceType type, Color color) {
     public Piece {
         if (type == null)
             throw new IllegalArgumentException("Type cannot be null");

@@ -1,12 +1,13 @@
 package nl.davefemi.webchess.game.actions.record;
 
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.*;
 import nl.davefemi.webchess.game.actions.move.*;
 import nl.davefemi.webchess.game.board.*;
 
 public class MoveRecordBuilder {
-    public static MoveRecord getMoveRecord(Board board, Move move, PieceColor color, Piece capturedPiece)
+    public static MoveRecord getMoveRecord(Board board, Move move, Color color, Piece capturedPiece)
             throws BoardException {
         if (move instanceof CastlingMove m){
             return getCastlingMoveRecord(board, m, color);
@@ -20,7 +21,7 @@ public class MoveRecordBuilder {
         return getSingleMoveRecord(board, (SingleMove) move, color, capturedPiece);
     }
 
-    private static SingleMoveRecord getSingleMoveRecord(Board board, SingleMove move, PieceColor color,
+    private static SingleMoveRecord getSingleMoveRecord(Board board, SingleMove move, Color color,
                                                         Piece capturedPiece) throws BoardException {
         PieceType pieceType = null;
         int capPieceId = 0;
@@ -37,7 +38,7 @@ public class MoveRecordBuilder {
                 capPieceId);
     }
 
-    private static EnPassantMoveRecord getEnPassantMoveRecord(Board board, EnPassantMove move, PieceColor color,
+    private static EnPassantMoveRecord getEnPassantMoveRecord(Board board, EnPassantMove move, Color color,
                                                         Piece capturedPiece) throws BoardException {
         PieceType pieceType = null;
         int capPieceId = 0;
@@ -55,7 +56,7 @@ public class MoveRecordBuilder {
     }
 
     private static CastlingMoveRecord getCastlingMoveRecord (Board board,
-                                                             CastlingMove move, PieceColor color) throws BoardException {
+                                                             CastlingMove move, Color color) throws BoardException {
         return new CastlingMoveRecord(
                 move,
                 color,
@@ -63,7 +64,7 @@ public class MoveRecordBuilder {
                 board.getPieceAt(move.moveRook().to()).id());
     }
 
-    private static PromotionMoveRecord getPromotionMoveRecord(Board board, PromotionMove move, PieceColor color,
+    private static PromotionMoveRecord getPromotionMoveRecord(Board board, PromotionMove move, Color color,
                                                               Piece capturedPiece) throws BoardException {
         PieceType capPiece = null;
         int capPieceID = 0;

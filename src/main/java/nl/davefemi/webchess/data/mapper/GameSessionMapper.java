@@ -5,7 +5,7 @@ import nl.davefemi.webchess.data.entity.GameSessionEntity;
 import nl.davefemi.webchess.data.entity.GameStateEntity;
 import nl.davefemi.webchess.data.entity.PlayerEntity;
 import nl.davefemi.webchess.exception.SessionException;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.session.GameSession;
@@ -42,12 +42,12 @@ public class GameSessionMapper {
     private PlayerEntity mapPlayerToEntity(Player player){
         PlayerEntity entity = new PlayerEntity();
         entity.setId(player.getId().toString());
-        entity.setPlayerColor(player.getPlayingColor().getColor());
+        entity.setPlayerColor(player.getColor().getColor());
         return entity;
     }
 
     private Player mapEntityToPlayer(PlayerEntity player){
-        return new Player(UUID.fromString(player.getId()), PieceColor.fromString(player.getPlayerColor()));
+        return new Player(UUID.fromString(player.getId()), Color.fromString(player.getPlayerColor()));
     }
 
     public GameSession mapEntityToDomain(GameSessionEntity entity) throws BoardException, SessionException {

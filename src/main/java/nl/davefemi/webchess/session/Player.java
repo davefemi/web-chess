@@ -1,24 +1,19 @@
 package nl.davefemi.webchess.session;
 
-import nl.davefemi.webchess.game.board.PieceColor;
+import lombok.Getter;
+import nl.davefemi.webchess.game.Color;
 
 import java.util.UUID;
 
-public class Player {
+public final class Player {
+    @Getter
     private final UUID id;
-    private final PieceColor playingColor;
+    @Getter
+    private final Color color;
 
-    public Player(UUID playerId, PieceColor playingColor){
+    public Player(UUID playerId, Color color){
         this.id = playerId;
-        this.playingColor = playingColor;
-    }
-
-    public UUID getId(){
-        return id;
-    }
-
-    public PieceColor getPlayingColor(){
-        return playingColor;
+        this.color = color;
     }
 
     @Override
@@ -26,6 +21,6 @@ public class Player {
         if(!(o instanceof Player))
             return false;
         Player p = (Player) o;
-        return p.id.equals(id) && p.playingColor.equals(playingColor);
+        return p.id.equals(id) && p.color.equals(color);
     }
 }

@@ -6,7 +6,7 @@ import nl.davefemi.webchess.data.entity.record.CastlingMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
 import nl.davefemi.webchess.game.actions.move.CastlingMove;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.board.Square;
 import nl.davefemi.webchess.game.actions.record.CastlingMoveRecord;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class CastlingMoveRecordMapper {
                                 new Square(data.getRookOldPos()),
                                 new Square(data.getRookNewPos())
                         )),
-                PieceColor.fromString(data.getPlayerColor()), data.getKingId(), data.getRookId());
+                Color.fromString(data.getPlayerColor()), data.getKingId(), data.getRookId());
     }
 
     protected CastlingMoveRecordEntity mapDomainToEntity(CastlingMoveRecord record){

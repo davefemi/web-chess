@@ -3,6 +3,7 @@ package nl.davefemi.webchess.data.mapper.move;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.move.PositionPieceDTO;
 import nl.davefemi.webchess.data.entity.PieceEntity;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.board.*;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +36,7 @@ public class PieceMapper {
         if (entity.getPieceType() != null){
             return new Piece(entity.getPieceId(),
                     PieceType.fromString(entity.getPieceType()),
-                    PieceColor.fromString(entity.getColor()));
+                    Color.fromString(entity.getColor()));
         }
         return null;
     }

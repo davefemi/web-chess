@@ -6,7 +6,7 @@ import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PositionMapper;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.board.Square;
 import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class SingleMoveRecordMapper {
         return new SingleMoveRecord(new SingleMove(
                 new Square(data.getOldPos()),
                 new Square(data.getNewPos())),
-                PieceColor.fromString(data.getPlayerColor()),
+                Color.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getMovedPieceType()),
                 data.getMovedPieceId(),
                 data.getCapturedPieceType() == null? null : PieceType.fromString(data.getCapturedPieceType()),

@@ -1,8 +1,9 @@
 import { Client } from "@stomp/stompjs";
 import WebSocket from "ws";
 
-const sessionId = "afbff240-910a-4054-a979-950e86de2098";
-const playerId = "44e1dce8-baa3-4b94-814f-7df70220df78"
+const sessionId = "dec8a8b7-4b84-4ab0-8794-d8cf16f4192c";
+const playerId = "76af85df-a4e6-4dce-87b8-09b19f53a9a6"
+// const playerId = "bb124abe-d0bb-4b75-81d0-b9ea7761d40d"
 
 const client = new Client({
     webSocketFactory: () => new WebSocket("ws://localhost:8080/ws"),
@@ -25,10 +26,8 @@ const client = new Client({
                 player_id: playerId,
                 move: {
                     move_type: "single",
-                    from_file: 1,
-                    from_rank: 4,
-                    to_file: 1,
-                    to_rank: 3,
+                    from: "h5",
+                    to: "f7"
                 },
             }),
         });

@@ -1,11 +1,10 @@
 package nl.davefemi.webchess.game;
 
 import lombok.Getter;
-import nl.davefemi.webchess.game.board.PieceColor;
 
 import java.util.Optional;
 
-public record GameStatus(GamePhase phase, Optional<PieceColor> winner, Optional<GameEndReason> reason) {
+public record GameStatus(GamePhase phase, Optional<Color> winner, Optional<GameEndReason> reason) {
     public enum GamePhase {
         WAITING_FOR_PLAYERS("waiting"),
         ACTIVE("active"),
@@ -40,12 +39,12 @@ public record GameStatus(GamePhase phase, Optional<PieceColor> winner, Optional<
         return new GameStatus(GamePhase.ACTIVE, Optional.empty(), Optional.empty());
     }
 
-    public static GameStatus checkmate(PieceColor winner){
+    public static GameStatus checkmate(Color winner){
         return new GameStatus(GamePhase.ENDED, Optional.of(winner), Optional.of(GameEndReason.CHECKMATE));
     }
 
-    public static GameStatus surrender(PieceColor color){
-        return new GameStatus(GamePhase.ENDED, Optional.of(PieceColor.getOpponent(color)), Optional.of(GameEndReason.SURRENDER));
+    public static GameStatus surrender(Color color){
+        return new GameStatus(GamePhase.ENDED, Optional.of(Color.getOpponent(color)), Optional.of(GameEndReason.SURRENDER));
     }
 
     public static GameStatus stalemate(){

@@ -5,6 +5,7 @@ import nl.davefemi.webchess.data.dto.BoardDTO;
 import nl.davefemi.webchess.data.entity.BoardContextEntity;
 import nl.davefemi.webchess.data.entity.PieceEntity;
 import nl.davefemi.webchess.data.mapper.move.PieceMapper;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.actions.MoveRecord;
@@ -45,7 +46,7 @@ public class BoardMapper {
         return entity;
     }
 
-    public GameBoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, PieceColor playerToMove) throws BoardException {
+    public GameBoardContext mapEntityToDomain(BoardContextEntity entity, MoveRecord lastMove, Color playerToMove) throws BoardException {
         Piece[] pieces = new Piece[128];
         for (PieceEntity p : entity.getPositions()) {
             Piece piece = positionPieceMapper.mapEntityToPiece(p);

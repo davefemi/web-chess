@@ -14,7 +14,7 @@ import nl.davefemi.webchess.exception.UnauthorizedException;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.session.AccessCodeGenerator;
 import nl.davefemi.webchess.session.AccessCode;
 import nl.davefemi.webchess.session.GameSession;
@@ -38,7 +38,7 @@ public class GameSessionService {
     public SessionInvitationDTO startGameSession(String color) throws SessionException, BoardException {
         GameSession session = new GameSession();
         log.info("Executed sessionId={}: session created", session.getSessionId());
-        Player player = session.createPlayer(PieceColor.fromString(color));
+        Player player = session.addPlayer(Color.fromString(color));
         int timeToLive = 60;
         AccessCode accessCode = AccessCodeGenerator.getAccessCode(session.getSessionId().toString(), timeToLive);
         storeAccessCode(accessCode, timeToLive);
@@ -50,11 +50,11 @@ public class GameSessionService {
             throws SessionException, FileNotFoundException, BoardException, GameException {
         AccessCodeEntity code = retrieveAccessCode(accessCode);
         GameSession session =  retrieveSession(code.getSessionId());
-        Player player = session.createPlayer();
+        Player player = session.addPlayer();
         session.startSession();
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapToDTO(session, player.getPlayingColor().getColor(),
+        return sessionResponseMapper.mapToDTO(session, player.getColor().getColor(),
                 "Successfully joined session");
     }
 
@@ -73,7 +73,7 @@ public class GameSessionService {
         log.info("Executed sessionId={}: new game created", session.getSessionId());
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, player.getPlayingColor(),
-                gameStateMapper.mapDomainToDTO(game, game.getColorToMove().getColor()));
+                gameStateMapper.mapDomainToDTO(game, game.getSideToMove().getColor()));
     }
 
     public SessionResponseDTO acceptRematch(String sessionId, PlayerDTO player)
@@ -84,7 +84,7 @@ public class GameSessionService {
         log.info("Executed sessionId={}: new game started", session.getSessionId());
         storeSession(session);
         return sessionResponseMapper.mapToDTO(session, player.getPlayingColor(),
-                gameStateMapper.mapDomainToDTO(game, game.getColorToMove().getColor()));
+                gameStateMapper.mapDomainToDTO(game, game.getSideToMove().getColor()));
     }
 
     private GameSession retrieveSession(String sessionId)
@@ -112,12 +112,12 @@ public class GameSessionService {
         sessionStore.saveAccessCode(accessCodeEntity, timeToLive);
     }
 
-    protected Pair<PieceColor, GameSession> getSessionAndPlayerColor(String playerId, String sessionId)
+    protected Pair<Color, GameSession> getSessionAndPlayerColor(String playerId, String sessionId)
             throws FileNotFoundException, SessionException, BoardException {
         GameSession session = retrieveSession(sessionId);
         for (Player p : session.getPlayers()){
             if (p.getId().toString().equals(playerId)) {
-                return Pair.of(p.getPlayingColor(), session);
+                return Pair.of(p.getColor(), session);
             }
         }
         throw new SessionException("This player does not belong to this session");

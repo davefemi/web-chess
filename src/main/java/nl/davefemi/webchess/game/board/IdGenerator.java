@@ -7,6 +7,9 @@ public final class IdGenerator {
         nextId = 100;
     }
     public IdGenerator(int id){
+        if (id < 100) {
+            throw new IllegalArgumentException("Id must be at least 100");
+        }
         nextId = id;
     }
 

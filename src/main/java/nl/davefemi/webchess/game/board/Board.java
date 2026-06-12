@@ -2,9 +2,11 @@ package nl.davefemi.webchess.game.board;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.exception.BoardException;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.move.*;
-
 import java.util.*;
+
+import static nl.davefemi.webchess.game.board.PieceType.KING;
 
 @Slf4j
 public final class Board {
@@ -27,10 +29,12 @@ public final class Board {
     }
 
     public Board(Piece[] pieces, int nextId) throws BoardException {
+        if (nextId < 100)
+            throw new IllegalArgumentException("Next id must be at least 100");
         this.pieceIdGenerator = new IdGenerator(nextId);
         if(pieces.length != 128)
             throw new IllegalArgumentException("Array length must be exactly 128");
-        addPiecesToBoard(pieces);
+        addPiecesToBoard(pieces, nextId);
     }
 
     public int getNextPieceId(){
@@ -47,7 +51,7 @@ public final class Board {
         throw new BoardException("Piece not found");
     }
 
-    public List<Square> getPositionsByTypeAndColor(PieceType type, PieceColor color){
+    public List<Square> getPositionsByTypeAndColor(PieceType type, Color color){
         List<Square> foundPositions = new ArrayList<>();
         for (int i = 0; i < squares.length; i++)
             if (squares[i] !=null && squares[i].type() == type && squares[i].color() == color){
@@ -103,16 +107,16 @@ public final class Board {
         return ((position & AND_HEX) == 0);
     }
 
-    private void addPiecesToBoard(Piece[] pieces)
+    private void addPiecesToBoard(Piece[] pieces, int nextId)
             throws BoardException {
-        Set<PieceColor> kingsByColor = new HashSet<>();
+        Set<Color> kingsByColor = new HashSet<>();
         HashSet<Integer> uniquePieces = new HashSet<>();
         for (int i = 0; i < squares.length; i++){
             Piece p = pieces[i];
             if (p!= null){
                 if (!isLegalPosition(i))
                     throw new BoardException(p.type() + " " + p.id() + " on illegal position: " +i);
-                if (p.type() == PieceType.KING && !kingsByColor.add(p.color()))
+                if (p.type() == KING && !kingsByColor.add(p.color()))
                     throw new BoardException("Board cannot have two kings of the same playerColor");
                 if (!uniquePieces.add(p.id()))
                     throw new BoardException("Pieces are not unique");
@@ -121,6 +125,9 @@ public final class Board {
         }
         if (kingsByColor.size() != 2)
             throw new BoardException("There must be exactly one king of each playerColor on the board");
+        int highestId = uniquePieces.stream().toList().stream().sorted().toList().getLast();
+        if (nextId < highestId)
+            throw new BoardException("Next id must be higher than " + highestId);
     }
 
     private Piece updatePiecePositions(SingleMove move) throws BoardException{
@@ -133,7 +140,7 @@ public final class Board {
         if (squares[move.from().value()] == null)
             throw new BoardException("There is no piece at " + move.from().value());
         Piece p = squares[move.to().value()];
-        if (p != null && p.type() == PieceType.KING)
+        if (p != null && p.type() == KING)
             throw new BoardException("Board must have exactly one king of each colour");
         squares[move.to().value()] = squares[move.from().value()];
         squares[move.from().value()] = null;
@@ -146,7 +153,7 @@ public final class Board {
                 throw new BoardException("New id cannot already exist");
         }
         Piece p = squares[pawnMove.from().value()];
-        PieceColor color = p.color();
+        Color color = p.color();
         updatePiecePositions(pawnMove);
         squares[pawnMove.to().value()] = new Piece(id, pieceType, color);
         return p;
@@ -159,7 +166,7 @@ public final class Board {
                 ? 16
                 : -16 ;
         Piece p = squares[move.to().value() - diff ];
-        if (p != null && p.type() == PieceType.KING)
+        if (p != null && p.type() == KING)
             throw new BoardException("Board must have exactly one king of each colour");
         squares[move.to().value() - diff ] = null;
         return p;

@@ -7,7 +7,7 @@ import nl.davefemi.webchess.data.mapper.move.PositionMapper;
 import nl.davefemi.webchess.game.actions.move.PromotionMove;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.board.PieceType;
-import nl.davefemi.webchess.game.board.PieceColor;
+import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.board.Square;
 import nl.davefemi.webchess.game.actions.record.PromotionMoveRecord;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class PromotionMoveRecordMapper {
                 new PromotionMove(new SingleMove(new Square(data.getOldPos()),
                         new Square(data.getNewPos())),
                         PieceType.fromString(data.getNewPieceType())),
-                PieceColor.fromString(data.getPlayerColor()),
+                Color.fromString(data.getPlayerColor()),
                 PieceType.fromString(data.getNewPieceType()),
                 data.getOldPieceId(),
                 PieceType.fromString(data.getCapturedPieceType()),

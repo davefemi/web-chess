@@ -1,28 +1,28 @@
-package nl.davefemi.webchess.game.board;
+package nl.davefemi.webchess.game;
 
 import lombok.Getter;
 
 @Getter
-public enum PieceColor {
+public enum Color {
     BLACK("black"),
     WHITE("white");
 
     private final String color;
-    PieceColor(String color){
+    Color(String color){
         this.color = color;
     }
 
-    public static PieceColor fromString(String color){
+    public static Color fromString(String color){
         if (color == null)
             throw new IllegalArgumentException("Color cannot be null");
-        for (PieceColor c : values()){
+        for (Color c : values()){
             if (color.toLowerCase().contains(c.color))
                     return c;
         }
         throw new IllegalArgumentException("Color does not exist");
     }
 
-    public static PieceColor getOpponent(PieceColor color) {
+    public static Color getOpponent(Color color) {
         if (color == null)
             throw new IllegalArgumentException("Color cannot be null");
         if (color == WHITE)
