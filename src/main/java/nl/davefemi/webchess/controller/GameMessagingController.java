@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.dto.session.GameStateDTO;
 import nl.davefemi.webchess.data.dto.session.SessionRequestDTO;
 import nl.davefemi.webchess.data.dto.move.MoveRequestDTO;
-import nl.davefemi.webchess.service.GameService;
+import nl.davefemi.webchess.service.GameQueryService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class GameMessagingController {
     private final SimpMessagingTemplate messagingTemplate;
-    private final GameService gameService;
+    private final GameQueryService gameService;
 
     @MessageMapping("/moves")
     public void executeMove(@DestinationVariable("id") String sessionId, @Payload MoveRequestDTO request) {

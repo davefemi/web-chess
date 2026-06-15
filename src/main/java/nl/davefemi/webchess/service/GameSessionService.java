@@ -12,7 +12,6 @@ import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.Color;
-import nl.davefemi.webchess.session.Token;
 import nl.davefemi.webchess.session.GameSession;
 import nl.davefemi.webchess.session.Player;
 import org.springframework.stereotype.Service;
@@ -34,21 +33,21 @@ public class GameSessionService {
         GameSession session = new GameSession();
         log.info("Executed sessionId={}: session created", session.getSessionId());
         Player player = session.addPlayer(Color.fromString(color));
-        Token accessToken = tokenService.generateAccessToken(session.getSessionId().toString());
-        Token playerToken = tokenService.generatePlayerToken(player);
+        String accessToken = tokenService.generateAccessToken(session.getSessionId().toString());
+        String playerToken = tokenService.generatePlayerToken(player);
         storeSession(session);
-        return sessionResponseMapper.mapInvitationToDTO(playerToken.getToken(), player.getColor().getColor(), String.format(INVITE_URL, accessToken.getToken()));
+        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().getColor(), String.format(INVITE_URL, accessToken));
     }
 
     public SessionInitiationDTO joinGameSession(String accessToken)
             throws SessionException, FileNotFoundException, BoardException, GameException {
         GameSession session =  retrieveSession(tokenService.authenticateAccessToken(accessToken));
         Player player = session.addPlayer();
-        Token playerToken = tokenService.generatePlayerToken(player);
+        String playerToken = tokenService.generatePlayerToken(player);
         session.startSession();
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapInvitationToDTO(playerToken.getToken(), player.getColor().getColor(),
+        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().getColor(),
                 "Successfully joined session");
     }
 

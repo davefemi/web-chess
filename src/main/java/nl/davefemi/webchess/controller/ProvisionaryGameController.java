@@ -8,7 +8,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.exception.SessionException;
-import nl.davefemi.webchess.service.GameService;
+import nl.davefemi.webchess.service.GamePlayService;
 import nl.davefemi.webchess.session.Player;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.io.FileNotFoundException;
 @RequiredArgsConstructor
 @RequestMapping("app/games")
 public class ProvisionaryGameController {
-    private final GameService gameService;
+    private final GamePlayService playService;
 
     @PostMapping("/moves")
     public ResponseEntity<?> executeMove(HttpServletRequest request, @RequestBody MoveRequestDTO move)
@@ -28,7 +28,7 @@ public class ProvisionaryGameController {
         Player player = (Player) request.getAttribute("player");
         log.info("Received from sessionId={}, playerId={}: move request {}",
                 player.getSessionId(), player.getId(), move.getMove());
-        return ResponseEntity.ok(gameService.executeMove(player, move.getMove()));
+        return ResponseEntity.ok(playService.executeMove(player, move.getMove()));
     }
 
     @PostMapping("/surrender")
@@ -36,7 +36,7 @@ public class ProvisionaryGameController {
             throws FileNotFoundException, BoardException, GameException, SessionException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received from sessionId={}, playerId={}:  surrender request", player.getSessionId(), player.getId());
-        return ResponseEntity.ok(gameService.surrender(player));
+        return ResponseEntity.ok(playService.surrender(player));
     }
 
 }

@@ -35,14 +35,6 @@ public class GameSessionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startGameSession(color));
     }
 
-    @PostMapping("/invite1")
-    public ResponseEntity<SessionResponseDTO> invitePlayer(HttpServletRequest request)
-            throws FileNotFoundException, SessionException, BoardException, GameException {
-        Player player = (Player) request.getAttribute("player");
-        log.info("Received sessionId={}: invite request", player.getSessionId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startRematch(player));
-    }
-
     @PostMapping("/join")
     public ResponseEntity<SessionInitiationDTO> joinGame
             (@RequestParam("token") String accessToken, HttpServletRequest request)
@@ -51,7 +43,15 @@ public class GameSessionController {
         return ResponseEntity.ok(gameSessionService.joinGameSession(accessToken));
     }
 
-    @PostMapping("/join2")
+    @PostMapping("/rematch/invite")
+    public ResponseEntity<SessionResponseDTO> invitePlayer(HttpServletRequest request)
+            throws FileNotFoundException, SessionException, BoardException, GameException {
+        Player player = (Player) request.getAttribute("player");
+        log.info("Received sessionId={}: invite request", player.getSessionId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startRematch(player));
+    }
+
+    @PostMapping("/rematch/join")
     public ResponseEntity<SessionResponseDTO> joinGame(HttpServletRequest request)
             throws FileNotFoundException, SessionException, BoardException, GameException {
         Player player = (Player) request.getAttribute("player");

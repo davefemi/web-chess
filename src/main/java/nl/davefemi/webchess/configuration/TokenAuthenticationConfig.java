@@ -21,8 +21,8 @@ public class TokenAuthenticationConfig extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/games/invite")
-                || path.startsWith("/games/join");
+        return path.endsWith("/games/invite")
+                || path.endsWith("/games/join");
     }
 
     @Override
