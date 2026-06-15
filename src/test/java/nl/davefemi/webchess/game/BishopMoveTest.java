@@ -12,7 +12,6 @@ import static nl.davefemi.webchess.game.Color.BLACK;
 import static nl.davefemi.webchess.game.Color.WHITE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public class BishopMoveTest {
     private Game game;
 

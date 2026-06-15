@@ -1,9 +1,9 @@
-package nl.davefemi.webchess.data.mapper;
+package nl.davefemi.webchess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.webchess.data.dto.GameStateDTO;
-import nl.davefemi.webchess.data.entity.GameStateEntity;
-import nl.davefemi.webchess.data.MoveRecordEntity;
+import nl.davefemi.webchess.data.dto.session.GameStateDTO;
+import nl.davefemi.webchess.data.entity.session.GameStateEntity;
+import nl.davefemi.webchess.data.entity.MoveRecordEntity;
 import nl.davefemi.webchess.data.mapper.move.PieceMapper;
 import nl.davefemi.webchess.data.mapper.record.MoveRecordMapper;
 import nl.davefemi.webchess.exception.BoardException;

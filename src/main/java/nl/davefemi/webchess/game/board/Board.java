@@ -3,6 +3,7 @@ package nl.davefemi.webchess.game.board;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.Color;
+import nl.davefemi.webchess.game.actions.move.Move;
 import nl.davefemi.webchess.game.actions.move.*;
 import java.util.*;
 
@@ -87,8 +88,6 @@ public final class Board {
         return pieces;
     }
 
-
-
     synchronized Piece applyValidatedMove(Move move) throws BoardException {
         if (move instanceof CastlingMove(SingleMove moveKing, SingleMove moveRook)){
             updatePiecePositions((moveKing));
@@ -140,8 +139,6 @@ public final class Board {
         if (squares[move.from().value()] == null)
             throw new BoardException("There is no piece at " + move.from().value());
         Piece p = squares[move.to().value()];
-        if (p != null && p.type() == KING)
-            throw new BoardException("Board must have exactly one king of each colour");
         squares[move.to().value()] = squares[move.from().value()];
         squares[move.from().value()] = null;
         return p;
@@ -152,11 +149,9 @@ public final class Board {
             if (t != null && t.id() == id)
                 throw new BoardException("New id cannot already exist");
         }
-        Piece p = squares[pawnMove.from().value()];
-        Color color = p.color();
-        updatePiecePositions(pawnMove);
-        squares[pawnMove.to().value()] = new Piece(id, pieceType, color);
-        return p;
+        Color color = squares[pawnMove.from().value()].color();
+        squares[pawnMove.from().value()] = new Piece(id, pieceType, color);
+        return updatePiecePositions(pawnMove);
     }
 
     private Piece applyEnPassantMove(EnPassantMove move) throws BoardException {

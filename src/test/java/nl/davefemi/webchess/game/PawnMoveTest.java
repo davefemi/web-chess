@@ -8,7 +8,6 @@ import nl.davefemi.webchess.game.actions.move.EnPassantMove;
 import nl.davefemi.webchess.game.actions.move.PromotionMove;
 import nl.davefemi.webchess.game.actions.move.SingleMove;
 import nl.davefemi.webchess.game.actions.record.EnPassantMoveRecord;
-import nl.davefemi.webchess.game.actions.record.SingleMoveRecord;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.rule.RuleEngine;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.assertj.core.api.Assertions.*;
 
-
 @Slf4j
 public class PawnMoveTest {
     private Game game;
-
 
     @BeforeEach
     public void setUp() throws GameException {
@@ -39,8 +36,12 @@ public class PawnMoveTest {
         return new SingleMove(new AlgebraicSquare(from).toSquare(),new AlgebraicSquare(to).toSquare());
     }
 
-    private EnPassantMove getEnPassantMove(String from, String to){
-        return new EnPassantMove(new AlgebraicSquare(from).toSquare(),new AlgebraicSquare(to).toSquare());
+    private SingleMove getSingleMove(AlgebraicSquare from, AlgebraicSquare to){
+        return new SingleMove(from.toSquare(), to.toSquare());
+    }
+
+    private EnPassantMove getEnPassantMove(AlgebraicSquare from, AlgebraicSquare to){
+        return new EnPassantMove(from.toSquare(), to.toSquare());
     }
 
     private Square toSquare(String position){
@@ -163,28 +164,54 @@ public class PawnMoveTest {
         assertEquals(30, game.getGameBoardContext().getCopyOfBoard().piecesOnBoard(), "Number of pieces");
     }
 
-    @Test
-    public void enPassantTest() throws MoveException, BoardException, GameException {
-        game.executeMove(WHITE, getSingleMove("a2","a3"));
-        game.executeMove(BLACK, getSingleMove("f7","f5"));
-        game.executeMove(WHITE, getSingleMove("a3","a4"));
-        game.executeMove(BLACK, getSingleMove("f5","f4"));
-        game.executeMove(WHITE, getSingleMove("g2","g4"));
-        game.executeMove(BLACK, getEnPassantMove("f4","g3"));
-    }
+    @ParameterizedTest
+    @CsvSource
+            ({
+                    "a2, a7, a7, b8, rook, white",
+                    "b2, b7, b7, c8, knight, white",
+                    "c2, c7, c7, d8, bishop, white",
+                    "d2, d7, d7, c8, queen, white",
+                    "e2, e7, e7, f8, rook, white",
+                    "f2, f7, f7, g8, knight, white",
+                    "g2, g7, g7, h8, bishop, white",
+                    "a7, a2, a2, b1, queen, black",
+                    "b7, b2, b2, c1, rook, black",
+                    "c7, c2, c2, d1, knight, black",
+                    "d7, d2, d2, c1, bishop, black",
+                    "e7, e2, e2, f1, queen, black",
+                    "f7, f2, f2, g1, rook, black",
+                    "g7, g2, g2, h1, knight, black",
+                    "b2, b7, b7, a8, bishop, white",
+                    "c2, c7, c7, b8, queen, white",
+                    "d2, d7, d7, c8, rook, white",
+                    "e2, e7, e7, d8, knight, white",
+                    "f2, f7, f7, g8, bishop, white",
+                    "g2, g7, g7, f8, queen, white",
+                    "h2, h7, h7, g8, rook, white",
+                    "b7, b2, b2, a1, knight, black",
+                    "c7, c2, c2, b1, bishop, black",
+                    "d7, d2, d2, c1, queen, black",
+                    "e7, e2, e2, d1, rook, black",
+                    "f7, f2, f2, g1, knight, black",
+                    "g7, g2, g2, f1, bishop, black",
+                    "h7, h2, h2, g1, queen, black"
+            })
+    public void promotionSerializedTest(AlgebraicSquare s1from, AlgebraicSquare s1to, AlgebraicSquare from, AlgebraicSquare to, String newPieceType, String firstToMove)
+            throws BoardException, MoveException, GameException {
 
-    @Test
-    public void enPassantTest2() throws MoveException, BoardException, GameException {
-        game.executeMove(WHITE, getSingleMove("d2","d4"));
-        game.executeMove(BLACK, getSingleMove("f7","f5"));
-        game.executeMove(WHITE, getSingleMove("d4","d5"));
-        game.executeMove(BLACK, getSingleMove("c7","c5"));
-        game.executeMove(WHITE, getEnPassantMove("d5","c6"));
-        assertThat(game.getMoveHistory().getLast() instanceof SingleMoveRecord);
-         EnPassantMoveRecord record = (EnPassantMoveRecord) game.getMoveHistory().getLast();
-        assertThat(record.capturedPiece() == PAWN);
+        //Arrange
+        GameBoardContext gameBoardContext = game.getGameBoardContext();
+        gameBoardContext = gameBoardContext.applyValidatedMove(getSingleMove(s1from, s1to));
+        PromotionMove move = new PromotionMove(getSingleMove(from,to), PieceType.fromString(newPieceType));
+        log.info("Piece at {} is a {}", to.value(), gameBoardContext.getCopyOfBoard().getPieceAt(to.toSquare()).type());
 
-        log.info("Pawn with id: {} was captured", record.capturedPieceId());
+        //Act
+        Game game = new Game(1, gameBoardContext, GameStatus.active(), Color.fromString(firstToMove), false, new ArrayList<>());
+        game.executeMove(Color.fromString(firstToMove), move);
+        Piece piece = game.getGameBoardContext().getCopyOfBoard().getPieceAt(move.to());
+
+        //Assert
+        assertThat(piece.type().getLabel()).isEqualTo(newPieceType);
     }
 
     @ParameterizedTest
@@ -219,7 +246,9 @@ public class PawnMoveTest {
                     "f7, f4, g2, g4, f4, g3, black",
                     "g7, g4, h2, h4, g4, h3, black"
             })
-    public void enPassantTest3(String s1from, String s1to, String s2from, String s2to, String from, String to, String firstToMove)
+    public void enPassantSerializedTest(AlgebraicSquare s1from, AlgebraicSquare s1to,
+                                        AlgebraicSquare s2from, AlgebraicSquare s2to,
+                                        AlgebraicSquare from, AlgebraicSquare to, String firstToMove)
             throws BoardException, MoveException, GameException {
 
         //Arrange
@@ -228,7 +257,8 @@ public class PawnMoveTest {
         gameBoardContext = gameBoardContext.applyValidatedMove(getSingleMove(s2from, s2to));
 
         //Act
-        Game game = new Game(1, gameBoardContext, GameStatus.active(), Color.fromString(firstToMove), false, new ArrayList<>());
+        Game game = new Game(1, gameBoardContext, GameStatus.active(), Color.fromString(firstToMove),
+                false, new ArrayList<>());
         game.executeMove(Color.fromString(firstToMove), getEnPassantMove(from, to));
         EnPassantMoveRecord record = (EnPassantMoveRecord) game.getMoveHistory().getLast();
 
@@ -237,5 +267,6 @@ public class PawnMoveTest {
         assertThat(game.getGameBoardContext().getCapturedPieces().getLast().color()).
                 isEqualTo(Color.getOpponent(Color.fromString(firstToMove)));
 
+        log.info("Pawn with id: {} was captured", record.capturedPieceId());
     }
 }

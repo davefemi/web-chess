@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.data.dto;
+package nl.davefemi.webchess.data.dto.session;
 
 import lombok.Data;
 import nl.davefemi.webchess.data.dto.move.PositionPieceDTO;

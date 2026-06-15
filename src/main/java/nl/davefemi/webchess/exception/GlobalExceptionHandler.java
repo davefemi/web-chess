@@ -11,31 +11,32 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+
     private String getMessage(Exception ex, HttpServletRequest request){
         return ex.getMessage();
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ProblemDetail handleUnauthorizedExceptions(UnauthorizedException ex, HttpServletRequest request) {
-        log.warn(ex.getMessage());
+        log.error(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, getMessage(ex, request));
     }
 
     @ExceptionHandler(SessionException.class)
     public ProblemDetail handleSessionExceptions(SessionException ex, HttpServletRequest request) {
-        log.warn(ex.getMessage());
+        log.error(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, getMessage(ex, request));
     }
 
     @ExceptionHandler(MoveException.class)
     public ProblemDetail handleMoveException(Exception ex, HttpServletRequest request) {
-        log.warn(ex.getMessage());
+        log.error(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, getMessage(ex, request));
     }
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleAllExceptions(Exception ex, HttpServletRequest request) {
-        log.warn(ex.getMessage());
+        log.error(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, getMessage(ex, request));
     }
 

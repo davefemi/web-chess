@@ -2,8 +2,8 @@ package nl.davefemi.webchess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.webchess.data.entity.record.CastlingMoveRecordEntity;
-import nl.davefemi.webchess.data.MoveRecordDTO;
-import nl.davefemi.webchess.data.MoveRecordEntity;
+import nl.davefemi.webchess.data.dto.MoveRecordDTO;
+import nl.davefemi.webchess.data.entity.MoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.EnPassantMoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.webchess.data.entity.record.SingleMoveRecordEntity;

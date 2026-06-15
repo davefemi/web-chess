@@ -74,7 +74,7 @@ public final class GameSession {
     }
 
     public Player addPlayer(Color color) throws SessionException {
-        Player player = new Player(UUID.randomUUID(), color);
+        Player player = new Player(UUID.randomUUID(), sessionId, color);
         if (checkExistingPlayers(player))
             players.add(player);
         return player;
@@ -86,11 +86,11 @@ public final class GameSession {
             throw new SessionException("Amount of players possible exceeded");
         if (players.size() == 1){
             Color color = Color.getOpponent(players.getLast().getColor());
-            player = new Player(UUID.randomUUID(), color);
+            player = new Player(UUID.randomUUID(), sessionId, color);
             players.add(player);
             return player;
         }
-        player = new Player(UUID.randomUUID(), Color.WHITE);
+        player = new Player(UUID.randomUUID(), sessionId, Color.WHITE);
         players.add(player);
         return player;
     }

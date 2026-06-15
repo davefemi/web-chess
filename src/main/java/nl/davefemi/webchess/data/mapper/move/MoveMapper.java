@@ -3,7 +3,7 @@ package nl.davefemi.webchess.data.mapper.move;
 import lombok.RequiredArgsConstructor;
 
 import nl.davefemi.webchess.data.dto.move.CastlingMoveDTO;
-import nl.davefemi.webchess.data.MoveDTO;
+import nl.davefemi.webchess.data.dto.MoveDTO;
 import nl.davefemi.webchess.data.dto.move.EnPassantMoveDTO;
 import nl.davefemi.webchess.data.dto.move.PromotionMoveDTO;
 import nl.davefemi.webchess.data.dto.move.SingleMoveDTO;

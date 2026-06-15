@@ -23,9 +23,8 @@ public class PromotionMoveRecordMapper {
                         new Square(data.getNewPos())),
                         PieceType.fromString(data.getNewPieceType())),
                 Color.fromString(data.getPlayerColor()),
+                data.getNewPieceId(),
                 PieceType.fromString(data.getNewPieceType()),
-                data.getOldPieceId(),
-                PieceType.fromString(data.getCapturedPieceType()),
                 data.getCapturedPieceId());
     }
 
@@ -34,8 +33,8 @@ public class PromotionMoveRecordMapper {
         data.setOldPos(record.move().move().from().value());
         data.setNewPos(record.move().move().to().value());
         data.setPlayerColor(record.playerColor().getColor());
-        data.setNewPieceType(record.newPiece().getLabel());
-        data.setNewPieceId(record.pieceId());
+        data.setNewPieceType(record.move().newPieceType().getLabel());
+        data.setNewPieceId(record.newPieceId());
         data.setCapturedPieceType(record.capturedPiece().getLabel());
         data.setCapturedPieceId(record.capturedPieceId());
         return data;
@@ -46,8 +45,8 @@ public class PromotionMoveRecordMapper {
         data.setOldPos(positionMapper.mapDomainToDTO(record.move().move().from()));
         data.setNewPos(positionMapper.mapDomainToDTO(record.move().move().to()));
         data.setPlayerColor(record.playerColor().getColor());
-        data.setNewPieceType(record.newPiece().getLabel());
-        data.setNewPieceId(record.pieceId());
+        data.setNewPieceType(record.move().newPieceType().getLabel());
+        data.setNewPieceId(record.newPieceId());
         data.setCapturedPieceType(record.capturedPiece().getLabel());
         data.setCapturedPieceId(record.capturedPieceId());
         return data;

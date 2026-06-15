@@ -4,8 +4,7 @@ import lombok.Data;
 
 @Data
 public class SessionResponseDTO {
-    private String sessionId;
-    private String playerId;
+    private String playerToken;
     private String color;
     private Object message;
 }

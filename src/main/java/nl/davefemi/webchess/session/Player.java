@@ -9,10 +9,13 @@ public final class Player {
     @Getter
     private final UUID id;
     @Getter
+    private final UUID sessionId;
+    @Getter
     private final Color color;
 
-    public Player(UUID playerId, Color color){
+    public Player(UUID playerId, UUID sessionId, Color color){
         this.id = playerId;
+        this.sessionId = sessionId;
         this.color = color;
     }
 

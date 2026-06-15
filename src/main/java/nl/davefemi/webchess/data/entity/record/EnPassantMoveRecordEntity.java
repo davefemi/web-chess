@@ -1,7 +1,7 @@
 package nl.davefemi.webchess.data.entity.record;
 
 import lombok.Data;
-import nl.davefemi.webchess.data.MoveRecordEntity;
+import nl.davefemi.webchess.data.entity.MoveRecordEntity;
 
 @Data
 public class EnPassantMoveRecordEntity implements MoveRecordEntity {

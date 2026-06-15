@@ -7,10 +7,10 @@ import nl.davefemi.webchess.game.Color;
 
 public record PromotionMoveRecord(PromotionMove move,
                                   Color playerColor,
+                                  int newPieceId,
                                   PieceType capturedPiece,
-                                  int capturedPieceId,
-                                  PieceType newPiece,
-                                  int pieceId)
+                                  int capturedPieceId
+                                  )
         implements MoveRecord {
     @Override
     public PromotionMove getMove(){

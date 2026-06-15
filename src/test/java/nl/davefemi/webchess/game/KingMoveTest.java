@@ -35,7 +35,6 @@ public class KingMoveTest {
         return new AlgebraicSquare(position).toSquare();
     }
 
-
     @Test
     public void checkTest() throws BoardException {
         Piece [] squares = new Piece[128];
@@ -132,7 +131,7 @@ public class KingMoveTest {
         Game game = new Game(1, new GameBoardContext(WHITE, board, null, new ArrayList<>(), new ArrayList<>()), GameStatus.active(), WHITE, false, new ArrayList<>());
         assertThatException().isThrownBy(()->
             game.executeMove(WHITE, getSingleMove("d3", "d4"))
-        ).withMessageContaining("Board must have exactly one king of each colour");
+        ).withMessageContaining("Illegal move");
 
         assertThat(game.getStatus()).isEqualTo(GameStatus.active());
     }

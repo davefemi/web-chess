@@ -4,6 +4,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.MoveException;
 import nl.davefemi.webchess.exception.TypeException;
 import nl.davefemi.webchess.game.Color;
+import nl.davefemi.webchess.game.actions.move.Move;
 import nl.davefemi.webchess.game.actions.move.*;
 import nl.davefemi.webchess.game.board.*;
 import nl.davefemi.webchess.game.actions.record.CastlingMoveRecord;

@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KnightMoveTest {
     private Game game;
 
-
     @BeforeEach
     public void setUp() throws GameException {
         game = new Game();
@@ -29,13 +28,14 @@ public class KnightMoveTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "b1,a3, true",
-            "b1,c3, true",
-            "b1,d3, false",
-            "b1,d2, true",
-            "g1,e2, true"
-    })
+    @CsvSource
+            ({
+                    "b1,a3, true",
+                    "b1,c3, true",
+                    "b1,d3, false",
+                    "b1,d2, true",
+                    "g1,e2, true"
+            })
     public void startingMoveTest(String from, String to, boolean expected) throws MoveException, BoardException, GameException {
         game.executeMove(WHITE, getSingleMove("d2","d4"));
         game.executeMove(BLACK, getSingleMove("a7","a6"));
@@ -43,5 +43,4 @@ public class KnightMoveTest {
         game.executeMove(BLACK, getSingleMove("a6","a5"));
         assertThat(RuleEngine.isMoveAllowed(game.getGameBoardContext(), game.getMoveHistory(), WHITE, getSingleMove(from, to))).isEqualTo(expected);
     }
-
 }

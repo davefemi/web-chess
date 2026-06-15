@@ -2,8 +2,8 @@ package nl.davefemi.webchess.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.webchess.data.entity.AccessCodeEntity;
-import nl.davefemi.webchess.data.entity.GameSessionEntity;
+import nl.davefemi.webchess.data.entity.session.GameSessionEntity;
+import nl.davefemi.webchess.data.entity.session.TokenEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -36,19 +36,19 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, AccessCodeEntity> accessCodeRedisTemplate(
+    public RedisTemplate<String,TokenEntity> tokenRedisTemplate(
             RedisConnectionFactory connectionFactory
     ) {
-        RedisTemplate<String, AccessCodeEntity> template = new RedisTemplate<>();
+        RedisTemplate<String, TokenEntity> template = new RedisTemplate<>();
 
 
         template.setConnectionFactory(connectionFactory);
 
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, AccessCodeEntity.class));
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, TokenEntity.class));
 
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, AccessCodeEntity.class));
+        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, TokenEntity.class));
 
         template.afterPropertiesSet();
 

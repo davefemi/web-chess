@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.data.entity;
+package nl.davefemi.webchess.data.entity.session;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

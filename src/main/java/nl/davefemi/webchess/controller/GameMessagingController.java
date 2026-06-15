@@ -1,7 +1,7 @@
 package nl.davefemi.webchess.controller;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.webchess.data.dto.GameStateDTO;
+import nl.davefemi.webchess.data.dto.session.GameStateDTO;
 import nl.davefemi.webchess.data.dto.session.SessionRequestDTO;
 import nl.davefemi.webchess.data.dto.move.MoveRequestDTO;
 import nl.davefemi.webchess.service.GameService;
@@ -22,8 +22,8 @@ public class GameMessagingController {
     public void executeMove(@DestinationVariable("id") String sessionId, @Payload MoveRequestDTO request) {
         GameStateDTO dto;
         try{
-            messagingTemplate.convertAndSend("/topic/games/" + sessionId, gameService.executeMove(
-                    request.getPlayerId(), sessionId, request.getMove()));
+//            messagingTemplate.convertAndSend("/topic/games/" + sessionId, gameService.executeMove(
+//                    request.getPlayerId(), sessionId, request.getMove()));
 
         } catch (Exception e) {
             messagingTemplate.convertAndSend("/topic/games/" + sessionId, e.getMessage());

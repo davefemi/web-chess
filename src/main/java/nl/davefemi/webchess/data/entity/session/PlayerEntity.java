@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.data.entity;
+package nl.davefemi.webchess.data.entity.session;
 
 import lombok.Data;
 
@@ -6,4 +6,5 @@ import lombok.Data;
 public class PlayerEntity {
     private String id;
     private String playerColor;
+    private String sessionId;
 }

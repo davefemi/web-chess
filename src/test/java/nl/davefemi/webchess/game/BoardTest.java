@@ -17,7 +17,6 @@ public class BoardTest {
     private Game game;
     private GameBoardContext board;
 
-
     @BeforeEach
     public void setUp() throws GameException {
         game = new Game();
@@ -25,7 +24,8 @@ public class BoardTest {
         board = game.getGameBoardContext();
     }
 
-    public void tearDown(){
+    public void tearDown() {
+
     }
 
     private SingleMove getSingleMove(int file_start, int rank_start, int file_end, int rank_end){
@@ -35,7 +35,6 @@ public class BoardTest {
     private Square toSquare(String position){
         return new AlgebraicSquare(position).toSquare();
     }
-
 
     @ParameterizedTest
     @CsvSource({

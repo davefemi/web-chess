@@ -1,9 +1,9 @@
-package nl.davefemi.webchess.data.mapper;
+package nl.davefemi.webchess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.webchess.data.entity.GameSessionEntity;
-import nl.davefemi.webchess.data.entity.GameStateEntity;
-import nl.davefemi.webchess.data.entity.PlayerEntity;
+import nl.davefemi.webchess.data.entity.session.GameSessionEntity;
+import nl.davefemi.webchess.data.entity.session.GameStateEntity;
+import nl.davefemi.webchess.data.entity.session.PlayerEntity;
 import nl.davefemi.webchess.exception.SessionException;
 import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.Game;
@@ -43,17 +43,18 @@ public class GameSessionMapper {
         PlayerEntity entity = new PlayerEntity();
         entity.setId(player.getId().toString());
         entity.setPlayerColor(player.getColor().getColor());
+        entity.setSessionId(player.getSessionId().toString());
         return entity;
     }
 
-    private Player mapEntityToPlayer(PlayerEntity player){
-        return new Player(UUID.fromString(player.getId()), Color.fromString(player.getPlayerColor()));
+    private Player mapEntityToPlayer(PlayerEntity player, String sessionId){
+        return new Player(UUID.fromString(player.getId()), UUID.fromString(sessionId), Color.fromString(player.getPlayerColor()));
     }
 
     public GameSession mapEntityToDomain(GameSessionEntity entity) throws BoardException, SessionException {
         List<Player> players = new ArrayList<>();
         for (PlayerEntity player : entity.getPlayers()){
-            players.add(mapEntityToPlayer(player));
+            players.add(mapEntityToPlayer(player, entity.getSessionId()));
         }
         List<Game> games = new ArrayList<>();
         for (GameStateEntity g: entity.getGames()){
@@ -61,6 +62,6 @@ public class GameSessionMapper {
         }
         return new GameSession(UUID.fromString(entity.getSessionId()),
                 entity.isActiveSession(), games, players,
-                entity.getPlayerToAccept() == null ? null : mapEntityToPlayer(entity.getPlayerToAccept()));
+                entity.getPlayerToAccept() == null ? null : mapEntityToPlayer(entity.getPlayerToAccept(), entity.getSessionId()));
     }
 }

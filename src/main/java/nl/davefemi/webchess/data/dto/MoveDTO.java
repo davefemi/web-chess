@@ -1,4 +1,4 @@
-package nl.davefemi.webchess.data;
+package nl.davefemi.webchess.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

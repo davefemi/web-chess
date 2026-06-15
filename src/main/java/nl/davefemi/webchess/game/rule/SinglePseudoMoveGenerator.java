@@ -18,7 +18,6 @@ public final class SinglePseudoMoveGenerator {
         throw new AssertionError("This class cannot be instantiated");
     }
 
-
     static List<SingleMove> generateMoves(Board board, Color color) throws BoardException {
         List<SingleMove> moves = new ArrayList<>();
         moves.addAll(getKingMoves(board, board.getPositionsByTypeAndColor(KING, color)));
@@ -171,11 +170,11 @@ public final class SinglePseudoMoveGenerator {
                                                   int promotionRank, int startingRank) throws BoardException {
         List<Square> newPos = new ArrayList<>();
         int bounds = position.rank() + movement;
-        if (bounds < 8 && bounds > 0) {
+        if (bounds < 8 && bounds > -1) {
             Square nextRank = Square.fromFileAndRank(position.file(), position.rank() + movement);
             if (position.rank() != promotionRank) {
                 newPos.add(nextRank);
-                if (position.file() - 1 >= 0)
+                if (position.file() - 1 > -1)
                     newPos.add(Square.fromFileAndRank(position.file() - 1, position.rank() + movement));
                 if (position.file() + 1 < 8)
                     newPos.add(Square.fromFileAndRank(position.file() + 1, position.rank() + movement));

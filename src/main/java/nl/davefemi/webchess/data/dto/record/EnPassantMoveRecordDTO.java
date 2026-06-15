@@ -1,7 +1,7 @@
 package nl.davefemi.webchess.data.dto.record;
 
 import lombok.Data;
-import nl.davefemi.webchess.data.MoveRecordDTO;
+import nl.davefemi.webchess.data.dto.MoveRecordDTO;
 
 @Data
 public class EnPassantMoveRecordDTO implements MoveRecordDTO {

@@ -75,7 +75,6 @@ public class Game {
         return RuleEngine.isCheck(getGameBoardContext(), color);
     }
 
-
     public List<Move> getAvailableMoves(Color color) throws BoardException, GameException {
         if (status.isWaiting())
             throw new GameException("Game is not active yet");
@@ -120,5 +119,4 @@ public class Game {
         if (currentGameBoardContext.getLastMove() != null)
             moveHistory.add(currentGameBoardContext.getLastMove());
     }
-
 }
