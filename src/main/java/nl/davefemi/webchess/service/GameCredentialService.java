@@ -10,7 +10,6 @@ import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.session.Player;
 import nl.davefemi.webchess.session.Credential;
 import org.springframework.stereotype.Service;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +40,7 @@ public final class GameCredentialService implements CredentialService {
     @Override
     public String generateAccessToken(String sessionId){
         try {
-            Credential credential = generateToken(ACCESS_TOKEN_BYTES, ACCESS_TOKEN_TTL);
+            Credential credential = generateCredential(ACCESS_TOKEN_BYTES, ACCESS_TOKEN_TTL);
             credential.setClaim(SESSION_ID, sessionId);
             storeCredential(ACCESS_TOKEN, tokenMapper.mapToEntity(credential));
             return credential.getToken();
@@ -50,19 +49,10 @@ public final class GameCredentialService implements CredentialService {
         }
     }
 
-    public UUID authenticateAccessToken(String token) throws InvalidTokenException {
-            try{
-                CredentialEntity entity = tokenRepository.retrieveCredentials(ACCESS_TOKEN, hash(token), true);
-                return UUID.fromString(entity.getClaims().get(SESSION_ID));
-            } catch (Exception e) {
-                throw new InvalidTokenException("Access token is invalid");
-            }
-    }
-
     @Override
     public String generatePlayerToken(Player player){
         try {
-            Credential credential = generateToken(PLAYER_TOKEN_BYTES, PLAYER_TOKEN_TTL);
+            Credential credential = generateCredential(PLAYER_TOKEN_BYTES, PLAYER_TOKEN_TTL);
             credential.setClaim(SESSION_ID, player.getSessionId().toString());
             credential.setClaim(PLAYER_ID, player.getId().toString());
             credential.setClaim(PLAYER_COLOR, player.getColor().getColor());
@@ -73,13 +63,22 @@ public final class GameCredentialService implements CredentialService {
         }
     }
 
-    private Credential generateToken(int bytes, int timeToLive) throws NoSuchAlgorithmException {
+    private Credential generateCredential(int bytes, int timeToLive) throws NoSuchAlgorithmException {
         byte[] array = new byte[bytes];
         random.nextBytes(array);
         String code = Base64.getUrlEncoder()
                 .withoutPadding()
                 .encodeToString(array);
         return new Credential(code, timeToLive);
+    }
+
+    public UUID authenticateAccessToken(String token) throws InvalidTokenException {
+        try{
+            CredentialEntity entity = tokenRepository.retrieveCredentials(ACCESS_TOKEN, hash(token), true);
+            return UUID.fromString(entity.getClaims().get(SESSION_ID));
+        } catch (Exception e) {
+            throw new InvalidTokenException("Access token is invalid");
+        }
     }
 
     @Override
@@ -99,9 +98,9 @@ public final class GameCredentialService implements CredentialService {
         }
     }
 
-    private void storeCredential(String key, CredentialEntity credential) throws NoSuchAlgorithmException {
+    private void storeCredential(String tokenType, CredentialEntity credential) throws NoSuchAlgorithmException {
         log.info("Executed sessionId={}: access token stored", credential.getClaims().get(SESSION_ID));
-        tokenRepository.saveCredentials(key, credential);
+        tokenRepository.saveCredentials(tokenType, credential);
     }
 
     private String hash(String token) throws NoSuchAlgorithmException {
@@ -109,5 +108,4 @@ public final class GameCredentialService implements CredentialService {
         byte[] hash = digest.digest(token.getBytes(StandardCharsets.UTF_8));
         return HexFormat.of().formatHex(hash);
     }
-
 }
