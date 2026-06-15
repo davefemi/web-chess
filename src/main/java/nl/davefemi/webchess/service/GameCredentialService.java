@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Map;
@@ -27,7 +28,7 @@ public final class GameCredentialService implements CredentialService {
     private static final int ACCESS_TOKEN_BYTES = 8;
     private static final int ACCESS_TOKEN_TTL = 60;
     private static final int PLAYER_TOKEN_BYTES = 32;
-    private static final int PLAYER_TOKEN_TTL = 12000;
+    private static final int PLAYER_TOKEN_TTL = 300;
     private static final String ACCESS_TOKEN = "access_token";
     private static final String PLAYER_TOKEN = "player_token";
     private static final String SESSION_ID = "session_id";
@@ -40,10 +41,10 @@ public final class GameCredentialService implements CredentialService {
     @Override
     public String generateAccessToken(String sessionId){
         try {
-            Credential token = generateToken(ACCESS_TOKEN_BYTES, ACCESS_TOKEN_TTL);
-            token.setClaim(SESSION_ID, sessionId);
-            storeToken(ACCESS_TOKEN, token);
-            return token.getToken();
+            Credential credential = generateToken(ACCESS_TOKEN_BYTES, ACCESS_TOKEN_TTL);
+            credential.setClaim(SESSION_ID, sessionId);
+            storeCredential(ACCESS_TOKEN, tokenMapper.mapToEntity(credential));
+            return credential.getToken();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -61,12 +62,12 @@ public final class GameCredentialService implements CredentialService {
     @Override
     public String generatePlayerToken(Player player){
         try {
-            Credential token = generateToken(PLAYER_TOKEN_BYTES, PLAYER_TOKEN_TTL);
-            token.setClaim(SESSION_ID, player.getSessionId().toString());
-            token.setClaim(PLAYER_ID, player.getId().toString());
-            token.setClaim(PLAYER_COLOR, player.getColor().getColor());
-            storeToken(PLAYER_TOKEN, token);
-            return token.getToken();
+            Credential credential = generateToken(PLAYER_TOKEN_BYTES, PLAYER_TOKEN_TTL);
+            credential.setClaim(SESSION_ID, player.getSessionId().toString());
+            credential.setClaim(PLAYER_ID, player.getId().toString());
+            credential.setClaim(PLAYER_COLOR, player.getColor().getColor());
+            storeCredential(PLAYER_TOKEN, tokenMapper.mapToEntity(credential));
+            return credential.getToken();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -85,8 +86,10 @@ public final class GameCredentialService implements CredentialService {
     public Player authenticatePlayerToken(String token) throws InvalidTokenException {
         try {
             String tokenHash = hash(token);
-            CredentialEntity tokenEntity = tokenRepository.retrieveCredentials(PLAYER_TOKEN, tokenHash, false);
-            Map<String, String> claims = tokenEntity.getClaims();
+            CredentialEntity credential = tokenRepository.retrieveCredentials(PLAYER_TOKEN, tokenHash, false);
+            Map<String, String> claims = credential.getClaims();
+            credential.setExpiresAt(Instant.now().plusSeconds(PLAYER_TOKEN_TTL));
+            storeCredential(PLAYER_TOKEN, credential);
             return new Player(UUID.fromString(claims.get(PLAYER_ID)),
                     UUID.fromString(claims.get(SESSION_ID)),
                     Color.fromString(claims.get(PLAYER_COLOR))
@@ -96,10 +99,9 @@ public final class GameCredentialService implements CredentialService {
         }
     }
 
-    private void storeToken(String key, Credential token) throws NoSuchAlgorithmException {
-        CredentialEntity tokenEntity = tokenMapper.mapToEntity(token);
-        log.info("Executed sessionId={}: access token stored", token.getClaim(SESSION_ID));
-        tokenRepository.saveCredentials(key, tokenEntity);
+    private void storeCredential(String key, CredentialEntity credential) throws NoSuchAlgorithmException {
+        log.info("Executed sessionId={}: access token stored", credential.getClaims().get(SESSION_ID));
+        tokenRepository.saveCredentials(key, credential);
     }
 
     private String hash(String token) throws NoSuchAlgorithmException {

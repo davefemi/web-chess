@@ -42,8 +42,8 @@ public class GameSessionMapper {
     private PlayerEntity mapPlayerToEntity(Player player){
         PlayerEntity entity = new PlayerEntity();
         entity.setId(player.getId().toString());
-        entity.setPlayerColor(player.getColor().getColor());
         entity.setSessionId(player.getSessionId().toString());
+        entity.setPlayerColor(player.getColor().getColor());
         return entity;
     }
 
