@@ -7,6 +7,7 @@ import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.data.entity.session.GameSessionEntity;
 import nl.davefemi.webchess.data.mapper.session.*;
 import nl.davefemi.webchess.data.repository.SessionRepository;
+import nl.davefemi.webchess.exception.InvalidTokenException;
 import nl.davefemi.webchess.exception.SessionException;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.BoardException;
@@ -27,23 +28,23 @@ public class GameSessionService {
     private final SessionRepository sessionStore;
     private final SessionResponseMapper sessionResponseMapper;
     private static final String INVITE_URL = "/games/join?token=%s";
-    private final TokenService tokenService;
+    private final CredentialService credentialService;
 
     public SessionInitiationDTO startGameSession(String color) throws SessionException, BoardException {
         GameSession session = new GameSession();
         log.info("Executed sessionId={}: session created", session.getSessionId());
         Player player = session.addPlayer(Color.fromString(color));
-        String accessToken = tokenService.generateAccessToken(session.getSessionId().toString());
-        String playerToken = tokenService.generatePlayerToken(player);
+        String accessToken = credentialService.generateAccessToken(session.getSessionId().toString());
+        String playerToken = credentialService.generatePlayerToken(player);
         storeSession(session);
         return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().getColor(), String.format(INVITE_URL, accessToken));
     }
 
     public SessionInitiationDTO joinGameSession(String accessToken)
-            throws SessionException, FileNotFoundException, BoardException, GameException {
-        GameSession session =  retrieveSession(tokenService.authenticateAccessToken(accessToken));
+            throws SessionException, FileNotFoundException, BoardException, GameException, InvalidTokenException {
+        GameSession session =  retrieveSession(credentialService.authenticateAccessToken(accessToken));
         Player player = session.addPlayer();
-        String playerToken = tokenService.generatePlayerToken(player);
+        String playerToken = credentialService.generatePlayerToken(player);
         session.startSession();
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);

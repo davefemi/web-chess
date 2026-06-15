@@ -18,6 +18,7 @@ public class GameMessagingController {
     private final SimpMessagingTemplate messagingTemplate;
     private final GameQueryService gameService;
 
+    //TODO: implement request validation for STOMP
     @MessageMapping("/moves")
     public void executeMove(@DestinationVariable("id") String sessionId, @Payload MoveRequestDTO request) {
         GameStateDTO dto;

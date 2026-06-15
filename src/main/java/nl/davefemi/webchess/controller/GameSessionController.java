@@ -7,6 +7,7 @@ import nl.davefemi.webchess.data.dto.session.SessionInitiationDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.exception.GameException;
+import nl.davefemi.webchess.exception.InvalidTokenException;
 import nl.davefemi.webchess.exception.SessionException;
 import nl.davefemi.webchess.service.GameSessionService;
 import nl.davefemi.webchess.session.Player;
@@ -38,7 +39,7 @@ public class GameSessionController {
     @PostMapping("/join")
     public ResponseEntity<SessionInitiationDTO> joinGame
             (@RequestParam("token") String accessToken, HttpServletRequest request)
-            throws FileNotFoundException, SessionException, BoardException, GameException {
+            throws FileNotFoundException, SessionException, BoardException, GameException, InvalidTokenException {
         log.info("Received from {}: join request", request.getSession().getId());
         return ResponseEntity.ok(gameSessionService.joinGameSession(accessToken));
     }

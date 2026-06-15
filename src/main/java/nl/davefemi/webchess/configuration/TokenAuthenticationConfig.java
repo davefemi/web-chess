@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.webchess.service.TokenService;
+import nl.davefemi.webchess.service.CredentialService;
 import nl.davefemi.webchess.session.Player;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,7 +16,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class TokenAuthenticationConfig extends OncePerRequestFilter {
-    private final TokenService tokenService;
+    private final CredentialService credentialService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -34,7 +34,7 @@ public class TokenAuthenticationConfig extends OncePerRequestFilter {
         }
         String token = authorization.substring("Bearer ".length());
         try {
-            Player player = tokenService.authenticatePlayerToken(token);
+            Player player = credentialService.authenticatePlayerToken(token);
             request.setAttribute("player", player);
             filterChain.doFilter(request, response);
         } catch (Exception ex) {

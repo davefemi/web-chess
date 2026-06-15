@@ -14,12 +14,12 @@ import java.time.temporal.ChronoUnit;
 @Repository
 @RequiredArgsConstructor
 public class SessionStore implements SessionRepository {
-    private final RedisTemplate<String, GameSessionEntity> sessionRedisTemplate;
+    private final RedisTemplate<String, GameSessionEntity> redisTemplate;
     private final int sessionTimeToLive = 5;
 
     @Override
     public GameSessionEntity retrieveGameSessionById(String sessionId) throws SessionException {
-        GameSessionEntity sessionEntity = sessionRedisTemplate.opsForValue().get("session: " + sessionId);
+        GameSessionEntity sessionEntity = redisTemplate.opsForValue().get("session: " + sessionId);
         if (sessionEntity == null)
             throw new SessionException("Session not found");
         return sessionEntity;
@@ -27,7 +27,6 @@ public class SessionStore implements SessionRepository {
 
     @Override
     public void saveGameSession(GameSessionEntity entity) {
-        sessionRedisTemplate.opsForValue().set("session: " + entity.getSessionId(), entity, Duration.of(sessionTimeToLive, ChronoUnit.MINUTES));
+        redisTemplate.opsForValue().set("session: " + entity.getSessionId(), entity, Duration.of(sessionTimeToLive, ChronoUnit.MINUTES));
     }
-
 }

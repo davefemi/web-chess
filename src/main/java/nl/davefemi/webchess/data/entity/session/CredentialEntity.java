@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class TokenEntity {
-    String hash;
+public class CredentialEntity {
+    String hashToken;
     private Instant expiresAt;
     Map<String, String> claims = new HashMap<>();
 
