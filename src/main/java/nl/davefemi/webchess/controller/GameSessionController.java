@@ -13,6 +13,7 @@ import nl.davefemi.webchess.service.GameSessionService;
 import nl.davefemi.webchess.session.Player;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import java.io.FileNotFoundException;
 
@@ -30,7 +31,7 @@ public class GameSessionController {
 
     @PostMapping("/invite")
     public ResponseEntity<SessionInitiationDTO> invitePlayer
-            (@RequestParam("color")String color, HttpServletRequest request)
+            (@Nullable @RequestParam("color")String color, HttpServletRequest request)
             throws SessionException, BoardException, InvalidTokenException {
         log.info("Received from {}: session initiation request", request.getSession().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startGameSession(color));

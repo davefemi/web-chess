@@ -32,10 +32,10 @@ public class PromotionMoveRecordMapper {
         PromotionMoveRecordEntity data = new PromotionMoveRecordEntity();
         data.setOldPos(record.move().move().from().value());
         data.setNewPos(record.move().move().to().value());
-        data.setPlayerColor(record.playerColor().getColor());
-        data.setNewPieceType(record.move().newPieceType().getLabel());
+        data.setPlayerColor(record.playerColor().toString());
+        data.setNewPieceType(record.move().newPieceType().toString());
         data.setNewPieceId(record.newPieceId());
-        data.setCapturedPieceType(record.capturedPiece().getLabel());
+        data.setCapturedPieceType(record.capturedPiece().toString());
         data.setCapturedPieceId(record.capturedPieceId());
         return data;
     }
@@ -44,10 +44,10 @@ public class PromotionMoveRecordMapper {
         PromotionMoveRecordDTO data = new PromotionMoveRecordDTO();
         data.setOldPos(positionMapper.mapDomainToDTO(record.move().move().from()));
         data.setNewPos(positionMapper.mapDomainToDTO(record.move().move().to()));
-        data.setPlayerColor(record.playerColor().getColor());
-        data.setNewPieceType(record.move().newPieceType().getLabel());
+        data.setPlayerColor(record.playerColor().toString());
+        data.setNewPieceType(record.move().newPieceType().toString());
         data.setNewPieceId(record.newPieceId());
-        data.setCapturedPieceType(record.capturedPiece().getLabel());
+        data.setCapturedPieceType(record.capturedPiece().toString());
         data.setCapturedPieceId(record.capturedPieceId());
         return data;
     }

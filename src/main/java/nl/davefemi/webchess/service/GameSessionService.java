@@ -33,22 +33,24 @@ public class GameSessionService {
     public SessionInitiationDTO startGameSession(String color) throws SessionException, BoardException, InvalidTokenException {
         GameSession session = new GameSession();
         log.info("Executed sessionId={}: session created", session.getSessionId());
-        Player player = session.addPlayer(Color.fromString(color));
-        String accessToken = credentialService.generateAccessToken(session.getSessionId().toString());
-        String playerToken = credentialService.generatePlayerToken(player);
+        Player player = color == null
+                ? session.addPlayer()
+                : session.addPlayer(Color.fromString(color));
+        String accessToken = credentialService.getAccessToken(session.getSessionId().toString());
+        String playerToken = credentialService.getPlayerToken(player);
         storeSession(session);
-        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().getColor(), String.format(INVITE_URL, accessToken));
+        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().toString(), String.format(INVITE_URL, accessToken));
     }
 
     public SessionInitiationDTO joinGameSession(String accessToken)
             throws SessionException, FileNotFoundException, BoardException, GameException, InvalidTokenException {
         GameSession session =  retrieveSession(credentialService.authenticateAccessToken(accessToken));
         Player player = session.addPlayer();
-        String playerToken = credentialService.generatePlayerToken(player);
+        String playerToken = credentialService.getPlayerToken(player);
         session.startSession();
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().getColor(),
+        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().toString(),
                 "Successfully joined session");
     }
 
@@ -57,7 +59,7 @@ public class GameSessionService {
         GameSession session = retrieveSession(player.getSessionId());
         session.endSession(player);
         storeSession(session);
-        return sessionResponseMapper.mapToDTO( player.getColor().getColor(), "Session ended");
+        return sessionResponseMapper.mapToDTO( player.getColor().toString(), "Session ended");
     }
 
     public SessionResponseDTO startRematch(Player player)
@@ -66,8 +68,8 @@ public class GameSessionService {
         Game game = session.getRematch(player);
         log.info("Executed sessionId={}: new game created", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapToDTO(player.getColor().getColor(),
-                gameStateMapper.mapDomainToDTO(game, game.getSideToMove().getColor()));
+        return sessionResponseMapper.mapToDTO(player.getColor().toString(),
+                gameStateMapper.mapDomainToDTO(game, game.getSideToMove().toString()));
     }
 
     public SessionResponseDTO acceptRematch(Player player)
@@ -77,8 +79,8 @@ public class GameSessionService {
         Game game = session.getCurrentGame();
         log.info("Executed sessionId={}: new game started", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapToDTO(player.getColor().getColor(),
-                gameStateMapper.mapDomainToDTO(game, game.getSideToMove().getColor()));
+        return sessionResponseMapper.mapToDTO(player.getColor().toString(),
+                gameStateMapper.mapDomainToDTO(game, game.getSideToMove().toString()));
     }
 
     private GameSession retrieveSession(UUID sessionId)

@@ -211,7 +211,7 @@ public class PawnMoveTest {
         Piece piece = game.getGameBoardContext().getCopyOfBoard().getPieceAt(move.to());
 
         //Assert
-        assertThat(piece.type().getLabel()).isEqualTo(newPieceType);
+        assertThat(piece.type().toString()).isEqualTo(newPieceType);
     }
 
     @ParameterizedTest

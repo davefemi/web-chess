@@ -31,27 +31,27 @@ public class GameQueryService {
         return sessionResponseMapper.mapToDTO(
                 game.getSideToMove() == null
                 ? null
-                : game.getSideToMove().getColor(),
+                : game.getSideToMove().toString(),
                 boardMapper.mapDomainToDTO(game.getGameBoardContext().getCopyOfBoard()));
     }
 
     public SessionResponseDTO getPlayerTurn(Player player)
             throws GameException, FileNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(game.getSideToMove().getColor(),  null);
+        return sessionResponseMapper.mapToDTO(game.getSideToMove().toString(),  null);
     }
 
     public SessionResponseDTO isCheck(Player player)
             throws FileNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
-        return sessionResponseMapper.mapToDTO(player.getColor().getColor(), game.isCheck(player.getColor()));
+        return sessionResponseMapper.mapToDTO(player.getColor().toString(), game.isCheck(player.getColor()));
     }
 
     public SessionResponseDTO getAvailableMoves(Player player)
             throws BoardException, FileNotFoundException, SessionException, GameException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         List<Move> moves = game.getAvailableMoves(player.getColor());
-        return sessionResponseMapper.mapToDTO(player.getColor().getColor(), moveMapper.mapDomainToDTO(moves));
+        return sessionResponseMapper.mapToDTO(player.getColor().toString(), moveMapper.mapDomainToDTO(moves));
     }
 
 }

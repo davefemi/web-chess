@@ -18,7 +18,7 @@ public class PromotionMoveMapper {
 
         dto.setTo(positionMapper.mapDomainToDTO(move.move().to()));
         dto.setFrom(positionMapper.mapDomainToDTO(move.move().from()));
-        dto.setNewPieceType(move.newPieceType().getLabel());
+        dto.setNewPieceType(move.newPieceType().toString());
         return dto;
     }
 

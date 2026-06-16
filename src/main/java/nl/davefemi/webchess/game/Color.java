@@ -1,8 +1,5 @@
 package nl.davefemi.webchess.game;
 
-import lombok.Getter;
-
-@Getter
 public enum Color {
     BLACK("black"),
     WHITE("white");
@@ -28,5 +25,10 @@ public enum Color {
         if (color == WHITE)
             return BLACK;
         return WHITE;
+    }
+
+    @Override
+    public String toString() {
+        return color;
     }
 }

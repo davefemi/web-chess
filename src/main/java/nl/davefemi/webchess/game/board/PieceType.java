@@ -14,7 +14,8 @@ public enum PieceType {
         this.label = label;
     }
 
-    public String getLabel(){
+    @Override
+    public String toString(){
         return label;
     }
 

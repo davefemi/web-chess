@@ -31,11 +31,11 @@ public class SingleMoveRecordMapper {
         SingleMoveRecordEntity dto = new SingleMoveRecordEntity();
         dto.setOldPos(record.move().from().value());
         dto.setNewPos(record.move().to().value());
-        dto.setPlayerColor(record.playerColor().getColor());
-        dto.setMovedPieceType(record.movedPiece().getLabel());
+        dto.setPlayerColor(record.playerColor().toString());
+        dto.setMovedPieceType(record.movedPiece().toString());
         dto.setMovedPieceId(record.movedPieceId());
         if (record.capturedPiece() != null){
-            dto.setCapturedPieceType(record.capturedPiece().getLabel());
+            dto.setCapturedPieceType(record.capturedPiece().toString());
             dto.setCapturedPieceId(record.capturedPieceId());
         }
         return dto;
@@ -45,11 +45,11 @@ public class SingleMoveRecordMapper {
         SingleMoveRecordDTO dto = new SingleMoveRecordDTO();
         dto.setOldPos(positionMapper.mapDomainToDTO(record.move().from()));
         dto.setNewPos(positionMapper.mapDomainToDTO(record.move().to()));
-        dto.setPlayerColor(record.playerColor().getColor());
-        dto.setMovedPieceType(record.movedPiece().getLabel());
+        dto.setPlayerColor(record.playerColor().toString());
+        dto.setMovedPieceType(record.movedPiece().toString());
         dto.setMovedPieceId(record.movedPieceId());
         if (record.capturedPiece() != null){
-            dto.setCapturedPieceType(record.capturedPiece().getLabel());
+            dto.setCapturedPieceType(record.capturedPiece().toString());
             dto.setCapturedPieceId(record.capturedPieceId());
         }
         return dto;

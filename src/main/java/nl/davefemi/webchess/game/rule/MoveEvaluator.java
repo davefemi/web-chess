@@ -81,7 +81,7 @@ public final class MoveEvaluator {
                 color == BLACK && oldPawnPos.rank() != 1)
             throw new MoveException("This piece is not up for promotion");
         if (newPieceType == PAWN || newPieceType == KING)
-            throw new TypeException("Replacement piece cannot be of type " + newPieceType.getLabel());
+            throw new TypeException("Replacement piece cannot be of type " + newPieceType);
         return true;
     }
 

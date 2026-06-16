@@ -37,7 +37,7 @@ public final class GameCredentialService implements CredentialService {
     private final CredentialMapper tokenMapper;
 
     @Override
-    public String generateAccessToken(String sessionId) throws InvalidTokenException {
+    public String getAccessToken(String sessionId) throws InvalidTokenException {
         try {
             return generateCredential(
                     ACCESS_TOKEN,
@@ -50,7 +50,7 @@ public final class GameCredentialService implements CredentialService {
     }
 
     @Override
-    public String generatePlayerToken(Player player) throws InvalidTokenException {
+    public String getPlayerToken(Player player) throws InvalidTokenException {
         try {
             return generateCredential(
                     PLAYER_TOKEN,
@@ -59,7 +59,7 @@ public final class GameCredentialService implements CredentialService {
                     Map.of(
                             SESSION_ID, player.getSessionId().toString(),
                             PLAYER_ID, player.getId().toString(),
-                            PLAYER_COLOR, player.getColor().getColor()
+                            PLAYER_COLOR, player.getColor().toString()
                     ));
         } catch (NoSuchAlgorithmException e) {
             throw new InvalidTokenException(e.getMessage());

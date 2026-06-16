@@ -33,7 +33,7 @@ public class GamePlayService {
             game.executeMove(player.getColor(), moveMapper.mapDTOtoDomain(move));
             String playerColor = null;
             try {
-                playerColor = game.getSideToMove().getColor();
+                playerColor = game.getSideToMove().toString();
             } catch (NullPointerException | GameException e) {
             }
             gameSessionService.saveGameSession(gameSession);
@@ -52,7 +52,7 @@ public class GamePlayService {
             game.surrender(player.getColor());
             String playerColor = null;
             try {
-                playerColor = game.getSideToMove().getColor();
+                playerColor = game.getSideToMove().toString();
             } catch (NullPointerException | GameException e) {
             }
             log.info("Executed sessionId={}, playerId={}: surrender request", player.getSessionId(), player.getId());

@@ -31,11 +31,11 @@ public class GameStateMapper {
         entity.setCurrentBoardContext(boardMapper.mapDomainToEntity(game.getGameBoardContext()));
         entity.setGamePhase(game.getStatus().phase().getPhase());
         entity.setInCheck(game.isInCheck());
-        entity.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().getColor(): null);
+        entity.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().toString(): null);
         entity.setGameEndReason(game.getStatus().isFinished()? game.getStatus().reason().get().getReason() : null);
         String turn;
         try{
-            turn = game.getSideToMove().getColor();
+            turn = game.getSideToMove().toString();
         } catch (NullPointerException | GameException e) {
             turn = null;
         }
@@ -80,7 +80,7 @@ public class GameStateMapper {
         dto.setColorToMove(turn);
         dto.setGamePhase(game.getStatus().phase().getPhase());
         dto.setInCheck(game.isInCheck());
-        dto.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().getColor(): null);
+        dto.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().toString(): null);
         dto.setGameEndReason(game.getStatus().isFinished()? game.getStatus().reason().get().getReason() : null);
         for (Piece p : game.getGameBoardContext().getCopyOfBoard().getPieces()){
             dto.getBoard().add(positionPieceMapper.mapDomainToDTO(

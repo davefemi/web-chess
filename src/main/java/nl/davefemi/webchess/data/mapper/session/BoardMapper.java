@@ -33,8 +33,8 @@ public class BoardMapper {
         for (Piece piece: board.getPieces()){
             PieceEntity positionPiece = new PieceEntity();
             positionPiece.setPosition(board.getPositionById(piece.id()).value());
-            positionPiece.setPieceType(piece.type().getLabel());
-            positionPiece.setColor(piece.color().getColor());
+            positionPiece.setPieceType(piece.type().toString());
+            positionPiece.setColor(piece.color().toString());
             positionPiece.setPieceId(piece.id());
             entity.getPositions().add(positionPiece);
         }
