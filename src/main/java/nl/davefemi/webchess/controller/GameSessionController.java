@@ -31,7 +31,7 @@ public class GameSessionController {
     @PostMapping("/invite")
     public ResponseEntity<SessionInitiationDTO> invitePlayer
             (@RequestParam("color")String color, HttpServletRequest request)
-            throws SessionException, BoardException {
+            throws SessionException, BoardException, InvalidTokenException {
         log.info("Received from {}: session initiation request", request.getSession().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startGameSession(color));
     }

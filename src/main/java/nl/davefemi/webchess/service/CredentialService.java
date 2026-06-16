@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface CredentialService {
 
-    String generateAccessToken(String sessionId);
-    String generatePlayerToken(Player player);
+    String generateAccessToken(String sessionId) throws InvalidTokenException;
+    String generatePlayerToken(Player player) throws InvalidTokenException;
     UUID authenticateAccessToken(String token) throws InvalidTokenException;
     Player authenticatePlayerToken(String token) throws InvalidTokenException;
 }

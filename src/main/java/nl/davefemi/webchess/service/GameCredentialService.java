@@ -8,7 +8,6 @@ import nl.davefemi.webchess.data.repository.CredentialRepository;
 import nl.davefemi.webchess.exception.InvalidTokenException;
 import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.session.Player;
-import nl.davefemi.webchess.session.Credential;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -38,69 +37,75 @@ public final class GameCredentialService implements CredentialService {
     private final CredentialMapper tokenMapper;
 
     @Override
-    public String generateAccessToken(String sessionId){
+    public String generateAccessToken(String sessionId) throws InvalidTokenException {
         try {
-            Credential credential = generateCredential(ACCESS_TOKEN_BYTES, ACCESS_TOKEN_TTL);
-            credential.setClaim(SESSION_ID, sessionId);
-            storeCredential(ACCESS_TOKEN, tokenMapper.mapToEntity(credential));
-            return credential.getToken();
+            return generateCredential(
+                    ACCESS_TOKEN,
+                    ACCESS_TOKEN_BYTES,
+                    ACCESS_TOKEN_TTL,
+                    Map.of(SESSION_ID, sessionId));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new InvalidTokenException(e.getMessage());
         }
     }
 
     @Override
-    public String generatePlayerToken(Player player){
+    public String generatePlayerToken(Player player) throws InvalidTokenException {
         try {
-            Credential credential = generateCredential(PLAYER_TOKEN_BYTES, PLAYER_TOKEN_TTL);
-            credential.setClaim(SESSION_ID, player.getSessionId().toString());
-            credential.setClaim(PLAYER_ID, player.getId().toString());
-            credential.setClaim(PLAYER_COLOR, player.getColor().getColor());
-            storeCredential(PLAYER_TOKEN, tokenMapper.mapToEntity(credential));
-            return credential.getToken();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            return generateCredential(
+                    PLAYER_TOKEN,
+                    PLAYER_TOKEN_BYTES,
+                    PLAYER_TOKEN_TTL,
+                    Map.of(
+                            SESSION_ID, player.getSessionId().toString(),
+                            PLAYER_ID, player.getId().toString(),
+                            PLAYER_COLOR, player.getColor().getColor()
+                    ));
+        } catch (NoSuchAlgorithmException e) {
+            throw new InvalidTokenException(e.getMessage());
         }
     }
 
-    private Credential generateCredential(int bytes, int timeToLive) throws NoSuchAlgorithmException {
+    private String generateCredential(String tokenType, int bytes, int timeToLive, Map<String, String> claims)
+            throws NoSuchAlgorithmException {
         byte[] array = new byte[bytes];
         random.nextBytes(array);
-        String code = Base64.getUrlEncoder()
+        String token = Base64.getUrlEncoder()
                 .withoutPadding()
                 .encodeToString(array);
-        return new Credential(code, timeToLive);
+        CredentialEntity credential = tokenMapper.mapToEntity(hash(token), Instant.now().plusSeconds(timeToLive), claims);
+        storeCredential(tokenType, credential);
+        return token;
     }
 
     public UUID authenticateAccessToken(String token) throws InvalidTokenException {
         try{
-            CredentialEntity entity = tokenRepository.retrieveCredentials(ACCESS_TOKEN, hash(token), true);
-            return UUID.fromString(entity.getClaims().get(SESSION_ID));
-        } catch (Exception e) {
-            throw new InvalidTokenException("Access token is invalid");
+            CredentialEntity entity = tokenRepository.retrieveCredential(ACCESS_TOKEN, hash(token), true);
+            return UUID.fromString(entity.getClaim(SESSION_ID));
+        } catch (NoSuchAlgorithmException e) {
+            throw new InvalidTokenException(e.getMessage());
         }
     }
 
     @Override
     public Player authenticatePlayerToken(String token) throws InvalidTokenException {
         try {
-            String tokenHash = hash(token);
-            CredentialEntity credential = tokenRepository.retrieveCredentials(PLAYER_TOKEN, tokenHash, false);
-            Map<String, String> claims = credential.getClaims();
-            credential.setExpiresAt(Instant.now().plusSeconds(PLAYER_TOKEN_TTL));
+            CredentialEntity credential = tokenRepository.retrieveCredential(PLAYER_TOKEN, hash(token), false);
+            credential.expiresAtPlusSeconds(PLAYER_TOKEN_TTL);
             storeCredential(PLAYER_TOKEN, credential);
-            return new Player(UUID.fromString(claims.get(PLAYER_ID)),
-                    UUID.fromString(claims.get(SESSION_ID)),
-                    Color.fromString(claims.get(PLAYER_COLOR))
+            return new Player(
+                    UUID.fromString(credential.getClaim(PLAYER_ID)),
+                    UUID.fromString(credential.getClaim(SESSION_ID)),
+                    Color.fromString(credential.getClaim(PLAYER_COLOR))
                     );
         } catch (Exception e) {
             throw new InvalidTokenException("Could not authenticate player");
         }
     }
 
-    private void storeCredential(String tokenType, CredentialEntity credential) throws NoSuchAlgorithmException {
-        log.info("Executed sessionId={}: access token stored", credential.getClaims().get(SESSION_ID));
-        tokenRepository.saveCredentials(tokenType, credential);
+    private void storeCredential(String tokenType, CredentialEntity credential) {
+        tokenRepository.saveCredential(tokenType, credential);
+        log.info("Executed sessionId={}: credential stored", credential.getClaim(SESSION_ID));
     }
 
     private String hash(String token) throws NoSuchAlgorithmException {

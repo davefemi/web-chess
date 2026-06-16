@@ -30,7 +30,7 @@ public class GameSessionService {
     private static final String INVITE_URL = "/games/join?token=%s";
     private final CredentialService credentialService;
 
-    public SessionInitiationDTO startGameSession(String color) throws SessionException, BoardException {
+    public SessionInitiationDTO startGameSession(String color) throws SessionException, BoardException, InvalidTokenException {
         GameSession session = new GameSession();
         log.info("Executed sessionId={}: session created", session.getSessionId());
         Player player = session.addPlayer(Color.fromString(color));

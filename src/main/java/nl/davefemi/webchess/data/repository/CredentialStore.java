@@ -15,21 +15,21 @@ public class CredentialStore implements CredentialRepository {
     private final RedisTemplate<String, CredentialEntity> redisTemplate;
 
     @Override
-    public void saveCredentials(String tokenType, CredentialEntity token) {
-        redisTemplate.opsForValue().set(tokenType +": " + token.getHashToken(), token, Duration.between(Instant.now(), token.getExpiresAt()));
+    public void saveCredential(String tokenType, CredentialEntity credential) {
+        redisTemplate.opsForValue().set(tokenType +": " + credential.getHashToken(), credential, Duration.between(Instant.now(), credential.getExpiresAt()));
     }
 
     @Override
-    public CredentialEntity retrieveCredentials(String tokenType, String tokenHash, boolean deleteOnRetrieval) {
+    public CredentialEntity retrieveCredential(String tokenType, String tokenHash, boolean deleteOnRetrieval) {
         CredentialEntity token = redisTemplate.opsForValue().get(tokenType + ": " + tokenHash);
         if (token == null)
-            throw new UnauthorizedException("Token not found");
+            throw new UnauthorizedException("Credential not found");
         if (deleteOnRetrieval)
-            deleteCredentials(tokenType, tokenHash);
+            deleteCredential(tokenType, tokenHash);
         return token;
     }
 
-    private void deleteCredentials(String tokenType, String tokenHash){
+    private void deleteCredential(String tokenType, String tokenHash){
         redisTemplate.delete(tokenType + ": " + tokenHash);
     }
 }

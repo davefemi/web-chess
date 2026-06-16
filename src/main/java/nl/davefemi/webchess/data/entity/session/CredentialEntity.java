@@ -8,8 +8,15 @@ import java.util.Map;
 
 @Data
 public class CredentialEntity {
-    String hashToken;
+    private String hashToken;
     private Instant expiresAt;
-    Map<String, String> claims = new HashMap<>();
+    private Map<String, String> claims = new HashMap<>();
 
+    public String getClaim(String key){
+        return claims.get(key);
+    }
+
+    public void expiresAtPlusSeconds(int secondsToAdd){
+        expiresAt = Instant.now().plusSeconds(secondsToAdd);
+    }
 }
