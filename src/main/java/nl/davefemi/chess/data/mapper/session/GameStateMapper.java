@@ -1,13 +1,12 @@
 package nl.davefemi.chess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.data.dto.session.GameStateDTO;
+import nl.davefemi.chess.http.response.game.GameStateDto;
 import nl.davefemi.chess.data.entity.session.GameStateEntity;
 import nl.davefemi.chess.data.entity.MoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PieceMapper;
 import nl.davefemi.chess.data.mapper.record.MoveRecordMapper;
 import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.play.model.game.Game;
 import nl.davefemi.chess.play.model.game.GameStatus;
 import nl.davefemi.chess.play.model.game.Color;
@@ -37,7 +36,7 @@ public class GameStateMapper {
         String turn;
         try{
             turn = game.getSideToMove().toString();
-        } catch (NullPointerException | GameException e) {
+        } catch (NullPointerException e) {
             turn = null;
         }
         entity.setColorToMove(turn);
@@ -76,16 +75,11 @@ public class GameStateMapper {
         };
     }
 
-    public GameStateDTO mapDomainToDTO(Game game) throws BoardException {
-        GameStateDTO dto = new GameStateDTO();
+    public GameStateDto mapDomainToDto(Game game) throws BoardException {
+        GameStateDto dto = new GameStateDto();
         dto.setId(game.getId());
         dto.setCurrentRound(game.getCurrentRound());
-        String sideToMove = null;
-        try {
-            sideToMove = game.getSideToMove().toString();
-        } catch (GameException e) {
-
-        }
+        String sideToMove = game.getSideToMove() == null ? null : game.getSideToMove().toString();
         dto.setColorToMove(sideToMove);
         dto.setGamePhase(game.getStatus().phase().getPhase());
         dto.setInCheck(game.isInCheck());

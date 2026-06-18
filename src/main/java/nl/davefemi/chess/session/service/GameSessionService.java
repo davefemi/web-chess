@@ -2,20 +2,25 @@ package nl.davefemi.chess.session.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.chess.data.dto.session.JoinSessionDTO;
-import nl.davefemi.chess.data.dto.session.SessionInitiationDTO;
-import nl.davefemi.chess.data.dto.session.SessionResponseDTO;
+import nl.davefemi.chess.http.response.session.AcceptedSessionResponse;
+import nl.davefemi.chess.http.response.session.EndedSessionResponse;
+import nl.davefemi.chess.http.response.session.RequestedSessionResponse;
+import nl.davefemi.chess.http.response.session.SessionResponse;
 import nl.davefemi.chess.data.entity.session.GameSessionEntity;
 import nl.davefemi.chess.data.mapper.session.*;
 import nl.davefemi.chess.data.repository.SessionRepository;
 import nl.davefemi.chess.exception.InvalidTokenException;
 import nl.davefemi.chess.exception.SessionException;
+import nl.davefemi.chess.http.websocket.service.event.RematchAcceptedEvent;
+import nl.davefemi.chess.http.websocket.service.event.RematchDeclinedEvent;
+import nl.davefemi.chess.http.websocket.service.event.RematchRequestEvent;
 import nl.davefemi.chess.play.model.game.Game;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.play.model.game.Color;
 import nl.davefemi.chess.session.model.GameSession;
 import nl.davefemi.chess.session.model.Player;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.util.UUID;
@@ -29,8 +34,9 @@ public class GameSessionService {
     private final SessionRepository sessionStore;
     private final SessionResponseMapper sessionResponseMapper;
     private final CredentialService credentialService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public SessionInitiationDTO startGameSession(String color) throws SessionException, BoardException, InvalidTokenException {
+    public RequestedSessionResponse startGameSession(String color) throws SessionException, BoardException, InvalidTokenException {
         GameSession session = new GameSession();
         log.info("Executed sessionId={}: session created", session.getSessionId());
         Player player = color == null
@@ -39,7 +45,7 @@ public class GameSessionService {
         String accessToken = credentialService.getAccessToken(session.getSessionId().toString());
         String playerToken = credentialService.getPlayerToken(player);
         storeSession(session);
-        return sessionResponseMapper.mapToInitiationResponseDTO(
+        return sessionResponseMapper.getRequestedSessionResponse(
                 session.getCurrentGame().getId(),
                 player.getMessageId(),
                 playerToken,
@@ -47,7 +53,7 @@ public class GameSessionService {
                 accessToken);
     }
 
-    public JoinSessionDTO joinGameSession(String accessToken)
+    public AcceptedSessionResponse joinGameSession(String accessToken)
             throws SessionException, FileNotFoundException, BoardException, GameException, InvalidTokenException {
         GameSession session =  retrieveSession(credentialService.authenticateAccessToken(accessToken));
         Player player = session.addPlayer();
@@ -55,40 +61,46 @@ public class GameSessionService {
         session.startSession();
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapToJoinSessionResponseDTO(
+        return sessionResponseMapper.getAcceptedSessionResponse(
                 session.getCurrentGame().getId(),
                 player.getMessageId(),
                 playerToken,
                 player.getColor().toString());
     }
 
-    public SessionResponseDTO endSession(Player player)
+    public EndedSessionResponse endSession(Player player)
             throws FileNotFoundException, SessionException, BoardException {
         GameSession session = retrieveSession(player.getSessionId());
         session.endSession(player);
         storeSession(session);
-        return sessionResponseMapper.mapToDTO( player.getColor().toString(), "Session ended");
+        return sessionResponseMapper.getEndedSessionResponse(player.getColor().toString());
     }
 
-    public SessionResponseDTO startRematch(Player player)
+    public SessionResponse startRematch(Player player)
             throws FileNotFoundException, BoardException, SessionException {
         GameSession session =  retrieveSession(player.getSessionId());
         Game game = session.getRematch(player);
         log.info("Executed sessionId={}: new game created", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapToDTO(player.getColor().toString(),
-                gameStateMapper.mapDomainToDTO(game));
+        applicationEventPublisher.publishEvent(new RematchRequestEvent(session.getSessionId(), game.getId(), player.getColor().toString()));
+        return sessionResponseMapper.getSessionResponse(player.getColor().toString(),
+                gameStateMapper.mapDomainToDto(game));
     }
 
-    public SessionResponseDTO acceptRematch(Player player)
+    public SessionResponse acceptRematch(Player player, boolean accepted)
             throws FileNotFoundException, SessionException, BoardException, GameException {
         GameSession session =  retrieveSession(player.getSessionId());
-        session.acceptRematch(player);
-        Game game = session.getCurrentGame();
-        log.info("Executed sessionId={}: new game started", session.getSessionId());
-        storeSession(session);
-        return sessionResponseMapper.mapToDTO(player.getColor().toString(),
-                gameStateMapper.mapDomainToDTO(game));
+        if (accepted) {
+            session.acceptRematch(player);
+            Game game = session.getCurrentGame();
+            log.info("Executed sessionId={}: new game started", session.getSessionId());
+            storeSession(session);
+            applicationEventPublisher.publishEvent(new RematchAcceptedEvent(session.getSessionId(), game.getId(), player.getColor().toString()));
+            return sessionResponseMapper.getSessionResponse(player.getColor().toString(),
+                    gameStateMapper.mapDomainToDto(game));
+        }
+        applicationEventPublisher.publishEvent(new RematchDeclinedEvent(session.getSessionId(), player.getColor().toString()));
+        return null;
     }
 
     private GameSession retrieveSession(UUID sessionId)

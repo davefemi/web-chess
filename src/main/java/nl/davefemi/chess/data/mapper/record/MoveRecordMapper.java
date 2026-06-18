@@ -2,7 +2,7 @@ package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.data.entity.record.CastlingMoveRecordEntity;
-import nl.davefemi.chess.data.dto.MoveRecordDTO;
+import nl.davefemi.chess.http.dto.MoveRecordDto;
 import nl.davefemi.chess.data.entity.MoveRecordEntity;
 import nl.davefemi.chess.data.entity.record.EnPassantMoveRecordEntity;
 import nl.davefemi.chess.data.entity.record.PromotionMoveRecordEntity;
@@ -36,7 +36,7 @@ public class MoveRecordMapper {
         return singleMoveRecordMapper.mapDomainToEntity(r);
     }
 
-    public MoveRecordDTO mapDomainToDTO(MoveRecord record){
+    public MoveRecordDto mapDomainToDTO(MoveRecord record){
         if (record instanceof CastlingMoveRecord r){
             return castlingMoveRecordMapper.mapDomainToDTO(r);
         }

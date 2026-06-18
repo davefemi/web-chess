@@ -2,11 +2,11 @@ package nl.davefemi.chess.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
 
-import nl.davefemi.chess.data.dto.move.CastlingMoveDTO;
-import nl.davefemi.chess.data.dto.MoveDTO;
-import nl.davefemi.chess.data.dto.move.EnPassantMoveDTO;
-import nl.davefemi.chess.data.dto.move.PromotionMoveDTO;
-import nl.davefemi.chess.data.dto.move.SingleMoveDTO;
+import nl.davefemi.chess.http.dto.move.CastlingMoveDto;
+import nl.davefemi.chess.http.dto.MoveDto;
+import nl.davefemi.chess.http.dto.move.EnPassantMoveDto;
+import nl.davefemi.chess.http.dto.move.PromotionMoveDto;
+import nl.davefemi.chess.http.dto.move.SingleMoveDto;
 import nl.davefemi.chess.play.model.actions.move.CastlingMove;
 import nl.davefemi.chess.play.model.actions.move.Move;
 import nl.davefemi.chess.play.model.actions.move.PromotionMove;
@@ -22,7 +22,7 @@ public class MoveMapper {
     private final CastlingMoveMapper castlingMoveMapper;
     private final PromotionMoveMapper promotionMoveMapper;
 
-    public MoveDTO mapDomainToDTO(Move move){
+    public MoveDto mapDomainToDTO(Move move){
         if (move instanceof CastlingMove m)
             return castlingMoveMapper.mapDomainToDTO(m);
         if (move instanceof PromotionMove m)
@@ -30,18 +30,18 @@ public class MoveMapper {
         return singleMoveMapper.mapDomainToDTO((SingleMove) move);
     }
 
-    public Move mapDTOtoDomain(MoveDTO move){
-        if (move instanceof CastlingMoveDTO m)
+    public Move mapDTOtoDomain(MoveDto move){
+        if (move instanceof CastlingMoveDto m)
             return castlingMoveMapper.mapDTOtoDomain(m);
-        if (move instanceof PromotionMoveDTO m)
+        if (move instanceof PromotionMoveDto m)
             return promotionMoveMapper.mapDTOtoDomain(m);
-        if (move instanceof EnPassantMoveDTO m)
+        if (move instanceof EnPassantMoveDto m)
             return singleMoveMapper.mapDTOtoDomain(m);
-        return singleMoveMapper.mapDTOtoDomain((SingleMoveDTO) move);
+        return singleMoveMapper.mapDTOtoDomain((SingleMoveDto) move);
     }
 
-    public List<MoveDTO> mapDomainToDTO(List<Move> moves){
-        List<MoveDTO> dtos = new ArrayList<>();
+    public List<MoveDto> mapDomainToDTO(List<Move> moves){
+        List<MoveDto> dtos = new ArrayList<>();
         for (Move m : moves){
             dtos.add(mapDomainToDTO(m));
         }

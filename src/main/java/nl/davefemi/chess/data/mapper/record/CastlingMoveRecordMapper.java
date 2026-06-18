@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.data.dto.record.CastlingMoveRecordDTO;
+import nl.davefemi.chess.http.dto.record.CastlingMoveRecordDto;
 import nl.davefemi.chess.data.entity.record.CastlingMoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PositionMapper;
 import nl.davefemi.chess.play.model.actions.move.CastlingMove;
@@ -41,8 +41,8 @@ public class CastlingMoveRecordMapper {
         return dto;
     }
 
-    protected CastlingMoveRecordDTO mapDomainToDTO(CastlingMoveRecord record){
-        CastlingMoveRecordDTO dto = new CastlingMoveRecordDTO();
+    protected CastlingMoveRecordDto mapDomainToDTO(CastlingMoveRecord record){
+        CastlingMoveRecordDto dto = new CastlingMoveRecordDto();
         SingleMove kingMove = record.move().moveKing();
         SingleMove rookMove = record.move().moveRook();
         dto.setKingOldPos(positionMapper.mapDomainToDTO(kingMove.from()));

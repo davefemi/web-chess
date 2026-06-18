@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.data.dto.move.PositionPieceDTO;
+import nl.davefemi.chess.http.dto.move.PositionPieceDto;
 import nl.davefemi.chess.data.entity.session.PieceEntity;
 import nl.davefemi.chess.play.model.board.Piece;
 import nl.davefemi.chess.play.model.board.PieceType;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 public class PieceMapper {
     private final PositionMapper positionMapper;
 
-    public PositionPieceDTO mapDomainToDTO(Square position, Piece piece){
-        PositionPieceDTO dto = new PositionPieceDTO();
+    public PositionPieceDto mapDomainToDTO(Square position, Piece piece){
+        PositionPieceDto dto = new PositionPieceDto();
         dto.setSquare(positionMapper.mapDomainToDTO(position));
         dto.setPieceType(piece == null ? "vacant" : piece.type().toString());
         dto.setColor(piece == null ? "vacant": piece.color().toString());

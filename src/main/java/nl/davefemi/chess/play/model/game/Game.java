@@ -62,7 +62,7 @@ public class Game {
         status = GameStatus.active();
     }
 
-    public Color getSideToMove() throws GameException {
+    public Color getSideToMove() {
         if (!status.isFinished())
             return turnGenerator.peek();
         return null;
@@ -110,9 +110,9 @@ public class Game {
         status = GameStatus.surrender(color);
     }
 
-    public Move getLastMove(){
+    public MoveRecord getLastMove(){
         if (!moveHistory.isEmpty())
-            return moveHistory.getLast().getMove();
+            return moveHistory.getLast();
         return null;
     }
 

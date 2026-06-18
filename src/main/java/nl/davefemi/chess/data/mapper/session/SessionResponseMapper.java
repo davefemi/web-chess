@@ -1,8 +1,6 @@
 package nl.davefemi.chess.data.mapper.session;
 
-import nl.davefemi.chess.data.dto.session.JoinSessionDTO;
-import nl.davefemi.chess.data.dto.session.SessionInitiationDTO;
-import nl.davefemi.chess.data.dto.session.SessionResponseDTO;
+import nl.davefemi.chess.http.response.session.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,15 +10,15 @@ public class SessionResponseMapper {
     private String websocketId;
 
 
-    public SessionResponseDTO mapToDTO(String color, Object message){
-        SessionResponseDTO dto = new SessionResponseDTO();
+    public SessionResponse getSessionResponse(String color, Object message){
+        SessionResponse dto = new SessionResponse();
         dto.setColor(color);
         dto.setMessage(message);
         return dto;
     }
 
-    public SessionInitiationDTO mapToInitiationResponseDTO(String gameId, String messageId, String playerToken, String playerColor, String accessToken){
-        SessionInitiationDTO dto = new SessionInitiationDTO();
+    public RequestedSessionResponse getRequestedSessionResponse(String gameId, String messageId, String playerToken, String playerColor, String accessToken){
+        RequestedSessionResponse dto = new RequestedSessionResponse();
         dto.setPlayerToken(playerToken);
         dto.setPlayerColor(playerColor);
         dto.setJoinToken(accessToken);
@@ -30,8 +28,8 @@ public class SessionResponseMapper {
         return dto;
     }
 
-    public JoinSessionDTO mapToJoinSessionResponseDTO(String gameId, String messageId, String playerToken, String playerColor){
-        JoinSessionDTO dto = new JoinSessionDTO();
+    public AcceptedSessionResponse getAcceptedSessionResponse(String gameId, String messageId, String playerToken, String playerColor){
+        AcceptedSessionResponse dto = new AcceptedSessionResponse();
         dto.setPlayerToken(playerToken);
         dto.setPlayerColor(playerColor);
         dto.setWebsocketId(websocketId);
@@ -40,4 +38,24 @@ public class SessionResponseMapper {
         return dto;
     }
 
+    public EndedSessionResponse getEndedSessionResponse(String playerColor){
+        EndedSessionResponse dto = new EndedSessionResponse();
+        dto.setEndedBy(playerColor);
+        return dto;
+    }
+
+    public RequestedRematchResponse getRequestedRematchResponse(String playerColor, String newGameId){
+        RequestedRematchResponse dto = new RequestedRematchResponse();
+        dto.setNewGameRequestedBy(playerColor);
+        dto.setNewGameId(newGameId);
+        return dto;
+    }
+
+    public RematchAcceptanceResponse getRematchAcceptanceResponse(boolean accepted, String playerColor, String newGameId){
+        RematchAcceptanceResponse dto = new RematchAcceptanceResponse();
+        dto.setAccepted(accepted);
+        dto.setBy(playerColor);
+        dto.setNewGameId(newGameId);
+        return dto;
+    }
 }

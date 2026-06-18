@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.data.dto.record.PromotionMoveRecordDTO;
+import nl.davefemi.chess.http.dto.record.PromotionMoveRecordDto;
 import nl.davefemi.chess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PositionMapper;
 import nl.davefemi.chess.play.model.actions.move.PromotionMove;
@@ -40,8 +40,8 @@ public class PromotionMoveRecordMapper {
         return data;
     }
 
-    protected PromotionMoveRecordDTO mapDomainToDTO(PromotionMoveRecord record){
-        PromotionMoveRecordDTO data = new PromotionMoveRecordDTO();
+    protected PromotionMoveRecordDto mapDomainToDTO(PromotionMoveRecord record){
+        PromotionMoveRecordDto data = new PromotionMoveRecordDto();
         data.setOldPos(positionMapper.mapDomainToDTO(record.move().move().from()));
         data.setNewPos(positionMapper.mapDomainToDTO(record.move().move().to()));
         data.setPlayerColor(record.playerColor().toString());

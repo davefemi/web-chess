@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.data.dto.record.SingleMoveRecordDTO;
+import nl.davefemi.chess.http.dto.record.SingleMoveRecordDto;
 import nl.davefemi.chess.data.entity.record.SingleMoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PositionMapper;
 import nl.davefemi.chess.play.model.actions.move.SingleMove;
@@ -41,8 +41,8 @@ public class SingleMoveRecordMapper {
         return dto;
     }
 
-    protected SingleMoveRecordDTO mapDomainToDTO(SingleMoveRecord record){
-        SingleMoveRecordDTO dto = new SingleMoveRecordDTO();
+    protected SingleMoveRecordDto mapDomainToDTO(SingleMoveRecord record){
+        SingleMoveRecordDto dto = new SingleMoveRecordDto();
         dto.setOldPos(positionMapper.mapDomainToDTO(record.move().from()));
         dto.setNewPos(positionMapper.mapDomainToDTO(record.move().to()));
         dto.setPlayerColor(record.playerColor().toString());

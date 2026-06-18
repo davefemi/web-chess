@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.data.dto.session.BoardDTO;
+import nl.davefemi.chess.http.response.game.BoardDto;
 import nl.davefemi.chess.data.entity.session.BoardContextEntity;
 import nl.davefemi.chess.data.entity.session.PieceEntity;
 import nl.davefemi.chess.data.mapper.move.PieceMapper;
@@ -21,8 +21,8 @@ import java.util.List;
 public class BoardMapper {
     private final PieceMapper positionPieceMapper;
 
-    public BoardDTO mapDomainToDTO(Board board) throws BoardException {
-        BoardDTO dto = new BoardDTO();
+    public BoardDto mapDomainToDTO(Board board) throws BoardException {
+        BoardDto dto = new BoardDto();
         for (Piece p : board.getPieces()){
             dto.getBoard().add(positionPieceMapper.mapDomainToDTO(board.getPositionById(p.id()), p));
         }
