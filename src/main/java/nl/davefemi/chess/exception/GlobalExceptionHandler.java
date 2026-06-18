@@ -22,8 +22,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, getMessage(ex, request));
     }
 
-    @ExceptionHandler(SessionException.class)
-    public ProblemDetail handleSessionExceptions(SessionException ex, HttpServletRequest request) {
+    @ExceptionHandler(SessionNotFoundException.class)
+    public ProblemDetail handleSessionExceptions(SessionNotFoundException ex, HttpServletRequest request) {
         log.error(ex.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, getMessage(ex, request));
     }

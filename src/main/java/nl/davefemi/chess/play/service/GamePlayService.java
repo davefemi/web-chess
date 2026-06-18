@@ -9,7 +9,7 @@ import nl.davefemi.chess.data.mapper.session.GameStateMapper;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.exception.MoveException;
-import nl.davefemi.chess.exception.SessionException;
+import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.http.websocket.event.CompletedMoveEvent;
 import nl.davefemi.chess.play.model.game.Game;
 import nl.davefemi.chess.session.model.GameSession;
@@ -17,8 +17,6 @@ import nl.davefemi.chess.session.model.Player;
 import nl.davefemi.chess.session.service.GameSessionService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
 
 @Slf4j
 @Service
@@ -30,7 +28,7 @@ public class GamePlayService {
     private final ApplicationEventPublisher publisher;
 
     public GameStateDto executeMove(Player player, MoveDto move)
-            throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
+            throws BoardException, MoveException, GameException, SessionNotFoundException {
         GameSession gameSession = gameSessionService.getGameSession(player.getSessionId());
         Game game = gameSession.getCurrentGame();
         if (game.getStatus().isActive()) {
@@ -45,7 +43,7 @@ public class GamePlayService {
     }
 
     public GameStateDto surrender(Player player)
-            throws FileNotFoundException, SessionException, BoardException, GameException {
+            throws SessionNotFoundException, BoardException, GameException {
         GameSession gameSession = gameSessionService.getGameSession(player.getSessionId());
         Game game = gameSession.getCurrentGame();
         if (game.getStatus().isActive()) {

@@ -3,7 +3,7 @@ package nl.davefemi.chess.data.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.data.entity.session.GameSessionEntity;
-import nl.davefemi.chess.exception.SessionException;
+import nl.davefemi.chess.exception.SessionNotFoundException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -18,10 +18,10 @@ public class SessionStore implements SessionRepository {
     private final int sessionTimeToLive = 5;
 
     @Override
-    public GameSessionEntity retrieveGameSessionById(String sessionId) throws SessionException {
+    public GameSessionEntity retrieveGameSessionById(String sessionId) throws SessionNotFoundException {
         GameSessionEntity sessionEntity = redisTemplate.opsForValue().get("session: " + sessionId);
         if (sessionEntity == null)
-            throw new SessionException("Session not found");
+            throw new SessionNotFoundException("Session not found");
         return sessionEntity;
     }
 

@@ -7,13 +7,11 @@ import nl.davefemi.chess.http.request.MoveRequest;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.exception.MoveException;
-import nl.davefemi.chess.exception.SessionException;
+import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.play.service.GamePlayService;
 import nl.davefemi.chess.session.model.Player;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.FileNotFoundException;
 
 @Slf4j
 @RestController
@@ -24,7 +22,7 @@ public class ProvisionaryGameController {
 
     @PostMapping("/moves")
     public ResponseEntity<?> executeMove(HttpServletRequest request, @RequestBody MoveRequest move)
-            throws FileNotFoundException, MoveException, BoardException, GameException, SessionException {
+            throws MoveException, BoardException, GameException, SessionNotFoundException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received from sessionId={}, playerId={}: move request {}",
                 player.getSessionId(), player.getId(), move.getMove());
@@ -33,7 +31,7 @@ public class ProvisionaryGameController {
 
     @PostMapping("/surrender")
     public ResponseEntity<?> surrender(HttpServletRequest request)
-            throws FileNotFoundException, BoardException, GameException, SessionException {
+            throws BoardException, GameException, SessionNotFoundException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received from sessionId={}, playerId={}:  surrender request", player.getSessionId(), player.getId());
         return ResponseEntity.ok(playService.surrender(player));

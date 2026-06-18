@@ -3,7 +3,7 @@ package nl.davefemi.chess.http.websocket.event;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.data.mapper.session.SessionResponseMapper;
 import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.exception.SessionException;
+import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
 import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
 import nl.davefemi.chess.http.websocket.service.GameMessagingService;
@@ -15,7 +15,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
-import java.io.FileNotFoundException;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class GameEventListener {
 
     @EventListener
     public void onSubscribe(SessionSubscribeEvent event)
-            throws FileNotFoundException, SessionException, BoardException {
+            throws SessionNotFoundException, BoardException {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         if (accessor.getUser() == null || accessor.getDestination() == null)
             return;
@@ -39,7 +38,7 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void onMove(CompletedMoveEvent event){
+    public void onCompletedMove(CompletedMoveEvent event){
         try {
             gameMessageService.publishGameState(
                     event.getGameId(),
@@ -50,7 +49,7 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void requestedRematch(RematchRequestEvent event) throws FileNotFoundException, SessionException, BoardException {
+    public void onRematchRequest(RematchRequestEvent event) throws SessionNotFoundException, BoardException {
         GameSession session = gameSessionService.getGameSession(event.getSessionId());
         String player1MessageId = session.getPlayers().getFirst().getMessageId();
         String player2MessageId = session.getPlayers().getLast().getMessageId();
@@ -61,7 +60,7 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void acceptedRematch(RematchAcceptedEvent event) throws FileNotFoundException, SessionException, BoardException {
+    public void onAcceptedRematch(RematchAcceptedEvent event) throws SessionNotFoundException, BoardException {
         GameSession session = gameSessionService.getGameSession(event.getSessionId());
         String player1MessageId = session.getPlayers().getFirst().getMessageId();
         String player2MessageId = session.getPlayers().getLast().getMessageId();
@@ -73,7 +72,7 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void declinedRematch(RematchDeclinedEvent event) throws FileNotFoundException, SessionException, BoardException {
+    public void onDeclinedRematch(RematchDeclinedEvent event) throws SessionNotFoundException, BoardException {
         GameSession session = gameSessionService.getGameSession(event.getSessionId());
         String player1MessageId = session.getPlayers().getFirst().getMessageId();
         String player2MessageId = session.getPlayers().getLast().getMessageId();

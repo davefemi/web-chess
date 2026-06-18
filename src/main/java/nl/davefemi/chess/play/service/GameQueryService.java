@@ -8,7 +8,7 @@ import nl.davefemi.chess.data.mapper.session.BoardMapper;
 import nl.davefemi.chess.data.mapper.session.GameStateMapper;
 import nl.davefemi.chess.data.mapper.session.SessionResponseMapper;
 import nl.davefemi.chess.data.mapper.move.MoveMapper;
-import nl.davefemi.chess.exception.SessionException;
+import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.play.model.game.Game;
 import nl.davefemi.chess.play.model.actions.move.Move;
 import nl.davefemi.chess.exception.BoardException;
@@ -16,7 +16,6 @@ import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.session.model.Player;
 import nl.davefemi.chess.session.service.GameSessionService;
 import org.springframework.stereotype.Service;
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +30,7 @@ public class GameQueryService {
     private final GameStateMapper gameStateMapper;
 
     public SessionResponse getChessPositions(Player player)
-            throws FileNotFoundException, BoardException, SessionException {
+            throws BoardException, SessionNotFoundException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         return sessionResponseMapper.getSessionResponse(
                 game.getSideToMove() == null
@@ -41,26 +40,26 @@ public class GameQueryService {
     }
 
     public SessionResponse getPlayerTurn(Player player)
-            throws FileNotFoundException, BoardException, SessionException {
+            throws BoardException, SessionNotFoundException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         return sessionResponseMapper.getSessionResponse(game.getSideToMove().toString(),  null);
     }
 
     public SessionResponse isCheck(Player player)
-            throws FileNotFoundException, BoardException, SessionException {
+            throws BoardException, SessionNotFoundException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         return sessionResponseMapper.getSessionResponse(player.getColor().toString(), game.isCheck(player.getColor()));
     }
 
     public SessionResponse getAvailableMoves(Player player)
-            throws BoardException, FileNotFoundException, SessionException, GameException {
+            throws BoardException, SessionNotFoundException, GameException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         List<Move> moves = game.getAvailableMoves(player.getColor());
         return sessionResponseMapper.getSessionResponse(player.getColor().toString(), moveMapper.mapDomainToDTO(moves));
     }
 
     public GameStateDto getCurrentGameState(UUID sessionId)
-            throws FileNotFoundException, SessionException, BoardException {
+            throws SessionNotFoundException, BoardException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return gameStateMapper.mapDomainToDto(game);
     }
