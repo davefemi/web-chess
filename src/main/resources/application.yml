@@ -8,3 +8,9 @@ spring:
       port: 6379
   jackson:
     property-naming-strategy: SNAKE_CASE
+external:
+  invite_url: ${INVITE_URL}
+  websocket_id: ${WEBSOCKET_ENDPOINT}
+  stomp_connect: ${STOMP_CONNECT}
+  application_receives_at: ${STOMP_RECEIVES_AT}
+  application_sends_to: ${STOMP_SENDS_TO}

@@ -24,6 +24,7 @@ public class GamePlayService {
     private final MoveMapper moveMapper;
     private final GameStateMapper gameStateMapper;
     private final GameSessionService gameSessionService;
+    private final GameMessageService gameMessageService;
 
     public GameStateDTO executeMove(Player player, MoveDTO move)
             throws BoardException, MoveException, GameException, FileNotFoundException, SessionException {
@@ -39,6 +40,8 @@ public class GamePlayService {
             gameSessionService.saveGameSession(gameSession);
             log.info("Executed sessionId={}, playerId={}, move {}", gameSession.getSessionId().toString(),
                     player.getId(), game.getLastMove().toString());
+            gameMessageService.sendGameState(gameSession.getSubscriptionId(),
+                    gameStateMapper.mapDomainToDTO(game, playerColor));
             return gameStateMapper.mapDomainToDTO(game, playerColor);
         }
         throw new GameException("Game is not active");

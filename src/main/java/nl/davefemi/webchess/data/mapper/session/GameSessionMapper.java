@@ -28,6 +28,7 @@ public class GameSessionMapper {
             sessionEntity.getGames().add(gameStateMapper.mapDomainToEntity(g));
         }
         sessionEntity.setSessionId(session.getSessionId().toString());
+        sessionEntity.setSubscriptionId(session.getSubscriptionId());
         sessionEntity.setActiveSession(session.isActive());
         sessionEntity.setPlayers(mapPlayersToEntities(session.getPlayers()));
         if (session.getPlayerToAccept() != null)
@@ -42,13 +43,17 @@ public class GameSessionMapper {
     private PlayerEntity mapPlayerToEntity(Player player){
         PlayerEntity entity = new PlayerEntity();
         entity.setId(player.getId().toString());
+        entity.setMessageId(player.getMessageId());
         entity.setSessionId(player.getSessionId().toString());
         entity.setPlayerColor(player.getColor().toString());
         return entity;
     }
 
     private Player mapEntityToPlayer(PlayerEntity player, String sessionId){
-        return new Player(UUID.fromString(player.getId()), UUID.fromString(sessionId), Color.fromString(player.getPlayerColor()));
+        return new Player(UUID.fromString(player.getId()),
+                player.getMessageId(),
+                UUID.fromString(sessionId),
+                Color.fromString(player.getPlayerColor()));
     }
 
     public GameSession mapEntityToDomain(GameSessionEntity entity) throws BoardException, SessionException {
@@ -61,6 +66,7 @@ public class GameSessionMapper {
             games.add(gameStateMapper.mapEntityToDomain(g));
         }
         return new GameSession(UUID.fromString(entity.getSessionId()),
+                entity.getSubscriptionId(),
                 entity.isActiveSession(), games, players,
                 entity.getPlayerToAccept() == null ? null : mapEntityToPlayer(entity.getPlayerToAccept(), entity.getSessionId()));
     }

@@ -3,6 +3,7 @@ package nl.davefemi.webchess.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.webchess.data.dto.session.JoinSessionDTO;
 import nl.davefemi.webchess.data.dto.session.SessionInitiationDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.exception.BoardException;
@@ -38,7 +39,7 @@ public class GameSessionController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<SessionInitiationDTO> joinGame
+    public ResponseEntity<JoinSessionDTO> joinGame
             (@RequestParam("token") String accessToken, HttpServletRequest request)
             throws FileNotFoundException, SessionException, BoardException, GameException, InvalidTokenException {
         log.info("Received from {}: join request", request.getSession().getId());

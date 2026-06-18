@@ -5,6 +5,7 @@ import nl.davefemi.webchess.exception.BoardException;
 import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.actions.move.Move;
 import nl.davefemi.webchess.game.actions.move.*;
+
 import java.util.*;
 
 import static nl.davefemi.webchess.game.board.PieceType.KING;

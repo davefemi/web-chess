@@ -7,6 +7,7 @@ import nl.davefemi.webchess.exception.GameException;
 import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.game.Game;
 import nl.davefemi.webchess.exception.SessionException;
+import nl.davefemi.webchess.util.TokenGenerator;
 
 import java.util.*;
 
@@ -14,6 +15,8 @@ import java.util.*;
 public final class GameSession {
     @Getter
     private final UUID sessionId;
+    @Getter
+    private final String subscriptionId;
     @Getter @Setter
     private boolean isActive = true;
     private final List<Game> games = new ArrayList<>();
@@ -25,6 +28,7 @@ public final class GameSession {
         this.sessionId = UUID.randomUUID();
         Game game = new Game();
         games.add(game);
+        subscriptionId = TokenGenerator.generateToken(8);
     }
 
     public Game getRematch(Player player) throws SessionException {
@@ -61,9 +65,10 @@ public final class GameSession {
         return true;
     }
 
-    public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept)
+    public GameSession(UUID sessionId, String subscriptionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept)
             throws SessionException {
         this.sessionId = sessionId;
+        this.subscriptionId = subscriptionId;
         this.games.addAll(games);
         for (Player p : players){
             if (checkExistingPlayers(p))
@@ -71,10 +76,11 @@ public final class GameSession {
             if (p.equals(playerToAccept))
                 this.playerToAccept = playerToAccept;
         }
+
     }
 
     public Player addPlayer(Color color) throws SessionException {
-        Player player = new Player(UUID.randomUUID(), sessionId, color);
+        Player player = new Player(UUID.randomUUID(), TokenGenerator.generateToken(8), sessionId, color);
         if (checkExistingPlayers(player))
             players.add(player);
         return player;
@@ -86,11 +92,11 @@ public final class GameSession {
             throw new SessionException("Amount of players possible exceeded");
         if (players.size() == 1){
             Color color = Color.getOpponent(players.getLast().getColor());
-            player = new Player(UUID.randomUUID(), sessionId, color);
+            player = new Player(UUID.randomUUID(), TokenGenerator.generateToken(8), sessionId, color);
             players.add(player);
             return player;
         }
-        player = new Player(UUID.randomUUID(), sessionId, Color.WHITE);
+        player = new Player(UUID.randomUUID(), TokenGenerator.generateToken(8), sessionId, Color.WHITE);
         players.add(player);
         return player;
     }

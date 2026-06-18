@@ -2,6 +2,7 @@ package nl.davefemi.webchess.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.webchess.data.dto.session.JoinSessionDTO;
 import nl.davefemi.webchess.data.dto.session.SessionInitiationDTO;
 import nl.davefemi.webchess.data.dto.session.SessionResponseDTO;
 import nl.davefemi.webchess.data.entity.session.GameSessionEntity;
@@ -27,7 +28,6 @@ public class GameSessionService {
     private final GameStateMapper gameStateMapper;
     private final SessionRepository sessionStore;
     private final SessionResponseMapper sessionResponseMapper;
-    private static final String INVITE_URL = "/games/join?token=%s";
     private final CredentialService credentialService;
 
     public SessionInitiationDTO startGameSession(String color) throws SessionException, BoardException, InvalidTokenException {
@@ -39,10 +39,15 @@ public class GameSessionService {
         String accessToken = credentialService.getAccessToken(session.getSessionId().toString());
         String playerToken = credentialService.getPlayerToken(player);
         storeSession(session);
-        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().toString(), String.format(INVITE_URL, accessToken));
+        return sessionResponseMapper.mapToInitiationResponseDTO(
+                session.getSubscriptionId(),
+                player.getMessageId(),
+                playerToken,
+                player.getColor().toString(),
+                accessToken);
     }
 
-    public SessionInitiationDTO joinGameSession(String accessToken)
+    public JoinSessionDTO joinGameSession(String accessToken)
             throws SessionException, FileNotFoundException, BoardException, GameException, InvalidTokenException {
         GameSession session =  retrieveSession(credentialService.authenticateAccessToken(accessToken));
         Player player = session.addPlayer();
@@ -50,8 +55,11 @@ public class GameSessionService {
         session.startSession();
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);
-        return sessionResponseMapper.mapInvitationToDTO(playerToken, player.getColor().toString(),
-                "Successfully joined session");
+        return sessionResponseMapper.mapToJoinSessionResponseDTO(
+                session.getSubscriptionId(),
+                player.getMessageId(),
+                playerToken,
+                player.getColor().toString());
     }
 
     public SessionResponseDTO endSession(Player player)

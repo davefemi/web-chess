@@ -8,13 +8,12 @@ import nl.davefemi.webchess.data.repository.CredentialRepository;
 import nl.davefemi.webchess.exception.InvalidTokenException;
 import nl.davefemi.webchess.game.Color;
 import nl.davefemi.webchess.session.Player;
+import nl.davefemi.webchess.util.TokenGenerator;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Map;
 import java.util.UUID;
@@ -31,8 +30,9 @@ public final class GameCredentialService implements CredentialService {
     private static final String PLAYER_TOKEN = "player_token";
     private static final String SESSION_ID = "session_id";
     private static final String PLAYER_ID = "player_id";
+    private static final String MESSAGE_ID = "message_id";
     private static final String PLAYER_COLOR = "player_color";
-    private final SecureRandom random = new SecureRandom();
+
     private final CredentialRepository tokenRepository;
     private final CredentialMapper tokenMapper;
 
@@ -59,6 +59,7 @@ public final class GameCredentialService implements CredentialService {
                     Map.of(
                             SESSION_ID, player.getSessionId().toString(),
                             PLAYER_ID, player.getId().toString(),
+                            MESSAGE_ID, player.getMessageId(),
                             PLAYER_COLOR, player.getColor().toString()
                     ));
         } catch (NoSuchAlgorithmException e) {
@@ -68,11 +69,7 @@ public final class GameCredentialService implements CredentialService {
 
     private String generateCredential(String tokenType, int bytes, int timeToLive, Map<String, String> claims)
             throws NoSuchAlgorithmException {
-        byte[] array = new byte[bytes];
-        random.nextBytes(array);
-        String token = Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(array);
+        String token = TokenGenerator.generateToken(bytes);
         CredentialEntity credential = tokenMapper.mapToEntity(hash(token), Instant.now().plusSeconds(timeToLive), claims);
         storeCredential(tokenType, credential);
         return token;
@@ -95,6 +92,7 @@ public final class GameCredentialService implements CredentialService {
             storeCredential(PLAYER_TOKEN, credential);
             return new Player(
                     UUID.fromString(credential.getClaim(PLAYER_ID)),
+                    credential.getClaim(MESSAGE_ID),
                     UUID.fromString(credential.getClaim(SESSION_ID)),
                     Color.fromString(credential.getClaim(PLAYER_COLOR))
                     );
