@@ -1,9 +1,9 @@
 import { Client } from "@stomp/stompjs";
 import WebSocket from "ws";
 
-const gameId = "";
-const playerId ="";
-const token = ""
+const gameId = "B3n8Z4tLHA8";
+const playerId ="lRFUPVV4FDo";
+const token = "jeIScrB-exfpCQQvQoJ6lb292vZ3o6ZehqrPqe2j9_M"
 
 const client = new Client({
     webSocketFactory: () => new WebSocket("ws://localhost:8080/NME2fTVJmEY"),
