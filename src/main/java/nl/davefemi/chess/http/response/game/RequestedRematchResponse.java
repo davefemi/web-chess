@@ -1,4 +1,4 @@
-package nl.davefemi.chess.http.response.session;
+package nl.davefemi.chess.http.response.game;
 
 import lombok.Data;
 

@@ -10,7 +10,7 @@ import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.exception.MoveException;
 import nl.davefemi.chess.exception.SessionException;
-import nl.davefemi.chess.http.websocket.service.event.MoveEvent;
+import nl.davefemi.chess.http.websocket.event.CompletedMoveEvent;
 import nl.davefemi.chess.play.model.game.Game;
 import nl.davefemi.chess.session.model.GameSession;
 import nl.davefemi.chess.session.model.Player;
@@ -38,7 +38,7 @@ public class GamePlayService {
             gameSessionService.saveGameSession(gameSession);
             log.info("Executed sessionId={}, playerId={}, move {}", gameSession.getSessionId().toString(),
                     player.getId(), game.getLastMove().toString());
-            publisher.publishEvent(new MoveEvent(gameSession.getSessionId(), game.getId(), player.getColor().toString()));
+            publisher.publishEvent(new CompletedMoveEvent(gameSession.getSessionId(), game.getId(), player.getColor().toString()));
             return gameStateMapper.mapDomainToDto(game);
         }
         throw new GameException("Game is not active");
@@ -52,7 +52,7 @@ public class GamePlayService {
             game.surrender(player.getColor());
             log.info("Executed sessionId={}, playerId={}: surrender request", player.getSessionId(), player.getId());
             gameSessionService.saveGameSession(gameSession);
-            publisher.publishEvent(new MoveEvent(gameSession.getSessionId(), game.getId(), player.getColor().toString()));
+            publisher.publishEvent(new CompletedMoveEvent(gameSession.getSessionId(), game.getId(), player.getColor().toString()));
             return gameStateMapper.mapDomainToDto(game);
         }
         throw new GameException("Game is not active");

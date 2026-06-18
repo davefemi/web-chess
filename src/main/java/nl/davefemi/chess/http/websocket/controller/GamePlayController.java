@@ -2,7 +2,7 @@ package nl.davefemi.chess.http.websocket.controller;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.http.request.MoveRequest;
-import nl.davefemi.chess.http.websocket.service.GameMessageService;
+import nl.davefemi.chess.http.websocket.service.GameMessagingService;
 import nl.davefemi.chess.play.service.GamePlayService;
 import nl.davefemi.chess.session.model.PlayerPrincipal;
 import nl.davefemi.chess.session.service.GameSessionService;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 @MessageMapping("/games")
 @RequiredArgsConstructor
 public class GamePlayController {
-    private final GameMessageService gameMessageService;
+    private final GameMessagingService gameMessageService;
     private final GamePlayService gamePlayService;
     private final GameSessionService gameSessionService;
 

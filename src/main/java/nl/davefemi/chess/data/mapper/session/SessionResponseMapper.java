@@ -1,5 +1,8 @@
 package nl.davefemi.chess.data.mapper.session;
 
+import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
+import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
+import nl.davefemi.chess.http.response.game.RequestedSessionResponse;
 import nl.davefemi.chess.http.response.session.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

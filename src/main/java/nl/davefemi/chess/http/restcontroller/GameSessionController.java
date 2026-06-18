@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.http.response.session.AcceptedSessionResponse;
-import nl.davefemi.chess.http.response.session.RequestedSessionResponse;
+import nl.davefemi.chess.http.response.game.RequestedSessionResponse;
 import nl.davefemi.chess.http.response.session.SessionResponse;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;

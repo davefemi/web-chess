@@ -3,15 +3,15 @@ package nl.davefemi.chess.http.websocket.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.http.response.game.GameStateDto;
-import nl.davefemi.chess.http.response.session.RematchAcceptanceResponse;
-import nl.davefemi.chess.http.response.session.RequestedRematchResponse;
+import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
+import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GameMessageService {
+public class GameMessagingService {
     private final SimpMessagingTemplate messagingTemplate;
     private static final String GAME_STATE_ENDPOINT = "/topic/games/%s/state";
     private static final String PLAYER_ENDPOINT = "/topic/games/players/%s";

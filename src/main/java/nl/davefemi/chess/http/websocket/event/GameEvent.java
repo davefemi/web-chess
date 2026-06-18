@@ -1,4 +1,4 @@
-package nl.davefemi.chess.http.websocket.service.event;
+package nl.davefemi.chess.http.websocket.event;
 
 import lombok.Getter;
 
@@ -8,11 +8,11 @@ import java.util.UUID;
 abstract class GameEvent {
     private final UUID sessionId;
     private final String gameId;
-    private final String causedBy;
+    private final String actionBy;
 
-    public GameEvent(UUID sessionId, String gameId, String causedBy){
+    public GameEvent(UUID sessionId, String gameId, String actionBy){
         this.sessionId = sessionId;
         this.gameId = gameId;
-        this.causedBy = causedBy;
+        this.actionBy = actionBy;
     }
 }

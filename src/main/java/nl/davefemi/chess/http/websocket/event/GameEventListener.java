@@ -1,15 +1,12 @@
-package nl.davefemi.chess.http.websocket.service;
+package nl.davefemi.chess.http.websocket.event;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.data.mapper.session.SessionResponseMapper;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.SessionException;
-import nl.davefemi.chess.http.response.session.RematchAcceptanceResponse;
-import nl.davefemi.chess.http.response.session.RequestedRematchResponse;
-import nl.davefemi.chess.http.websocket.service.event.MoveEvent;
-import nl.davefemi.chess.http.websocket.service.event.RematchAcceptedEvent;
-import nl.davefemi.chess.http.websocket.service.event.RematchDeclinedEvent;
-import nl.davefemi.chess.http.websocket.service.event.RematchRequestEvent;
+import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
+import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
+import nl.davefemi.chess.http.websocket.service.GameMessagingService;
 import nl.davefemi.chess.play.service.GameQueryService;
 import nl.davefemi.chess.session.model.GameSession;
 import nl.davefemi.chess.session.model.PlayerPrincipal;
@@ -23,7 +20,7 @@ import java.io.FileNotFoundException;
 @Component
 @RequiredArgsConstructor
 public class GameEventListener {
-    private final GameMessageService gameMessageService;
+    private final GameMessagingService gameMessageService;
     private final GameQueryService gameQueryService;
     private final GameSessionService gameSessionService;
     private final SessionResponseMapper sessionResponseMapper;
@@ -42,7 +39,7 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void onMove(MoveEvent event){
+    public void onMove(CompletedMoveEvent event){
         try {
             gameMessageService.publishGameState(
                     event.getGameId(),
@@ -58,7 +55,7 @@ public class GameEventListener {
         String player1MessageId = session.getPlayers().getFirst().getMessageId();
         String player2MessageId = session.getPlayers().getLast().getMessageId();
         RequestedRematchResponse response = sessionResponseMapper.getRequestedRematchResponse(
-                event.getCausedBy(),
+                event.getActionBy(),
                 event.getGameId());
         gameMessageService.sendRequestedRematchResponse(player1MessageId, player2MessageId, response);
     }
@@ -70,7 +67,7 @@ public class GameEventListener {
         String player2MessageId = session.getPlayers().getLast().getMessageId();
         RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
                 true,
-                event.getCausedBy(),
+                event.getActionBy(),
                 event.getGameId());
         gameMessageService.sendRematchAcceptanceResponse(player1MessageId,player2MessageId, response);
     }
@@ -82,7 +79,7 @@ public class GameEventListener {
         String player2MessageId = session.getPlayers().getLast().getMessageId();
         RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
                 false,
-                event.getCausedBy(),
+                event.getActionBy(),
                 event.getGameId());
         gameMessageService.sendRematchAcceptanceResponse(player1MessageId, player2MessageId, response);
     }
