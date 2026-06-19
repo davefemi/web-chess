@@ -20,13 +20,12 @@ public class SessionResponseMapper {
         return dto;
     }
 
-    public RequestedSessionResponse getRequestedSessionResponse(String gameId, String messageId, String playerToken, String playerColor, String accessToken){
+    public RequestedSessionResponse getRequestedSessionResponse(String messageId, String playerToken, String playerColor, String accessToken){
         RequestedSessionResponse dto = new RequestedSessionResponse();
         dto.setPlayerToken(playerToken);
         dto.setPlayerColor(playerColor);
         dto.setJoinToken(accessToken);
         dto.setWebsocketId(websocketId);
-        dto.setGameId(gameId);
         dto.setPlayerId(messageId);
         return dto;
     }
@@ -47,18 +46,16 @@ public class SessionResponseMapper {
         return dto;
     }
 
-    public RequestedRematchResponse getRequestedRematchResponse(String playerColor, String newGameId){
+    public RequestedRematchResponse getRequestedRematchResponse(String playerColor){
         RequestedRematchResponse dto = new RequestedRematchResponse();
         dto.setNewGameRequestedBy(playerColor);
-        dto.setNewGameId(newGameId);
         return dto;
     }
 
-    public RematchAcceptanceResponse getRematchAcceptanceResponse(boolean accepted, String playerColor, String newGameId){
+    public RematchAcceptanceResponse getRematchAcceptanceResponse(boolean accepted, String playerColor){
         RematchAcceptanceResponse dto = new RematchAcceptanceResponse();
         dto.setAccepted(accepted);
         dto.setBy(playerColor);
-        dto.setNewGameId(newGameId);
         return dto;
     }
 }

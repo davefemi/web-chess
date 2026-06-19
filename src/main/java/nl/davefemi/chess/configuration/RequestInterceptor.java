@@ -64,13 +64,14 @@ public class RequestInterceptor extends OncePerRequestFilter implements ChannelI
         }
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authorization = accessor.getFirstNativeHeader("Authorization");
+            String correlationId = accessor.getFirstNativeHeader("Correlation_id");
             if (authorization == null || !authorization.startsWith("Bearer ")) {
                 throw new IllegalArgumentException("Missing player token");
             }
             String token = authorization.substring("Bearer ".length());
             try {
                 Player player = credentialService.authenticatePlayerToken(token);
-                accessor.setUser(new PlayerPrincipal(player));
+                accessor.setUser(new PlayerPrincipal(player, correlationId));
             } catch (InvalidTokenException e) {
                 throw new RuntimeException(e);
             }

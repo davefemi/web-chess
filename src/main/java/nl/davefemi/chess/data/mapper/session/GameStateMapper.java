@@ -77,7 +77,6 @@ public class GameStateMapper {
 
     public GameStateDto mapDomainToDto(Game game) throws BoardException {
         GameStateDto dto = new GameStateDto();
-        dto.setId(game.getId());
         dto.setCurrentRound(game.getCurrentRound());
         String sideToMove = game.getSideToMove() == null ? null : game.getSideToMove().toString();
         dto.setColorToMove(sideToMove);

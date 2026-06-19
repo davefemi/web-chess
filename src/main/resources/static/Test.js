@@ -15,7 +15,7 @@ const client = new Client({
 
     onConnect: () => {
         console.log("Connected");
-        client.subscribe(`/topic/games/${gameId}/state`, (message) => {
+        client.subscribe(`/user/${playerId}/queue/games/updates`, (message) => {
             console.log("Received:", message.body);
         });
 

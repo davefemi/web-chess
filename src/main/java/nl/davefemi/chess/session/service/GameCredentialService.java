@@ -59,7 +59,7 @@ public final class GameCredentialService implements CredentialService {
                     Map.of(
                             SESSION_ID, player.getSessionId().toString(),
                             PLAYER_ID, player.getId().toString(),
-                            MESSAGE_ID, player.getMessageId(),
+                            MESSAGE_ID, player.getMessageEndpointId(),
                             PLAYER_COLOR, player.getColor().toString()
                     ));
         } catch (NoSuchAlgorithmException e) {

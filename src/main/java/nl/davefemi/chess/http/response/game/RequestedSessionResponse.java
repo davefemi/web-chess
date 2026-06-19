@@ -8,6 +8,5 @@ public class RequestedSessionResponse {
     private String playerColor;
     private String joinToken;
     private String websocketId;
-    private String gameId;
     private String playerId;
 }

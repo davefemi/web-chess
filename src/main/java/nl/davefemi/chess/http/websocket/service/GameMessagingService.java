@@ -2,9 +2,11 @@ package nl.davefemi.chess.http.websocket.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.chess.http.response.game.GameStateDto;
-import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
-import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
+import nl.davefemi.chess.http.websocket.event.EventType;
+import nl.davefemi.chess.http.websocket.message.GameMessage;
+import nl.davefemi.chess.http.websocket.message.GameMessageType;
+import nl.davefemi.chess.http.websocket.message.MessageMapper;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,35 +15,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GameMessagingService {
     private final SimpMessagingTemplate messagingTemplate;
-    private static final String GAME_STATE_ENDPOINT = "/topic/games/%s/state";
-    private static final String PLAYER_ENDPOINT = "/topic/games/players/%s";
+    private final MessageMapper messageMapper;
+    private static final String PLAYER_ENDPOINT = "/user/%s/queue/games/updates";
 
-    public void publishGameState(String id, GameStateDto payload){
-        messagingTemplate.convertAndSend(String.format(GAME_STATE_ENDPOINT, id), payload);
-        log.info("Executed gameId={}: sent message to {}", id, String.format(GAME_STATE_ENDPOINT, id));
+    public <T> void sendEventMessage(String player, GameMessageType type, EventType event, T payload){
+        GameMessage<T> message = messageMapper.mapToMessage(type, event, payload);
+        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player), message);
+        log.info("Executed playerEndpointId={}: sent message to {}", player, String.format(PLAYER_ENDPOINT, player));
     }
 
-    public void sendMessage(String id, String message){
-        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, id), message);
-        log.info("Executed playerId={}: sent message to {}", id, String.format(PLAYER_ENDPOINT, id));
-    }
-
-    public void sendGameStateToPlayer(String id, GameStateDto payload){
-        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, id), payload);
-        log.info("Executed playerId={}: sent message to {}", id, String.format(PLAYER_ENDPOINT, id));
-    }
-
-    public void sendRequestedRematchResponse(String player1, String player2, RequestedRematchResponse response){
-        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player1), response);
-        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player2), response);
-        log.info("Executed playerId={}, playerId={}: sent rematch invite message to {} and {}", player1, player2, String.format(PLAYER_ENDPOINT, player1),
-                String.format(PLAYER_ENDPOINT, player2));
-    }
-
-    public void sendRematchAcceptanceResponse(String player1, String player2, RematchAcceptanceResponse response){
-        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player1), response);
-        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player2), response);
-        log.info("Executed playerId={}, playerId={}: sent rematch acceptance message to {} and {}", player1, player2, String.format(PLAYER_ENDPOINT, player1),
-                String.format(PLAYER_ENDPOINT, player2));
+    public <T> void sendResponseMessage(String player, String correlationId, GameMessageType type, EventType event, T payload){
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
+        headerAccessor.setHeader("correlation_id", correlationId);
+        headerAccessor.setLeaveMutable(true);
+        GameMessage<T> message = messageMapper.mapToMessage(type, event, payload);
+        messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player), message, headerAccessor.getMessageHeaders());
+        log.info("Executed player={}: sent message to {}", player, String.format(PLAYER_ENDPOINT, player));
     }
 }

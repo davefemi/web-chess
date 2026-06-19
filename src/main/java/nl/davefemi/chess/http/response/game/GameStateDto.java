@@ -9,7 +9,6 @@ import java.util.List;
 
 @Data
 public class GameStateDto {
-    private String id;
     private int currentRound;
     private String colorToMove;
     private String gamePhase;

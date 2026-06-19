@@ -1,12 +1,13 @@
 package nl.davefemi.chess.session.model;
 
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.exception.GameException;
+import nl.davefemi.chess.exception.SessionException;
 import nl.davefemi.chess.play.model.game.Color;
 import nl.davefemi.chess.play.model.game.Game;
-import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.util.TokenGenerator;
 
 import java.util.*;
@@ -28,11 +29,11 @@ public final class GameSession {
         games.add(game);
     }
 
-    public Game getRematch(Player player) throws SessionNotFoundException {
+    public Game getRematch(Player player) throws SessionException {
         if (games.getLast().getStatus().isWaiting())
-            throw new SessionNotFoundException("A new game has already been initiated");
+            throw new SessionException("A new game has already been initiated");
         if (games.getLast().getStatus().isActive()){
-            throw new SessionNotFoundException("End running game first");
+            throw new SessionException("End running game first");
         }
         if (players.contains(player)) {
             Game game = new Game(TokenGenerator.generateToken(8));
@@ -43,12 +44,12 @@ public final class GameSession {
             }
             return game;
         }
-        throw new SessionNotFoundException("Player is not part of this session");
+        throw new SessionException("Player is not part of this session");
     }
 
-    public void acceptRematch(Player player) throws GameException, SessionNotFoundException {
+    public void acceptRematch(Player player) throws GameException, SessionException {
         if (!player.equals(playerToAccept))
-            throw new SessionNotFoundException("Invalid player");
+            throw new SessionException("Invalid player");
         games.getLast().start();
         playerToAccept = null;
     }
@@ -63,7 +64,7 @@ public final class GameSession {
     }
 
     public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept)
-            throws SessionNotFoundException {
+            throws SessionException {
         this.sessionId = sessionId;
         this.isActive = active;
         this.games.addAll(games);
@@ -76,17 +77,17 @@ public final class GameSession {
 
     }
 
-    public Player addPlayer(Color color) throws SessionNotFoundException {
+    public synchronized Player addPlayer(Color color) throws SessionException {
         Player player = new Player(UUID.randomUUID(), TokenGenerator.generateToken(8), sessionId, color);
         if (checkExistingPlayers(player))
             players.add(player);
         return player;
     }
 
-    public Player addPlayer() throws SessionNotFoundException {
+    public synchronized Player addPlayer() throws SessionException {
         Player player;
         if (players.size() > 1 )
-            throw new SessionNotFoundException("Amount of players possible exceeded");
+            throw new SessionException("Amount of players possible exceeded");
         if (players.size() == 1){
             Color color = Color.getOpponent(players.getLast().getColor());
             player = new Player(UUID.randomUUID(), TokenGenerator.generateToken(8), sessionId, color);
@@ -106,9 +107,9 @@ public final class GameSession {
         return new ArrayList<>(games);
     }
 
-    public Player getPlayer(UUID id){
+    public Player getPlayer(String messageId){
         for (Player p: players){
-            if (p.getId().equals(id))
+            if (p.getMessageEndpointId().equals(messageId))
                 return p;
         }
         return null;
@@ -118,14 +119,24 @@ public final class GameSession {
         return new ArrayList<>(players);
     }
 
-    private boolean checkExistingPlayers(Player player) throws SessionNotFoundException {
+    public Player getOpponent(Player player) throws SessionException {
+        if (!players.contains(player))
+            throw new SessionException("Player is not part of this session");
+        for (Player p : players){
+            if (!p.equals(player))
+                return p;
+        }
+        return null;
+    }
+
+    private boolean checkExistingPlayers(Player player) throws SessionException {
         if (players.size() > 1 )
-            throw new SessionNotFoundException("Amount of players possible exceeded");
+            throw new SessionException("Amount of players possible exceeded");
         for (Player p : players) {
             if (p.getColor() == player.getColor())
-                throw new SessionNotFoundException(player.getColor() + " is already taken");
+                throw new SessionException(player.getColor() + " is already taken");
             if (p.getId() == player.getId())
-                throw new SessionNotFoundException("Player already joined");
+                throw new SessionException("Player already joined");
         }
         return true;
     }

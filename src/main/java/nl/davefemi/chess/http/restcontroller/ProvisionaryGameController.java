@@ -3,11 +3,8 @@ package nl.davefemi.chess.http.restcontroller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.chess.exception.*;
 import nl.davefemi.chess.http.request.MoveRequest;
-import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.exception.GameException;
-import nl.davefemi.chess.exception.MoveException;
-import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.play.service.GamePlayService;
 import nl.davefemi.chess.session.model.Player;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +19,7 @@ public class ProvisionaryGameController {
 
     @PostMapping("/moves")
     public ResponseEntity<?> executeMove(HttpServletRequest request, @RequestBody MoveRequest move)
-            throws MoveException, BoardException, GameException, SessionNotFoundException {
+            throws MoveException, BoardException, GameException, SessionNotFoundException, SessionException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received from sessionId={}, playerId={}: move request {}",
                 player.getSessionId(), player.getId(), move.getMove());
@@ -31,7 +28,7 @@ public class ProvisionaryGameController {
 
     @PostMapping("/surrender")
     public ResponseEntity<?> surrender(HttpServletRequest request)
-            throws BoardException, GameException, SessionNotFoundException {
+            throws BoardException, GameException, SessionNotFoundException, SessionException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received from sessionId={}, playerId={}:  surrender request", player.getSessionId(), player.getId());
         return ResponseEntity.ok(playService.surrender(player));

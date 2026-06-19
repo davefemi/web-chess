@@ -2,6 +2,7 @@ package nl.davefemi.chess.play.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.chess.exception.SessionException;
 import nl.davefemi.chess.http.response.game.GameStateDto;
 import nl.davefemi.chess.http.response.session.SessionResponse;
 import nl.davefemi.chess.data.mapper.session.BoardMapper;
@@ -30,7 +31,7 @@ public class GameQueryService {
     private final GameStateMapper gameStateMapper;
 
     public SessionResponse getChessPositions(Player player)
-            throws BoardException, SessionNotFoundException {
+            throws BoardException, SessionNotFoundException, SessionException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         return sessionResponseMapper.getSessionResponse(
                 game.getSideToMove() == null
@@ -40,26 +41,26 @@ public class GameQueryService {
     }
 
     public SessionResponse getPlayerTurn(Player player)
-            throws BoardException, SessionNotFoundException {
+            throws BoardException, SessionNotFoundException, SessionException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         return sessionResponseMapper.getSessionResponse(game.getSideToMove().toString(),  null);
     }
 
     public SessionResponse isCheck(Player player)
-            throws BoardException, SessionNotFoundException {
+            throws BoardException, SessionNotFoundException, SessionException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         return sessionResponseMapper.getSessionResponse(player.getColor().toString(), game.isCheck(player.getColor()));
     }
 
     public SessionResponse getAvailableMoves(Player player)
-            throws BoardException, SessionNotFoundException, GameException {
+            throws BoardException, SessionNotFoundException, GameException, SessionException {
         Game game = gameSessionService.getGameSession(player.getSessionId()).getCurrentGame();
         List<Move> moves = game.getAvailableMoves(player.getColor());
         return sessionResponseMapper.getSessionResponse(player.getColor().toString(), moveMapper.mapDomainToDTO(moves));
     }
 
     public GameStateDto getCurrentGameState(UUID sessionId)
-            throws SessionNotFoundException, BoardException {
+            throws SessionNotFoundException, BoardException, SessionException {
         Game game = gameSessionService.getGameSession(sessionId).getCurrentGame();
         return gameStateMapper.mapDomainToDto(game);
     }

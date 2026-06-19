@@ -8,15 +8,15 @@ public final class Player {
     @Getter
     private final UUID id;
     @Getter
-    private final String messageId;
+    private final String messageEndpointId;
     @Getter
     private final UUID sessionId;
     @Getter
     private final Color color;
 
-    public Player(UUID playerId, String messageId, UUID sessionId, Color color){
+    public Player(UUID playerId, String messageEndpointId, UUID sessionId, Color color){
         this.id = playerId;
-        this.messageId = messageId;
+        this.messageEndpointId = messageEndpointId;
         this.sessionId = sessionId;
         this.color = color;
     }
@@ -26,7 +26,7 @@ public final class Player {
         if(!(o instanceof Player p))
             return false;
         return p.id.equals(id) &&
-                p.messageId.equals(messageId) &&
+                p.messageEndpointId.equals(messageEndpointId) &&
                 p.sessionId.equals(sessionId) &&
                 p.color.equals(color);
     }

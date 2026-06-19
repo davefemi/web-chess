@@ -3,9 +3,11 @@ package nl.davefemi.chess.http.websocket.event;
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.data.mapper.session.SessionResponseMapper;
 import nl.davefemi.chess.exception.BoardException;
+import nl.davefemi.chess.exception.SessionException;
 import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
 import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
+import nl.davefemi.chess.http.websocket.message.GameMessageType;
 import nl.davefemi.chess.http.websocket.service.GameMessagingService;
 import nl.davefemi.chess.play.service.GameQueryService;
 import nl.davefemi.chess.session.model.GameSession;
@@ -26,60 +28,77 @@ public class GameEventListener {
 
     @EventListener
     public void onSubscribe(SessionSubscribeEvent event)
-            throws SessionNotFoundException, BoardException {
+            throws SessionNotFoundException, BoardException, SessionException {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         if (accessor.getUser() == null || accessor.getDestination() == null)
             return;
-        if (!accessor.getDestination().startsWith("/topic/games"))
+        if (!accessor.getDestination().startsWith("/user"))
             return;
         PlayerPrincipal player = (PlayerPrincipal) accessor.getUser();
-        gameMessageService.sendGameStateToPlayer(player.player().getMessageId(),
+        gameMessageService.sendEventMessage(
+                player.player().getMessageEndpointId(),
+                GameMessageType.GAME_STATE_UPDATED,
+                EventType.PLAYER_SUBSCRIBED,
                 gameQueryService.getCurrentGameState(player.player().getSessionId()));
     }
 
     @EventListener
-    public void onCompletedMove(CompletedMoveEvent event){
-        try {
-            gameMessageService.publishGameState(
-                    event.getGameId(),
-                    gameQueryService.getCurrentGameState(event.getSessionId()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public void onCompletedMove(GameEvent<EventType> event){
+        if (event.type() == EventType.MOVE_COMPLETED ||
+                event.type() == EventType.PLAYER_SURRENDERED) {
+            try {
+                gameMessageService.sendEventMessage(
+                        event.actionBy().getMessageEndpointId(),
+                        GameMessageType.GAME_STATE_UPDATED,
+                        event.type(),
+                        gameQueryService.getCurrentGameState(event.sessionId()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     @EventListener
-    public void onRematchRequest(RematchRequestEvent event) throws SessionNotFoundException, BoardException {
-        GameSession session = gameSessionService.getGameSession(event.getSessionId());
-        String player1MessageId = session.getPlayers().getFirst().getMessageId();
-        String player2MessageId = session.getPlayers().getLast().getMessageId();
-        RequestedRematchResponse response = sessionResponseMapper.getRequestedRematchResponse(
-                event.getActionBy(),
-                event.getGameId());
-        gameMessageService.sendRequestedRematchResponse(player1MessageId, player2MessageId, response);
+    public void onRematchRequest(GameEvent<EventType> event) throws SessionNotFoundException, BoardException, SessionException {
+        if(event.type()==EventType.REMATCH_REQUESTED) {
+            GameSession session = gameSessionService.getGameSession(event.sessionId());
+            RequestedRematchResponse response = sessionResponseMapper.getRequestedRematchResponse(
+                    event.actionBy().getColor().toString());
+            gameMessageService.sendEventMessage(
+                    session.getOpponent(event.actionBy()).getMessageEndpointId(),
+                    GameMessageType.GAME_STATE_UPDATED,
+                    event.type(),
+                    response);
+        }
     }
 
     @EventListener
-    public void onAcceptedRematch(RematchAcceptedEvent event) throws SessionNotFoundException, BoardException {
-        GameSession session = gameSessionService.getGameSession(event.getSessionId());
-        String player1MessageId = session.getPlayers().getFirst().getMessageId();
-        String player2MessageId = session.getPlayers().getLast().getMessageId();
-        RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
-                true,
-                event.getActionBy(),
-                event.getGameId());
-        gameMessageService.sendRematchAcceptanceResponse(player1MessageId,player2MessageId, response);
+    public void onAcceptedRematch(GameEvent<EventType> event) throws SessionNotFoundException, BoardException, SessionException {
+        if (event.type() == EventType.REMATCH_ACCEPTED) {
+            GameSession session = gameSessionService.getGameSession(event.sessionId());
+            RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
+                    true,
+                    event.actionBy().getColor().toString());
+            gameMessageService.sendEventMessage(
+                    session.getOpponent(event.actionBy()).getMessageEndpointId(),
+                    GameMessageType.GAME_STATE_UPDATED,
+                    event.type(),
+                    response);
+        }
     }
 
     @EventListener
-    public void onDeclinedRematch(RematchDeclinedEvent event) throws SessionNotFoundException, BoardException {
-        GameSession session = gameSessionService.getGameSession(event.getSessionId());
-        String player1MessageId = session.getPlayers().getFirst().getMessageId();
-        String player2MessageId = session.getPlayers().getLast().getMessageId();
-        RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
-                false,
-                event.getActionBy(),
-                event.getGameId());
-        gameMessageService.sendRematchAcceptanceResponse(player1MessageId, player2MessageId, response);
+    public void onDeclinedRematch(GameEvent<EventType> event) throws SessionNotFoundException, BoardException, SessionException {
+        if (event.type() == EventType.REMATCH_DECLINED) {
+            GameSession session = gameSessionService.getGameSession(event.sessionId());
+            RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
+                    false,
+                    event.actionBy().getColor().toString());
+            gameMessageService.sendEventMessage(
+                    session.getOpponent(event.actionBy()).getMessageEndpointId(),
+                    GameMessageType.GAME_STATE_UPDATED,
+                    event.type(),
+                    response);
+        }
     }
 }

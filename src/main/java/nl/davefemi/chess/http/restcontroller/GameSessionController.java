@@ -3,13 +3,10 @@ package nl.davefemi.chess.http.restcontroller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.davefemi.chess.exception.*;
 import nl.davefemi.chess.http.response.session.AcceptedSessionResponse;
 import nl.davefemi.chess.http.response.game.RequestedSessionResponse;
 import nl.davefemi.chess.http.response.session.SessionResponse;
-import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.exception.GameException;
-import nl.davefemi.chess.exception.InvalidTokenException;
-import nl.davefemi.chess.exception.SessionNotFoundException;
 import nl.davefemi.chess.session.service.GameSessionService;
 import nl.davefemi.chess.session.model.Player;
 import org.springframework.http.HttpStatus;
@@ -32,7 +29,7 @@ public class GameSessionController {
     @PostMapping("/invite")
     public ResponseEntity<RequestedSessionResponse> invitePlayer
             (@Nullable @RequestParam("color")String color, HttpServletRequest request)
-            throws SessionNotFoundException, BoardException, InvalidTokenException {
+            throws BoardException, InvalidTokenException, SessionException {
         log.info("Received from {}: session initiation request", request.getSession().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startGameSession(color));
     }
@@ -40,32 +37,32 @@ public class GameSessionController {
     @PostMapping("/join")
     public ResponseEntity<AcceptedSessionResponse> joinGame
             (@RequestParam("token") String accessToken, HttpServletRequest request)
-            throws SessionNotFoundException, BoardException, GameException, InvalidTokenException {
+            throws SessionNotFoundException, BoardException, GameException, InvalidTokenException, SessionException {
         log.info("Received from {}: join request", request.getSession().getId());
         return ResponseEntity.ok(gameSessionService.joinGameSession(accessToken));
     }
 
     @PostMapping("/rematch/invite")
     public ResponseEntity<SessionResponse> invitePlayer(HttpServletRequest request)
-            throws SessionNotFoundException, BoardException {
+            throws SessionNotFoundException, BoardException, SessionException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received sessionId={}: invite request", player.getSessionId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.startRematch(player));
+        return ResponseEntity.status(HttpStatus.CREATED).body(gameSessionService.offerRematch(player));
     }
 
     @PostMapping("/rematch/join")
     public ResponseEntity<SessionResponse> joinGame(HttpServletRequest request)
-            throws SessionNotFoundException, BoardException, GameException {
+            throws SessionNotFoundException, BoardException, GameException, SessionException {
         Player player = (Player) request.getAttribute("player");
         log.info("Received sessionId={}: join request", player.getSessionId());
-        return ResponseEntity.ok(gameSessionService.acceptRematch(player, true));
+        return ResponseEntity.ok(gameSessionService.respondToRematchOffer(player, true));
     }
 
     @DeleteMapping("/rematch/decline")
     public ResponseEntity<SessionResponse> declineGame(HttpServletRequest request)
-            throws SessionNotFoundException, BoardException, GameException {
+            throws SessionNotFoundException, BoardException, GameException, SessionException {
         Player player = (Player) request.getAttribute("player");
-        return ResponseEntity.ok(gameSessionService.acceptRematch(player,false));
+        return ResponseEntity.ok(gameSessionService.respondToRematchOffer(player,false));
     }
 
     @PostMapping("/bot")

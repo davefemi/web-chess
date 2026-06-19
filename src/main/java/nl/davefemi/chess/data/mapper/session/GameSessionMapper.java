@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.data.entity.session.GameSessionEntity;
 import nl.davefemi.chess.data.entity.session.GameStateEntity;
 import nl.davefemi.chess.data.entity.session.PlayerEntity;
-import nl.davefemi.chess.exception.SessionNotFoundException;
+import nl.davefemi.chess.exception.SessionException;
 import nl.davefemi.chess.play.model.game.Color;
 import nl.davefemi.chess.play.model.game.Game;
 import nl.davefemi.chess.exception.BoardException;
@@ -42,7 +42,7 @@ public class GameSessionMapper {
     private PlayerEntity mapPlayerToEntity(Player player){
         PlayerEntity entity = new PlayerEntity();
         entity.setId(player.getId().toString());
-        entity.setMessageId(player.getMessageId());
+        entity.setMessageId(player.getMessageEndpointId());
         entity.setSessionId(player.getSessionId().toString());
         entity.setPlayerColor(player.getColor().toString());
         return entity;
@@ -55,7 +55,7 @@ public class GameSessionMapper {
                 Color.fromString(player.getPlayerColor()));
     }
 
-    public GameSession mapEntityToDomain(GameSessionEntity entity) throws BoardException, SessionNotFoundException {
+    public GameSession mapEntityToDomain(GameSessionEntity entity) throws BoardException, SessionException {
         List<Player> players = new ArrayList<>();
         for (PlayerEntity player : entity.getPlayers()){
             players.add(mapEntityToPlayer(player, entity.getSessionId()));

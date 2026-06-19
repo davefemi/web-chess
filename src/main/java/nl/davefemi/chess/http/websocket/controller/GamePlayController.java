@@ -2,6 +2,8 @@ package nl.davefemi.chess.http.websocket.controller;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.http.request.MoveRequest;
+import nl.davefemi.chess.http.websocket.event.EventType;
+import nl.davefemi.chess.http.websocket.message.GameMessageType;
 import nl.davefemi.chess.http.websocket.service.GameMessagingService;
 import nl.davefemi.chess.play.service.GamePlayService;
 import nl.davefemi.chess.session.model.PlayerPrincipal;
@@ -24,36 +26,53 @@ public class GamePlayController {
             gamePlayService.executeMove(principal.player(), request.getMove());
 
         } catch (Exception e) {
-            gameMessageService.sendMessage(principal.player().getMessageId(), e.getMessage());
+            gameMessageService.sendResponseMessage(
+                    principal.player().getMessageEndpointId(),
+                    principal.correlationId(),
+                    GameMessageType.ERROR,
+                    EventType.MOVE_REJECTED,
+                    e.getMessage());
         }
     }
 
     @MessageMapping("/rematch/invite")
     public void invite(PlayerPrincipal principal) {
         try{
-            gameSessionService.startRematch(principal.player());
+            gameSessionService.offerRematch(principal.player());
 
         } catch (Exception e) {
-            gameMessageService.sendMessage(principal.player().getMessageId(), e.getMessage());
+            gameMessageService.sendResponseMessage( principal.player().getMessageEndpointId(),
+                    principal.correlationId(),
+                    GameMessageType.ERROR,
+                    EventType.REMATCH_REQUESTED,
+                    e.getMessage());
         }
     }
 
     @MessageMapping("/rematch/join")
     public void joinInvite(PlayerPrincipal principal) {
         try{
-            gameSessionService.acceptRematch(principal.player(), true);
+            gameSessionService.respondToRematchOffer(principal.player(), true);
 
         } catch (Exception e) {
-            gameMessageService.sendMessage(principal.player().getMessageId(), e.getMessage());
+            gameMessageService.sendResponseMessage( principal.player().getMessageEndpointId(),
+                    principal.correlationId(),
+                    GameMessageType.ERROR,
+                    EventType.REMATCH_REQUESTED,
+                    e.getMessage());
         }
     }
 
     @MessageMapping("/rematch/decline")
     public void declineInvite(PlayerPrincipal principal) {
         try{
-            gameSessionService.acceptRematch(principal.player(), false);
+            gameSessionService.respondToRematchOffer(principal.player(), false);
         } catch (Exception e) {
-            gameMessageService.sendMessage(principal.player().getMessageId(), e.getMessage());
+            gameMessageService.sendResponseMessage( principal.player().getMessageEndpointId(),
+                    principal.correlationId(),
+                    GameMessageType.ERROR,
+                    EventType.REMATCH_DECLINED,
+                    e.getMessage());
         }
     }
 }
