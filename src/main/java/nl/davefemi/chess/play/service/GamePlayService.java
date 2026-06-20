@@ -34,7 +34,7 @@ public class GamePlayService {
             gameSessionService.saveGameSession(gameSession);
             log.info("Executed sessionId={}, playerId={}, move {}", gameSession.getSessionId().toString(),
                     player.getId(), game.getLastMove().toString());
-            publisher.publishEvent(new GameEvent<>(EventType.MOVE_COMPLETED, gameSession.getSessionId(), game.getId(), player));
+            publisher.publishEvent(new GameEvent<>(EventType.MOVE_COMPLETED, gameSession.getSessionId(), player));
             return gameStateMapper.mapDomainToDto(game);
         }
         throw new GameException("Game is not active");
@@ -48,7 +48,7 @@ public class GamePlayService {
             game.surrender(player.getColor());
             log.info("Executed sessionId={}, playerId={}: surrender request", player.getSessionId(), player.getId());
             gameSessionService.saveGameSession(gameSession);
-            publisher.publishEvent(new GameEvent<>(EventType.PLAYER_SURRENDERED, gameSession.getSessionId(), game.getId(), player));
+            publisher.publishEvent(new GameEvent<>(EventType.PLAYER_SURRENDERED, gameSession.getSessionId(), player));
             return gameStateMapper.mapDomainToDto(game);
         }
         throw new GameException("Game is not active");

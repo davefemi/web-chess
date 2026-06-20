@@ -74,7 +74,8 @@ public class GameSessionService {
         Game game = session.getRematch(player);
         log.info("Executed sessionId={}: new game created", session.getSessionId());
         storeSession(session);
-        applicationEventPublisher.publishEvent(new GameEvent<>(EventType.REMATCH_REQUESTED, session.getSessionId(), game.getId(), player));
+        applicationEventPublisher.publishEvent(
+                new GameEvent<>(EventType.REMATCH_REQUESTED, session.getSessionId(), player));
         return sessionResponseMapper.getSessionResponse(player.getColor().toString(),
                 gameStateMapper.mapDomainToDto(game));
     }
@@ -82,7 +83,8 @@ public class GameSessionService {
     public SessionResponse declineRematch(Player player)
             throws SessionNotFoundException, BoardException, SessionException {
         GameSession session =  retrieveSession(player.getSessionId());
-        applicationEventPublisher.publishEvent(new GameEvent<>(EventType.REMATCH_DECLINED, session.getSessionId(), null, player));
+        applicationEventPublisher.publishEvent(
+                new GameEvent<>(EventType.REMATCH_DECLINED, session.getSessionId(), player));
         endSession(player);
         return null;
     }
@@ -93,7 +95,8 @@ public class GameSessionService {
         Game game = session.getCurrentGame();
         log.info("Executed sessionId={}: new game started", session.getSessionId());
         storeSession(session);
-        applicationEventPublisher.publishEvent(new GameEvent<>(EventType.REMATCH_ACCEPTED, session.getSessionId(), game.getId(), player));
+        applicationEventPublisher.publishEvent(
+                new GameEvent<>(EventType.REMATCH_ACCEPTED, session.getSessionId(), player));
         return sessionResponseMapper.getSessionResponse(player.getColor().toString(),
                     gameStateMapper.mapDomainToDto(game));
     }
