@@ -1,6 +1,7 @@
 package nl.davefemi.chess.http.websocket.event;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.data.mapper.session.SessionResponseMapper;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.SessionException;
@@ -18,6 +19,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GameEventListener {
@@ -43,14 +45,15 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void onCompletedMove(GameEvent<EventType> event){
+    public void onCompletedMove(GameEvent<?> event){
+        log.info("onCompletedMove event logged");
         if (event.type() == EventType.MOVE_COMPLETED ||
                 event.type() == EventType.PLAYER_SURRENDERED) {
             try {
                 gameMessageService.sendEventMessage(
-                        event.actionBy().getMessageEndpointId(),
+                        gameSessionService.getGameSession(event.sessionId()).getOpponent(event.actionBy()).getMessageEndpointId(),
                         GameMessageType.GAME_STATE_UPDATED,
-                        event.type(),
+                        ((GameEvent<EventType>) event).type(),
                         gameQueryService.getCurrentGameState(event.sessionId()));
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -59,21 +62,21 @@ public class GameEventListener {
     }
 
     @EventListener
-    public void onRematchRequest(GameEvent<EventType> event) throws SessionNotFoundException, BoardException, SessionException {
-        if(event.type()==EventType.REMATCH_REQUESTED) {
+    public void onRematchRequest(GameEvent<?> event) throws SessionNotFoundException, BoardException, SessionException {
+        if(event.type() == EventType.REMATCH_REQUESTED) {
             GameSession session = gameSessionService.getGameSession(event.sessionId());
             RequestedRematchResponse response = sessionResponseMapper.getRequestedRematchResponse(
                     event.actionBy().getColor().toString());
             gameMessageService.sendEventMessage(
                     session.getOpponent(event.actionBy()).getMessageEndpointId(),
                     GameMessageType.GAME_STATE_UPDATED,
-                    event.type(),
+                    ((GameEvent<EventType>) event).type(),
                     response);
         }
     }
 
     @EventListener
-    public void onAcceptedRematch(GameEvent<EventType> event) throws SessionNotFoundException, BoardException, SessionException {
+    public void onAcceptedRematch(GameEvent<?> event) throws SessionNotFoundException, BoardException, SessionException {
         if (event.type() == EventType.REMATCH_ACCEPTED) {
             GameSession session = gameSessionService.getGameSession(event.sessionId());
             RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
@@ -82,13 +85,13 @@ public class GameEventListener {
             gameMessageService.sendEventMessage(
                     session.getOpponent(event.actionBy()).getMessageEndpointId(),
                     GameMessageType.GAME_STATE_UPDATED,
-                    event.type(),
+                    ((GameEvent<EventType>) event).type(),
                     response);
         }
     }
 
     @EventListener
-    public void onDeclinedRematch(GameEvent<EventType> event) throws SessionNotFoundException, BoardException, SessionException {
+    public void onDeclinedRematch(GameEvent<?> event) throws SessionNotFoundException, BoardException, SessionException {
         if (event.type() == EventType.REMATCH_DECLINED) {
             GameSession session = gameSessionService.getGameSession(event.sessionId());
             RematchAcceptanceResponse response = sessionResponseMapper.getRematchAcceptanceResponse(
@@ -97,7 +100,7 @@ public class GameEventListener {
             gameMessageService.sendEventMessage(
                     session.getOpponent(event.actionBy()).getMessageEndpointId(),
                     GameMessageType.GAME_STATE_UPDATED,
-                    event.type(),
+                    ((GameEvent<EventType>) event).type(),
                     response);
         }
     }

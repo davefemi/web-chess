@@ -55,7 +55,6 @@ public class GameSessionService {
         log.info("Executed sessionId={}: session joined and game started", session.getSessionId());
         storeSession(session);
         return sessionResponseMapper.getAcceptedSessionResponse(
-                session.getCurrentGame().getId(),
                 player.getMessageEndpointId(),
                 playerToken,
                 player.getColor().toString());
@@ -80,21 +79,23 @@ public class GameSessionService {
                 gameStateMapper.mapDomainToDto(game));
     }
 
-    public SessionResponse respondToRematchOffer(Player player, boolean offerAccepted)
-            throws SessionNotFoundException, BoardException, GameException, SessionException {
+    public SessionResponse declineRematch(Player player)
+            throws SessionNotFoundException, BoardException, SessionException {
         GameSession session =  retrieveSession(player.getSessionId());
-        if (offerAccepted) {
-            session.acceptRematch(player);
-            Game game = session.getCurrentGame();
-            log.info("Executed sessionId={}: new game started", session.getSessionId());
-            storeSession(session);
-            applicationEventPublisher.publishEvent(new GameEvent<>(EventType.REMATCH_ACCEPTED, session.getSessionId(), game.getId(), player));
-            return sessionResponseMapper.getSessionResponse(player.getColor().toString(),
-                    gameStateMapper.mapDomainToDto(game));
-        }
         applicationEventPublisher.publishEvent(new GameEvent<>(EventType.REMATCH_DECLINED, session.getSessionId(), null, player));
         endSession(player);
         return null;
+    }
+    public SessionResponse acceptRematch(Player player)
+            throws SessionNotFoundException, BoardException, GameException, SessionException {
+        GameSession session =  retrieveSession(player.getSessionId());
+        session.acceptRematch(player);
+        Game game = session.getCurrentGame();
+        log.info("Executed sessionId={}: new game started", session.getSessionId());
+        storeSession(session);
+        applicationEventPublisher.publishEvent(new GameEvent<>(EventType.REMATCH_ACCEPTED, session.getSessionId(), game.getId(), player));
+        return sessionResponseMapper.getSessionResponse(player.getColor().toString(),
+                    gameStateMapper.mapDomainToDto(game));
     }
 
     private GameSession retrieveSession(UUID sessionId)

@@ -26,7 +26,7 @@ public class GameMessagingService {
 
     public <T> void sendResponseMessage(String player, String correlationId, GameMessageType type, EventType event, T payload){
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create();
-        headerAccessor.setHeader("correlation_id", correlationId);
+        headerAccessor.setNativeHeader("correlation_id", correlationId);
         headerAccessor.setLeaveMutable(true);
         GameMessage<T> message = messageMapper.mapToMessage(type, event, payload);
         messagingTemplate.convertAndSend(String.format(PLAYER_ENDPOINT, player), message, headerAccessor.getMessageHeaders());

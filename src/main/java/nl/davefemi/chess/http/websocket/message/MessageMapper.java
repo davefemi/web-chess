@@ -10,7 +10,7 @@ public class MessageMapper {
         GameMessage<T> message = new GameMessage<>();
         message.setType(type);
         message.setEvent(event);
-        message.setPayload(payload);
+        message.setMessage(payload);
         return message;
     }
 }

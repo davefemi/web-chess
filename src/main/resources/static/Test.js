@@ -1,14 +1,15 @@
 import { Client } from "@stomp/stompjs";
 import WebSocket from "ws";
 
-const gameId = "wN00LC8mLM4";
-const playerId ="C4blZoCn6xo";
-const token = "Uu9Yk2fpr8jHC_FjTGCbrzBcQFf8JkLK3PkRKv9si3U"
+const playerId ="8y0oE13KEWk";
+const token = "RQWvcN3wJUXt1nbcy6yD79Eq__qOORfKQuMOVf4wq1A"
+const correlation = (Math.random() + 1).toString(36).substring(7)
 
 const client = new Client({
     webSocketFactory: () => new WebSocket("ws://localhost:8080/NME2fTVJmEY"),
     connectHeaders: {
         Authorization: `Bearer ${token}`,
+
     },
     debug: (msg) => console.log("[STOMP]", msg),
 
@@ -19,20 +20,18 @@ const client = new Client({
             console.log("Received:", message.body);
         });
 
-        client.subscribe(`/topic/games/players/${playerId}`, (message) => {
-            console.log("Received:", message.body);
-        });
 
         client.publish({
             destination: `/app/games/moves`,
             headers: {
-                "content-type": "application/json"
+                "content-type": "application/json",
+                "correlation_id": correlation,
             },
             body: JSON.stringify({
                 move: {
                     move_type: "single",
-                    from: "g7",
-                    to: "g6"
+                    from: "g5",
+                    to: "g4"
                 },
             }),
         });

@@ -4,8 +4,8 @@ import lombok.Data;
 import nl.davefemi.chess.http.websocket.event.EventType;
 
 @Data
-public class GameMessage <T>{
+public class GameMessage<T> {
     private GameMessageType type;
     private EventType event;
-    private T payload;
+    private T message;
 }

@@ -30,12 +30,11 @@ public class SessionResponseMapper {
         return dto;
     }
 
-    public AcceptedSessionResponse getAcceptedSessionResponse(String gameId, String messageId, String playerToken, String playerColor){
+    public AcceptedSessionResponse getAcceptedSessionResponse(String messageId, String playerToken, String playerColor){
         AcceptedSessionResponse dto = new AcceptedSessionResponse();
         dto.setPlayerToken(playerToken);
         dto.setPlayerColor(playerColor);
         dto.setWebsocketId(websocketId);
-        dto.setGameId(gameId);
         dto.setPlayerId(messageId);
         return dto;
     }
