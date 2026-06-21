@@ -1,17 +1,17 @@
 package nl.davefemi.chess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.http.response.game.GameStateDto;
+import nl.davefemi.chess.web.dto.response.game.GameStateDto;
 import nl.davefemi.chess.data.entity.session.GameStateEntity;
 import nl.davefemi.chess.data.entity.MoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PieceMapper;
 import nl.davefemi.chess.data.mapper.record.MoveRecordMapper;
 import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.play.model.game.Game;
-import nl.davefemi.chess.play.model.game.GameStatus;
-import nl.davefemi.chess.play.model.game.Color;
-import nl.davefemi.chess.play.model.actions.MoveRecord;
-import nl.davefemi.chess.play.model.board.Piece;
+import nl.davefemi.chess.gameplay.model.game.Game;
+import nl.davefemi.chess.gameplay.model.game.GameStatus;
+import nl.davefemi.chess.gameplay.model.game.Color;
+import nl.davefemi.chess.gameplay.model.actions.MoveRecord;
+import nl.davefemi.chess.gameplay.model.board.Piece;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -80,10 +80,7 @@ public class GameStateMapper {
         dto.setCurrentRound(game.getCurrentRound());
         String sideToMove = game.getSideToMove() == null ? null : game.getSideToMove().toString();
         dto.setColorToMove(sideToMove);
-        dto.setGamePhase(game.getStatus().phase().getPhase());
         dto.setInCheck(game.isInCheck());
-        dto.setWinner(game.getStatus().winner().isPresent()? game.getStatus().winner().get().toString(): null);
-        dto.setGameEndReason(game.getStatus().isFinished()? game.getStatus().reason().get().getReason() : null);
         for (Piece p : game.getGameBoardContext().getCopyOfBoard().getPieces()){
             dto.getBoard().add(positionPieceMapper.mapDomainToDTO(
                     game.getGameBoardContext().getCopyOfBoard().getPositionById(p.id()), p));

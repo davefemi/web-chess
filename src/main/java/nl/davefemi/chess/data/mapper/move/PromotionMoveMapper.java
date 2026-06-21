@@ -1,10 +1,10 @@
 package nl.davefemi.chess.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.http.dto.move.PromotionMoveDto;
-import nl.davefemi.chess.play.model.actions.move.PromotionMove;
-import nl.davefemi.chess.play.model.actions.move.SingleMove;
-import nl.davefemi.chess.play.model.board.PieceType;
+import nl.davefemi.chess.web.dto.move.PromotionMoveDto;
+import nl.davefemi.chess.gameplay.model.actions.move.PromotionMove;
+import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.board.PieceType;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,10 +1,10 @@
 package nl.davefemi.chess.data.mapper.move;
 
-import nl.davefemi.chess.http.dto.move.EnPassantMoveDto;
-import nl.davefemi.chess.http.dto.move.SingleMoveDto;
-import nl.davefemi.chess.play.model.actions.move.EnPassantMove;
-import nl.davefemi.chess.play.model.actions.move.SingleMove;
-import nl.davefemi.chess.play.model.board.AlgebraicSquare;
+import nl.davefemi.chess.web.dto.move.EnPassantMoveDto;
+import nl.davefemi.chess.web.dto.move.SingleMoveDto;
+import nl.davefemi.chess.gameplay.model.actions.move.EnPassantMove;
+import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.board.AlgebraicSquare;
 import org.springframework.stereotype.Component;
 
 @Component

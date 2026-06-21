@@ -2,16 +2,16 @@ package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
 import nl.davefemi.chess.data.entity.record.CastlingMoveRecordEntity;
-import nl.davefemi.chess.http.dto.MoveRecordDto;
+import nl.davefemi.chess.web.dto.record.MoveRecordDto;
 import nl.davefemi.chess.data.entity.MoveRecordEntity;
 import nl.davefemi.chess.data.entity.record.EnPassantMoveRecordEntity;
 import nl.davefemi.chess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.chess.data.entity.record.SingleMoveRecordEntity;
-import nl.davefemi.chess.play.model.actions.record.CastlingMoveRecord;
-import nl.davefemi.chess.play.model.actions.MoveRecord;
-import nl.davefemi.chess.play.model.actions.record.EnPassantMoveRecord;
-import nl.davefemi.chess.play.model.actions.record.PromotionMoveRecord;
-import nl.davefemi.chess.play.model.actions.record.SingleMoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.record.CastlingMoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.MoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.record.EnPassantMoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.record.PromotionMoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
 
 @Component

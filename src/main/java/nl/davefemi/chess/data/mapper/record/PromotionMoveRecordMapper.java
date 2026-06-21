@@ -1,15 +1,15 @@
 package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.http.dto.record.PromotionMoveRecordDto;
+import nl.davefemi.chess.web.dto.record.PromotionMoveRecordDto;
 import nl.davefemi.chess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PositionMapper;
-import nl.davefemi.chess.play.model.actions.move.PromotionMove;
-import nl.davefemi.chess.play.model.actions.move.SingleMove;
-import nl.davefemi.chess.play.model.board.PieceType;
-import nl.davefemi.chess.play.model.game.Color;
-import nl.davefemi.chess.play.model.board.Square;
-import nl.davefemi.chess.play.model.actions.record.PromotionMoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.move.PromotionMove;
+import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.board.PieceType;
+import nl.davefemi.chess.gameplay.model.game.Color;
+import nl.davefemi.chess.gameplay.model.board.Square;
+import nl.davefemi.chess.gameplay.model.actions.record.PromotionMoveRecord;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,7 +24,7 @@ public class PromotionMoveRecordMapper {
                         PieceType.fromString(data.getNewPieceType())),
                 Color.fromString(data.getPlayerColor()),
                 data.getNewPieceId(),
-                PieceType.fromString(data.getNewPieceType()),
+                PieceType.fromString(data.getCapturedPieceType()),
                 data.getCapturedPieceId());
     }
 

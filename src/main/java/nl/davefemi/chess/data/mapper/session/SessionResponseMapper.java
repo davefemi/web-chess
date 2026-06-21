@@ -1,9 +1,11 @@
 package nl.davefemi.chess.data.mapper.session;
 
-import nl.davefemi.chess.http.response.game.RematchAcceptanceResponse;
-import nl.davefemi.chess.http.response.game.RequestedRematchResponse;
-import nl.davefemi.chess.http.response.game.RequestedSessionResponse;
-import nl.davefemi.chess.http.response.session.*;
+import nl.davefemi.chess.web.dto.response.game.RematchAcceptanceResponse;
+import nl.davefemi.chess.web.dto.response.game.RequestedRematchResponse;
+import nl.davefemi.chess.web.dto.response.session.AcceptedSessionResponse;
+import nl.davefemi.chess.web.dto.response.session.EndedSessionResponse;
+import nl.davefemi.chess.web.dto.response.session.RequestedSessionResponse;
+import nl.davefemi.chess.web.dto.response.session.SessionResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +28,7 @@ public class SessionResponseMapper {
         dto.setPlayerColor(playerColor);
         dto.setJoinToken(accessToken);
         dto.setWebsocketId(websocketId);
-        dto.setPlayerId(messageId);
+        dto.setChannelId(messageId);
         return dto;
     }
 
@@ -35,7 +37,7 @@ public class SessionResponseMapper {
         dto.setPlayerToken(playerToken);
         dto.setPlayerColor(playerColor);
         dto.setWebsocketId(websocketId);
-        dto.setPlayerId(messageId);
+        dto.setChannelId(messageId);
         return dto;
     }
 

@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.move;
 
-import nl.davefemi.chess.play.model.board.AlgebraicSquare;
-import nl.davefemi.chess.play.model.board.Square;
+import nl.davefemi.chess.gameplay.model.board.AlgebraicSquare;
+import nl.davefemi.chess.gameplay.model.board.Square;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,16 +1,16 @@
 package nl.davefemi.chess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.http.response.game.BoardDto;
+import nl.davefemi.chess.web.dto.response.game.BoardDto;
 import nl.davefemi.chess.data.entity.session.BoardContextEntity;
 import nl.davefemi.chess.data.entity.session.PieceEntity;
 import nl.davefemi.chess.data.mapper.move.PieceMapper;
-import nl.davefemi.chess.play.model.board.Board;
-import nl.davefemi.chess.play.model.board.GameBoardContext;
-import nl.davefemi.chess.play.model.board.Piece;
-import nl.davefemi.chess.play.model.game.Color;
+import nl.davefemi.chess.gameplay.model.board.Board;
+import nl.davefemi.chess.gameplay.model.board.GameBoardContext;
+import nl.davefemi.chess.gameplay.model.board.Piece;
+import nl.davefemi.chess.gameplay.model.game.Color;
 import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.play.model.actions.MoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.MoveRecord;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

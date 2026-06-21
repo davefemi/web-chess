@@ -22,10 +22,12 @@ public class CredentialStore implements CredentialRepository {
     @Override
     public CredentialEntity retrieveCredential(String tokenType, String tokenHash, boolean deleteOnRetrieval) {
         CredentialEntity token = redisTemplate.opsForValue().get(tokenType + ": " + tokenHash);
-        if (token == null)
+        if (token == null) {
             throw new UnauthorizedException("Credential not found");
-        if (deleteOnRetrieval)
+        }
+        if (deleteOnRetrieval) {
             deleteCredential(tokenType, tokenHash);
+        }
         return token;
     }
 

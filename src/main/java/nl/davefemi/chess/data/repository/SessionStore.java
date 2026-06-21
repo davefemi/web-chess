@@ -20,8 +20,9 @@ public class SessionStore implements SessionRepository {
     @Override
     public GameSessionEntity retrieveGameSessionById(String sessionId) throws SessionNotFoundException {
         GameSessionEntity sessionEntity = redisTemplate.opsForValue().get("session: " + sessionId);
-        if (sessionEntity == null)
+        if (sessionEntity == null) {
             throw new SessionNotFoundException("Session not found");
+        }
         return sessionEntity;
     }
 

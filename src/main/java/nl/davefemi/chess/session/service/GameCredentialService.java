@@ -6,9 +6,8 @@ import nl.davefemi.chess.data.entity.session.CredentialEntity;
 import nl.davefemi.chess.data.mapper.session.CredentialMapper;
 import nl.davefemi.chess.data.repository.CredentialRepository;
 import nl.davefemi.chess.exception.InvalidTokenException;
-import nl.davefemi.chess.play.model.game.Color;
+import nl.davefemi.chess.gameplay.model.game.Color;
 import nl.davefemi.chess.session.model.Player;
-import nl.davefemi.chess.util.TokenGenerator;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -59,7 +58,7 @@ public final class GameCredentialService implements CredentialService {
                     Map.of(
                             SESSION_ID, player.getSessionId().toString(),
                             PLAYER_ID, player.getId().toString(),
-                            MESSAGE_ID, player.getMessageEndpointId(),
+                            MESSAGE_ID, player.getChannelId(),
                             PLAYER_COLOR, player.getColor().toString()
                     ));
         } catch (NoSuchAlgorithmException e) {

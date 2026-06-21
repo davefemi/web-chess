@@ -1,8 +1,8 @@
 import { Client } from "@stomp/stompjs";
 import WebSocket from "ws";
 
-const playerId ="8y0oE13KEWk";
-const token = "RQWvcN3wJUXt1nbcy6yD79Eq__qOORfKQuMOVf4wq1A"
+const playerId ="52nhpV7KsJs";
+const token = "FlTP1GazzDVsZJpS8Y441O0yEdrzMmZS205hxCaBW9w"
 const correlation = (Math.random() + 1).toString(36).substring(7)
 
 const client = new Client({
@@ -22,16 +22,19 @@ const client = new Client({
 
 
         client.publish({
-            destination: `/app/games/moves`,
+            destination: `/app/games/rematch/decline`,
             headers: {
                 "content-type": "application/json",
-                "correlation_id": correlation,
+                "correlation-id": correlation,
             },
             body: JSON.stringify({
                 move: {
                     move_type: "single",
-                    from: "g5",
-                    to: "g4"
+                    from: "h4",
+                    to: "f2",
+                    rook_from: "h8",
+                    rook_to: "f8",
+                    new_piece_type:"knight"
                 },
             }),
         });

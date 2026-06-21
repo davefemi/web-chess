@@ -5,8 +5,8 @@ import nl.davefemi.chess.data.entity.session.GameSessionEntity;
 import nl.davefemi.chess.data.entity.session.GameStateEntity;
 import nl.davefemi.chess.data.entity.session.PlayerEntity;
 import nl.davefemi.chess.exception.SessionException;
-import nl.davefemi.chess.play.model.game.Color;
-import nl.davefemi.chess.play.model.game.Game;
+import nl.davefemi.chess.gameplay.model.game.Color;
+import nl.davefemi.chess.gameplay.model.game.Game;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.session.model.GameSession;
 import nl.davefemi.chess.session.model.Player;
@@ -30,8 +30,9 @@ public class GameSessionMapper {
         sessionEntity.setSessionId(session.getSessionId().toString());
         sessionEntity.setActiveSession(session.isActive());
         sessionEntity.setPlayers(mapPlayersToEntities(session.getPlayers()));
-        if (session.getPlayerToAccept() != null)
+        if (session.getPlayerToAccept() != null) {
             sessionEntity.setPlayerToAccept(mapPlayerToEntity(session.getPlayerToAccept()));
+        }
         return sessionEntity;
     }
 
@@ -42,7 +43,7 @@ public class GameSessionMapper {
     private PlayerEntity mapPlayerToEntity(Player player){
         PlayerEntity entity = new PlayerEntity();
         entity.setId(player.getId().toString());
-        entity.setMessageId(player.getMessageEndpointId());
+        entity.setMessageId(player.getChannelId());
         entity.setSessionId(player.getSessionId().toString());
         entity.setPlayerColor(player.getColor().toString());
         return entity;

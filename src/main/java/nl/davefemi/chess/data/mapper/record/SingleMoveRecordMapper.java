@@ -1,14 +1,14 @@
 package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.http.dto.record.SingleMoveRecordDto;
+import nl.davefemi.chess.web.dto.record.SingleMoveRecordDto;
 import nl.davefemi.chess.data.entity.record.SingleMoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PositionMapper;
-import nl.davefemi.chess.play.model.actions.move.SingleMove;
-import nl.davefemi.chess.play.model.board.PieceType;
-import nl.davefemi.chess.play.model.game.Color;
-import nl.davefemi.chess.play.model.board.Square;
-import nl.davefemi.chess.play.model.actions.record.SingleMoveRecord;
+import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.board.PieceType;
+import nl.davefemi.chess.gameplay.model.game.Color;
+import nl.davefemi.chess.gameplay.model.board.Square;
+import nl.davefemi.chess.gameplay.model.actions.record.SingleMoveRecord;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
