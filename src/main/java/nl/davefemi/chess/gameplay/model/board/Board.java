@@ -2,7 +2,7 @@ package nl.davefemi.chess.gameplay.model.board;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.exception.BoardException;
-import nl.davefemi.chess.gameplay.model.actions.move.*;
+import nl.davefemi.chess.gameplay.model.action.move.*;
 import nl.davefemi.chess.gameplay.model.game.Color;
 
 import java.util.*;

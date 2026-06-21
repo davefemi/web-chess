@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.gameplay.model.game.Color;
-import nl.davefemi.chess.gameplay.model.actions.move.Move;
-import nl.davefemi.chess.gameplay.model.actions.MoveRecord;
-import nl.davefemi.chess.gameplay.model.actions.record.MoveRecordBuilder;
+import nl.davefemi.chess.gameplay.model.action.move.Move;
+import nl.davefemi.chess.gameplay.model.action.record.MoveRecord;
+import nl.davefemi.chess.gameplay.model.action.record.MoveRecordBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

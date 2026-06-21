@@ -3,7 +3,7 @@ package nl.davefemi.chess.gameplay;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.exception.MoveException;
-import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.action.move.SingleMove;
 import nl.davefemi.chess.gameplay.model.board.AlgebraicSquare;
 import nl.davefemi.chess.gameplay.model.game.Game;
 import org.junit.jupiter.api.BeforeEach;

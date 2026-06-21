@@ -2,8 +2,8 @@ package nl.davefemi.chess.gameplay.model.game;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import nl.davefemi.chess.gameplay.model.actions.move.Move;
-import nl.davefemi.chess.gameplay.model.actions.MoveRecord;
+import nl.davefemi.chess.gameplay.model.action.move.Move;
+import nl.davefemi.chess.gameplay.model.action.record.MoveRecord;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.exception.MoveException;

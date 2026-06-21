@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.exception.*;
-import nl.davefemi.chess.web.dto.request.MoveRequest;
+import nl.davefemi.chess.web.message.request.MoveRequest;
 import nl.davefemi.chess.gameplay.service.GamePlayService;
 import nl.davefemi.chess.session.model.Player;
 import org.springframework.http.ResponseEntity;

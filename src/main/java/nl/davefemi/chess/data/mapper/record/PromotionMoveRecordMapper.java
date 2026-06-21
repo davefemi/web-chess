@@ -1,15 +1,15 @@
 package nl.davefemi.chess.data.mapper.record;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.web.dto.record.PromotionMoveRecordDto;
+import nl.davefemi.chess.web.message.dto.record.PromotionMoveRecordDto;
 import nl.davefemi.chess.data.entity.record.PromotionMoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PositionMapper;
-import nl.davefemi.chess.gameplay.model.actions.move.PromotionMove;
-import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.action.move.PromotionMove;
+import nl.davefemi.chess.gameplay.model.action.move.SingleMove;
 import nl.davefemi.chess.gameplay.model.board.PieceType;
 import nl.davefemi.chess.gameplay.model.game.Color;
 import nl.davefemi.chess.gameplay.model.board.Square;
-import nl.davefemi.chess.gameplay.model.actions.record.PromotionMoveRecord;
+import nl.davefemi.chess.gameplay.model.action.record.PromotionMoveRecord;
 import org.springframework.stereotype.Component;
 
 @Component

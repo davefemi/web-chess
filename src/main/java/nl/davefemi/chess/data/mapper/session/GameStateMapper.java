@@ -1,16 +1,16 @@
 package nl.davefemi.chess.data.mapper.session;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.web.dto.response.game.GameStateDto;
+import nl.davefemi.chess.web.message.response.game.GameStateDto;
 import nl.davefemi.chess.data.entity.session.GameStateEntity;
-import nl.davefemi.chess.data.entity.MoveRecordEntity;
+import nl.davefemi.chess.data.entity.record.MoveRecordEntity;
 import nl.davefemi.chess.data.mapper.move.PieceMapper;
 import nl.davefemi.chess.data.mapper.record.MoveRecordMapper;
 import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.gameplay.model.game.Game;
 import nl.davefemi.chess.gameplay.model.game.GameStatus;
 import nl.davefemi.chess.gameplay.model.game.Color;
-import nl.davefemi.chess.gameplay.model.actions.MoveRecord;
+import nl.davefemi.chess.gameplay.model.action.record.MoveRecord;
 import nl.davefemi.chess.gameplay.model.board.Piece;
 import org.springframework.stereotype.Component;
 

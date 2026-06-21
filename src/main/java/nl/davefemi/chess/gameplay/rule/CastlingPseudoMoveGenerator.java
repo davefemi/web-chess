@@ -4,8 +4,8 @@ import nl.davefemi.chess.exception.BoardException;
 import nl.davefemi.chess.gameplay.model.board.Board;
 import nl.davefemi.chess.gameplay.model.board.Square;
 import nl.davefemi.chess.gameplay.model.game.Color;
-import nl.davefemi.chess.gameplay.model.actions.move.CastlingMove;
-import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.gameplay.model.action.move.CastlingMove;
+import nl.davefemi.chess.gameplay.model.action.move.SingleMove;
 
 import java.util.ArrayList;
 import java.util.List;

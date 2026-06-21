@@ -2,15 +2,15 @@ package nl.davefemi.chess.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
 
-import nl.davefemi.chess.web.dto.move.CastlingMoveDto;
-import nl.davefemi.chess.web.dto.move.MoveDto;
-import nl.davefemi.chess.web.dto.move.EnPassantMoveDto;
-import nl.davefemi.chess.web.dto.move.PromotionMoveDto;
-import nl.davefemi.chess.web.dto.move.SingleMoveDto;
-import nl.davefemi.chess.gameplay.model.actions.move.CastlingMove;
-import nl.davefemi.chess.gameplay.model.actions.move.Move;
-import nl.davefemi.chess.gameplay.model.actions.move.PromotionMove;
-import nl.davefemi.chess.gameplay.model.actions.move.SingleMove;
+import nl.davefemi.chess.web.message.dto.move.CastlingMoveDto;
+import nl.davefemi.chess.web.message.dto.move.MoveDto;
+import nl.davefemi.chess.web.message.dto.move.EnPassantMoveDto;
+import nl.davefemi.chess.web.message.dto.move.PromotionMoveDto;
+import nl.davefemi.chess.web.message.dto.move.SingleMoveDto;
+import nl.davefemi.chess.gameplay.model.action.move.CastlingMove;
+import nl.davefemi.chess.gameplay.model.action.move.Move;
+import nl.davefemi.chess.gameplay.model.action.move.PromotionMove;
+import nl.davefemi.chess.gameplay.model.action.move.SingleMove;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;

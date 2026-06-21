@@ -1,7 +1,7 @@
 package nl.davefemi.chess.data.mapper.move;
 
 import lombok.RequiredArgsConstructor;
-import nl.davefemi.chess.web.dto.move.PositionPieceDto;
+import nl.davefemi.chess.web.message.dto.move.PositionPieceDto;
 import nl.davefemi.chess.data.entity.session.PieceEntity;
 import nl.davefemi.chess.gameplay.model.board.Piece;
 import nl.davefemi.chess.gameplay.model.board.PieceType;
