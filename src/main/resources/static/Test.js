@@ -1,8 +1,8 @@
 import { Client } from "@stomp/stompjs";
 import WebSocket from "ws";
 
-const playerId ="52nhpV7KsJs";
-const token = "FlTP1GazzDVsZJpS8Y441O0yEdrzMmZS205hxCaBW9w"
+const playerId ="M57Y9LAQu4k";
+const token = "hN5zgMqAkG45dQ8BqIqZ5YjqM9knxqjPyXIFa81VO9g"
 const correlation = (Math.random() + 1).toString(36).substring(7)
 
 const client = new Client({
@@ -22,7 +22,7 @@ const client = new Client({
 
 
         client.publish({
-            destination: `/app/games/rematch/decline`,
+            destination: `/app/games/rematch/request`,
             headers: {
                 "content-type": "application/json",
                 "correlation-id": correlation,

@@ -2,7 +2,6 @@ package nl.davefemi.chess.session.model;
 
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import nl.davefemi.chess.exception.GameException;
 import nl.davefemi.chess.exception.SessionException;
@@ -16,7 +15,7 @@ import java.util.*;
 public final class GameSession {
     @Getter
     private final UUID sessionId;
-    @Getter @Setter
+    @Getter
     private boolean isActive = true;
     private final List<Game> games = new ArrayList<>();
     private final List<Player> players = new ArrayList<>();
@@ -53,6 +52,9 @@ public final class GameSession {
         if (!player.equals(playerToAccept)) {
             throw new SessionException("Invalid player");
         }
+        if(!games.getLast().getStatus().isWaiting()) {
+            throw new GameException("Game is not eligible for a rematch");
+        }
         games.getLast().start();
         playerToAccept = null;
     }
@@ -61,9 +63,9 @@ public final class GameSession {
         games.getLast().start();
     }
 
-    public boolean endSession(Player player){
-        games.getLast().surrender(player.getColor());
-        return true;
+
+    public void endSession(){
+        isActive = false;
     }
 
     public GameSession(UUID sessionId, boolean active, List<Game> games, List<Player> players, Player playerToAccept)
@@ -106,22 +108,20 @@ public final class GameSession {
         return player;
     }
 
-    public Game getCurrentGame() {
-        return games.getLast();
-    }
-
-    public List<Game> getGames() {
-        return new ArrayList<>(games);
-    }
-
-    public Player getPlayer(String messageId){
-        for (Player p: players){
-            if (p.getChannelId().equals(messageId)) {
-                return p;
-            }
+    public Game getCurrentGame() throws SessionException {
+        if (isActive) {
+            return games.getLast();
         }
-        return null;
+        throw new SessionException("Session is not active");
     }
+
+    public List<Game> getGames() throws SessionException {
+        if (isActive) {
+            return new ArrayList<>(games);
+        }
+        throw new SessionException("Session is not active");
+    }
+
 
     public List<Player> getPlayers(){
         return new ArrayList<>(players);

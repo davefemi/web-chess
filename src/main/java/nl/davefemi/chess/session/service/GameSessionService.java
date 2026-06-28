@@ -63,8 +63,9 @@ public class GameSessionService {
     public EndedSessionResponse endSession(Player player)
             throws SessionNotFoundException, BoardException, SessionException {
         GameSession session = retrieveSession(player.getSessionId());
-        session.endSession(player);
+        session.endSession();
         storeSession(session);
+        applicationEventPublisher.publishEvent(new GameEvent<>(EventType.SESSION_ENDED, session.getSessionId(), player));
         return sessionResponseMapper.getEndedSessionResponse(player.getColor().toString());
     }
 
@@ -83,9 +84,9 @@ public class GameSessionService {
     public SessionResponse declineRematch(Player player)
             throws SessionNotFoundException, BoardException, SessionException {
         GameSession session =  retrieveSession(player.getSessionId());
+        endSession(player);
         applicationEventPublisher.publishEvent(
                 new GameEvent<>(EventType.REMATCH_DECLINED, session.getSessionId(), player));
-        endSession(player);
         return null;
     }
     public SessionResponse acceptRematch(Player player)
@@ -106,7 +107,7 @@ public class GameSessionService {
         return gameSessionMapper.mapEntityToDomain(sessionStore.retrieveGameSessionById(sessionId.toString()));
     }
 
-    private void storeSession(GameSession session) throws BoardException {
+    private void storeSession(GameSession session) throws BoardException, SessionException {
         GameSessionEntity sessionEntity = gameSessionMapper.mapDomainToEntity(session);
         log(session.getSessionId(), "session stored");
         sessionStore.saveGameSession(sessionEntity);
@@ -119,7 +120,7 @@ public class GameSessionService {
         return session;
     }
 
-    public void saveGameSession(GameSession gameSession) throws SessionNotFoundException, BoardException {
+    public void saveGameSession(GameSession gameSession) throws SessionNotFoundException, BoardException, SessionException {
         if (gameSession == null) {
             throw new SessionNotFoundException("No game session to store");
         }

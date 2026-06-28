@@ -22,7 +22,7 @@ public class GameSessionMapper {
     private final GameStateMapper gameStateMapper;
 
 
-    public GameSessionEntity mapDomainToEntity(GameSession session) throws BoardException {
+    public GameSessionEntity mapDomainToEntity(GameSession session) throws BoardException, SessionException {
         GameSessionEntity sessionEntity = new GameSessionEntity();
         for (Game g: session.getGames()){
             sessionEntity.getGames().add(gameStateMapper.mapDomainToEntity(g));
